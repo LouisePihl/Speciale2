@@ -55,20 +55,23 @@ plot(y=Data$O, x=Data$age)
 ####      AGGREGERING OG IKKE-LINEARE TRENDS      ####
 ######################################################
 
+# Aggregering af data efter 'age'
 AgeAgg <- Data %>%
   group_by(age) %>%
   summarise(expoAgg = sum(E), occAgg=sum(O)) %>%
   mutate(OE = occAgg/expoAgg)
 
+
+# Aggregering af data efter 'duration'
 DurAgg <- Data %>%
   group_by(duration) %>%
   summarise(expoAgg = sum(E), occAgg=sum(O)) %>%
   mutate(OE = occAgg/expoAgg)
 
 
+# Plots af trends
 plot(AgeAgg$age, AgeAgg$OE)
-plot(DurAgg$duration, DurAgg$OE, ylim = c(0.0,0.25))
-
+plot(DurAgg$duration, DurAgg$OE)
 
 plot(AgeAgg$age, AgeAgg$occAgg)
 plot(DurAgg$duration, DurAgg$occAgg)
@@ -84,16 +87,9 @@ plot(DurAgg$duration, DurAgg$expoAgg)
 
 
 
-#GLM: Lineær model med alle variable 
-glm_linear_1 <- glm(O ~ age + duration, offset = log(E), 
-                    family = poisson, data = Data)
-
-glm_linear_2 <- glm(O ~ age, offset = log(E), 
-                    family = poisson, data = Data)
-
-glm_linear_3 <- glm(O ~ duration, offset = log(E), 
-                    family = poisson, data = Data)
-
+######################################################
+####                  Residualplots               ####
+######################################################
 
 
 #Centrer middelværdien: 
@@ -109,9 +105,25 @@ residplotduration<-function(model){qplot(Data$duration, .stdresid,data = model)+
 
 
 
+######################################################
+####                  GLM MODELLER                ####
+######################################################
+glm_linear_1 <- glm(O ~ age + duration, offset = log(E), 
+                    family = poisson, data = Data)
+
+glm_linear_2 <- glm(O ~ age, offset = log(E), 
+                    family = poisson, data = Data)
+
+glm_linear_3 <- glm(O ~ duration, offset = log(E), 
+                    family = poisson, data = Data)
 
 
-#Tjekker samtlige poly kombinationer
+
+
+
+######################################################
+####                  Polynomier                  ####
+######################################################
 
 glm_poly_1 <- glm(O ~ age + poly(duration, 1), offset = log(E), 
                   family = poisson, data = Data)
@@ -224,10 +236,13 @@ AIC(glm_poly_2_1,glm_poly_4_1,glm_poly_6_1,glm_poly_8_1,glm_poly_10_1,glm_poly_1
 
 
 
-#Tjekker prædictions plots: 
-#abline(v = my_knots, col = "green", lty = 2)
+######################################################
+####         Prædictions- og residualplot         ####
+######################################################
+#Indsæt den valgte model: 
+model <- glm_poly_16
 
-Data$predicted_O <- predict(glm_poly_16, type="response")
+Data$predicted_O <- predict(model, type="response")
 
 
 #Tjek efter trends
@@ -235,9 +250,6 @@ AgeAgg <- Data %>%
   group_by(age) %>%
   summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
   mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
-
-
-# Beregn OE-rater med de korrekte E-værdier
 
 
 # Plot OE-rates over age
@@ -250,7 +262,6 @@ plot(AgeAgg$age, AgeAgg$OE,
 
 # Tilføj den korrekte splines kurve for OE-raterne
 lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
-
 
 
 #Tjek efter trends
@@ -273,12 +284,14 @@ plot(DurAgg$duration, DurAgg$OE,
 # Tilføj den korrekte splines kurve for OE-raterne
 lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
 
-residplotduration(glm_poly_16)
+residplotduration(model)
 #abline(v = my_knots, col = "green", lty = 2)
 
 
 
-#Prøver med splines: 
+######################################################
+####                    SPLINES                   ####
+######################################################
 glm_splines_2 <- glm(O ~ age + ns(duration, df = 3), offset = log(E), 
                      family = poisson, data = Data)
 
@@ -312,7 +325,9 @@ AIC(glm_splines_2,glm_splines_4,glm_splines_6,glm_splines_8,glm_splines_10,glm_s
 
 
 
-#Indikator
+######################################################
+####                  1 INDIKATOR                 ####
+######################################################
 glm_2indikator_add <- glm(O ~ age + poly(duration, 1) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
                           family = poisson, data = Data)
 
@@ -353,10 +368,14 @@ AIC(glm_indikator_poly1,glm_indikator_poly2,glm_indikator_poly4,glm_indikator_po
 
 
 
+######################################################
+####         Prædictions- og residualplot         ####
+######################################################
 
-#abline(v = my_knots, col = "green", lty = 2)
+#Indsæt den valgre model
+model <- glm_indikator_poly2
 
-Data$predicted_O <- predict(glm_indikator_poly2, type="response")
+Data$predicted_O <- predict(model, type="response")
 
 
 #Tjek efter trends
@@ -402,170 +421,14 @@ plot(DurAgg$duration, DurAgg$OE,
 # Tilføj den korrekte splines kurve for OE-raterne
 lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
 
-residplotduration(glm_indikator_poly2)
+residplotduration(model)
 #abline(v = my_knots, col = "green", lty = 2)
 
 
 
-#abline(v = my_knots, col = "green", lty = 2)
-
-Data$predicted_O <- predict(glm_indikator_poly4, type="response")
-
-
-#Tjek efter trends
-AgeAgg <- Data %>%
-  group_by(age) %>%
-  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
-  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
-
-
-# Beregn OE-rater med de korrekte E-værdier
-
-
-# Plot OE-rates over age
-plot(AgeAgg$age, AgeAgg$OE, 
-     col = "blue", 
-     pch = 1, 
-     xlab = "Age",
-     ylab = "OE Rate",
-     main = "OE-rates with additive model over Age")
-
-# Tilføj den korrekte splines kurve for OE-raterne
-lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
-
-
-
-#Tjek efter trends
-DurAgg <- Data %>%
-  group_by(duration) %>%
-  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
-  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
-
-# Beregn OE-rater med de korrekte E-værdier
-
-
-# Plot OE-rates over age
-plot(DurAgg$duration, DurAgg$OE, 
-     col = "blue", 
-     pch = 1, 
-     xlab = "Duration",
-     ylab = "OE Rate",
-     main = "OE-rates with 4th degree polynomial over Duration")
-
-# Tilføj den korrekte splines kurve for OE-raterne
-lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
-
-residplotduration(glm_indikator_poly4)
-#abline(v = my_knots, col = "green", lty = 2)
-
-
-
-#abline(v = my_knots, col = "green", lty = 2)
-
-Data$predicted_O <- predict(glm_indikator_poly8, type="response")
-
-
-#Tjek efter trends
-AgeAgg <- Data %>%
-  group_by(age) %>%
-  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
-  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
-
-
-# Beregn OE-rater med de korrekte E-værdier
-
-
-# Plot OE-rates over age
-plot(AgeAgg$age, AgeAgg$OE, 
-     col = "blue", 
-     pch = 1, 
-     xlab = "Age",
-     ylab = "OE Rate",
-     main = "OE-rates with additive model over Age")
-
-# Tilføj den korrekte splines kurve for OE-raterne
-lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
-
-
-
-#Tjek efter trends
-DurAgg <- Data %>%
-  group_by(duration) %>%
-  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
-  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
-
-# Beregn OE-rater med de korrekte E-værdier
-
-
-# Plot OE-rates over age
-plot(DurAgg$duration, DurAgg$OE, 
-     col = "blue", 
-     pch = 1, 
-     xlab = "Duration",
-     ylab = "OE Rate",
-     main = "OE-rates with 8th degree polynomial over Duration")
-
-# Tilføj den korrekte splines kurve for OE-raterne
-lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
-
-residplotduration(glm_indikator_poly8)
-#abline(v = my_knots, col = "green", lty = 2)
-
-
-
-#abline(v = my_knots, col = "green", lty = 2)
-
-Data$predicted_O <- predict(glm_indikator_poly16, type="response")
-
-
-#Tjek efter trends
-AgeAgg <- Data %>%
-  group_by(age) %>%
-  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
-  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
-
-
-# Beregn OE-rater med de korrekte E-værdier
-
-
-# Plot OE-rates over age
-plot(AgeAgg$age, AgeAgg$OE, 
-     col = "blue", 
-     pch = 1, 
-     xlab = "Age",
-     ylab = "OE Rate",
-     main = "OE-rates with additive model over Age")
-
-# Tilføj den korrekte splines kurve for OE-raterne
-lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
-
-
-
-#Tjek efter trends
-DurAgg <- Data %>%
-  group_by(duration) %>%
-  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
-  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
-
-# Beregn OE-rater med de korrekte E-værdier
-
-
-# Plot OE-rates over age
-plot(DurAgg$duration, DurAgg$OE, 
-     col = "blue", 
-     pch = 1, 
-     xlab = "Duration",
-     ylab = "OE Rate",
-     main = "OE-rates with 16th degree polynomial over Duration")
-
-# Tilføj den korrekte splines kurve for OE-raterne
-lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
-
-residplotduration(glm_indikator_poly16)
-#abline(v = my_knots, col = "green", lty = 2)
-
-
-
+######################################################
+####                  2 INDIKATOR                 ####
+######################################################
 glm_2indikator_poly1 <- glm(O ~ age + poly(duration, 1) + I(duration >= 2/12) + I(duration >= 5.5/12), offset = log(E), 
                             family = poisson, data = Data)
 glm_2indikator_poly2 <- glm(O ~ age + poly(duration, 2) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
@@ -596,8 +459,12 @@ AIC(glm_2indikator_poly1,glm_2indikator_poly2,glm_2indikator_poly4,glm_2indikato
 
 
 
+######################################################
+####         Prædictions- og residualplot         ####
+######################################################
 
-#abline(v = my_knots, col = "green", lty = 2)
+#Indsæt den valgte model
+model <- glm_2indikator_poly6
 
 Data$predicted_O <- predict(model, type="response")
 
@@ -646,17 +513,16 @@ plot(DurAgg$duration, DurAgg$OE,
 # Tilføj den korrekte splines kurve for OE-raterne
 lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
 
-residplotduration(glm_2indikator_poly4)
+residplotduration(model)
 #abline(v = my_knots, col = "green", lty = 2)
 
 
 
 
-glm_2indikator_poly4_2 <- glm(O ~ poly(age, 2) + poly(duration, 4) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
-                              family = poisson, data = Data)
 
-
-
+######################################################
+####     Hvad sker der efter duration = 3 år      ####
+######################################################
 
 # Definer MAX antallet af polynomiumgrader
 num_plots <- 18
