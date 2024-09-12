@@ -11,22 +11,33 @@ library(hexbin)
 
 #Indlæs data:
 Data <- read_csv("SDJA.csv")
+
+# Opret variabel OE-rater
 Data$OE <- Data$O / Data$E
+
+# Vis data og opsummering
 view(Data)
 summary(Data)
 
 
-#Centrerer covariater
+######################################################
+####          CENTRERING AF COVARIATER            ####
+######################################################
+
+# Centrering af 'age'
 midpointsage<-c((unique(Data$age)[-1]+unique(Data$age)[-length(unique(Data$age))])/2,unique(Data$age)[length(unique(Data$age))])
 Data$age_centered<-midpointsage[match(Data$age, unique(Data$age))]
 
+# Centrering af 'duration'
 midpointsduration<-c((unique(Data$duration)[-1]+unique(Data$duration)[-length(unique(Data$duration))])/2,unique(Data$duration)[length(unique(Data$duration))])
 Data$duration_centered<-midpointsduration[match(Data$duration, unique(Data$duration))]
 
 View(Data)
 
 
-#Ser på data
+######################################################
+####            VISUALISERING AF DATA             ####
+######################################################
 ggplot(Data, aes(x = age, y=OE)) +
   geom_point(aes(color = duration))+
   facet_wrap(~ duration)
@@ -40,9 +51,10 @@ plot(y=Data$O, x=Data$age)
 
 
 
-#Tjek grafer/plots om man kan spotte ikke-lineære tendenser
+######################################################
+####      AGGREGERING OG IKKE-LINEARE TRENDS      ####
+######################################################
 
-#Tjek efter trends
 AgeAgg <- Data %>%
   group_by(age) %>%
   summarise(expoAgg = sum(E), occAgg=sum(O)) %>%
