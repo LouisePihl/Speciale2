@@ -11,10 +11,12 @@ library(splines)
 library(hexbin)
 
 # Indlæs data
-Data <- read_csv("FJSD.csv")
+Data <- read_csv("Data/FJ/FJSD.csv")
 Data$OE <- Data$O / Data$E
 
 View(Data)
+
+getwd()
 
 #Dette datasæt har ingen inddeling af age, så vi har kun covariaten duration.
 

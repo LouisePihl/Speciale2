@@ -9,7 +9,7 @@ library(splines)
 library(hexbin)
 
 # Indlæs data:
-Data <- read_csv("SDJA.csv")
+Data <- read_csv("Data/JA/JASD.csv")
 
 # Opret variabel OE-rater
 Data$OE <- Data$O / Data$E
