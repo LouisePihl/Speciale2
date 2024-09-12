@@ -122,7 +122,7 @@ glm_linear_3 <- glm(O ~ duration, offset = log(E),
 
 
 ######################################################
-####                  Polynomier                  ####
+####                  POLYNIMIER                  ####
 ######################################################
 
 glm_poly_1 <- glm(O ~ age + poly(duration, 1), offset = log(E), 
