@@ -16,8 +16,8 @@ Data <- read_csv("Data/SD/SDJA.csv")
 Data$OE <- Data$O / Data$E
 
 # Vis data og opsummering
-view(Data)
-summary(Data)
+#view(Data)
+#summary(Data)
 
 
 ######################################################
@@ -27,6 +27,20 @@ summary(Data)
 # Centrering af 'age'
 midpointsage<-c((unique(Data$age)[-1]+unique(Data$age)[-length(unique(Data$age))])/2,unique(Data$age)[length(unique(Data$age))])
 Data$age_centered<-midpointsage[match(Data$age, unique(Data$age))]
+
+
+# 1. Find unikke aldersværdier
+unique_ages <- unique(Data$age)
+midpoints <- (unique_ages[-1] + unique_ages[-length(unique_ages)]) / 2
+custom_last_point <- (67 - 60) / 2 + 60  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints <- c(midpoints, custom_last_point)
+Data$age <- midpoints[match(Data$age, unique_ages)]
+
+# Vis resultater
+View(Data)
+
+
+############# OVERVEJ DET VENSTRE ENDEPUNKT ####################
 
 # Centrering af 'duration'
 midpointsduration<-c((unique(Data$duration)[-1]+unique(Data$duration)[-length(unique(Data$duration))])/2,unique(Data$duration)[length(unique(Data$duration))])
@@ -525,11 +539,11 @@ residplotduration(model)
 ######################################################
 
 # Definer MAX antallet af polynomiumgrader
-num_plots <- 18
+num_plots <- 8
 
 # Sekvenser for alder og varighed
-xseq <- seq(30, 67, 0.1)  # Alder fra 30 til 67
-useq <- seq(0, 37, 0.1)   # Varighed fra 0 til 37
+xseq <- seq(20, 67, 0.1)  # Alder fra 30 til 67
+useq <- seq(0, 47, 0.1)   # Varighed fra 0 til 37
 
 # Funktion til at beregne prædiktioner baseret på en polynomiumgrad i
 predmodel_i <- function(x, u, i) {
