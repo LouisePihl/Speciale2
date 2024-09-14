@@ -54,27 +54,37 @@ mu_23 <- function(t,z){exp(-11.9169277+0.1356766*t)*(z>5)+(exp(-6.1057464+0.0635
 mu_2p<-function(t,z){mu_21(t,z)+mu_23(t,z)}
 predmodelmu2p_vec <- Vectorize(mu_2p, vectorize.args = c("t", "z"))
 #Nedenstående skal ændres så det er de 4 andre intensiteter ud fra tilstanden
-SDJA<-read_csv("SD/SDJA.csv")
+#Nedenstående skal ændres så det er de 4 andre intensiteter ud fra tilstanden
+SDJA<-read_csv("Data/SD/SDJA.csv")
 SDJA_OE<-sum(SDJA$O)/sum(SDJA$E)
-SDLY<-read_csv("SD/SDLY.csv")
+SDJA$OE<-SDJA$O/SDJA$E
+SDRF<-read_csv("Data/SD/SDRF.csv")
+SDRF_OE<-sum(SDRF$O)/sum(SDRF$E)
+SDLY<-read_csv("Data/SD/SDLY.csv")
 SDLY_OE<-sum(SDLY$O)/sum(SDLY$E)
-SDFP<-read_csv("SD/SDFP.csv")
+SDFP<-read_csv("Data/SD/SDFP.csv")
 SDFP_OE<-sum(SDFP$O)/sum(SDFP$E)
-SDFJ<-read_csv("SD/SDFJ.csv")
+SDFJ<-read_csv("Data/SD/SDFJ.csv")
 SDFJ_OE<-sum(SDFJ$O)/sum(SDFJ$E)
 
+
+
 #Her kan modellen og startalder ændres ændres 
-age0<-30
-xseq<-seq(age0,67-age0,0.1)
+age0<-40
+xseq<-seq(age0,67,0.1)
 useq<-seq(0,67-age0,0.1)
 tseq<-seq(0,67-age0,0.1)
 
-model<-modelpoly3
+model<-glm(O ~ age + poly(duration, 2) + I(duration >= 2/12), 
+           offset = log(E), family = poisson, data = SDJA)
 
 predictions <- predmodel_vec(x = xseq, u = useq)
 
+predictions[31:length(predictions)] <- 0.0755537 #Observerede OE-rate ggregeret på alder 
+
 predictions_mu2p<-predmodelmu2p_vec(xseq,useq)
-mu_SDp<-predictions+predictions_mu2p+SDJA_OE+SDLY_OE+SDFP_OE+SDFJ_OE
+mu_SDp<-predictions+predictions_mu2p+SDRF_OE+SDLY_OE+SDFP_OE+SDFJ_OE
+
 
 integrand<-exp(-trapezoidal_integration_cum(tseq,mu_SDp))
 trapezoidal_integration(tseq[-1],integrand)
