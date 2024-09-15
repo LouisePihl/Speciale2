@@ -1,3 +1,12 @@
+#Pakker: 
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(stats)
+library(splines)
+library(hexbin)
+
+
 #Regner reserve størrelse
 
 #Definerer funktioner først
@@ -53,7 +62,7 @@ mu_21 <- function(t,z){exp(-0.042168-0.092455*t)*(z>5)+exp(-0.4808001-0.0309126*
 mu_23 <- function(t,z){exp(-11.9169277+0.1356766*t)*(z>5)+(exp(-6.1057464+0.0635736*t-0.2891195*z))*(z<=5)}
 mu_2p<-function(t,z){mu_21(t,z)+mu_23(t,z)}
 predmodelmu2p_vec <- Vectorize(mu_2p, vectorize.args = c("t", "z"))
-#Nedenstående skal ændres så det er de 4 andre intensiteter ud fra tilstanden
+
 #Nedenstående skal ændres så det er de 4 andre intensiteter ud fra tilstanden
 SDJA<-read_csv("Data/SD/SDJA.csv")
 SDJA_OE<-sum(SDJA$O)/sum(SDJA$E)
@@ -68,19 +77,20 @@ SDFJ<-read_csv("Data/SD/SDFJ.csv")
 SDFJ_OE<-sum(SDFJ$O)/sum(SDFJ$E)
 
 
-
 #Her kan modellen og startalder ændres ændres 
 age0<-40
 xseq<-seq(age0,67,0.1)
 useq<-seq(0,67-age0,0.1)
 tseq<-seq(0,67-age0,0.1)
 
-model<-glm(O ~ age + poly(duration, 2) + I(duration >= 2/12), 
+model<-glm(O ~ age + poly(duration, 4) + I(duration >= 2/12), 
            offset = log(E), family = poisson, data = SDJA)
 
 predictions <- predmodel_vec(x = xseq, u = useq)
 
-predictions[31:length(predictions)] <- 0.0755537 #Observerede OE-rate ggregeret på alder 
+predictions[31:41] <- 0.0755537 #Observerede OE-rate ggregeret på alder 
+predictions[41:length(predictions)] <- 1000 #Observerede OE-rate ggregeret på alder 
+
 
 predictions_mu2p<-predmodelmu2p_vec(xseq,useq)
 mu_SDp<-predictions+predictions_mu2p+SDRF_OE+SDLY_OE+SDFP_OE+SDFJ_OE
@@ -88,3 +98,4 @@ mu_SDp<-predictions+predictions_mu2p+SDRF_OE+SDLY_OE+SDFP_OE+SDFJ_OE
 
 integrand<-exp(-trapezoidal_integration_cum(tseq,mu_SDp))
 trapezoidal_integration(tseq[-1],integrand)
+
