@@ -164,8 +164,7 @@ predplot(model)
 
 AIC(glm_linear_1,glm_poly_2,glm_splines_2,glm_splines_3,glm_splines_4,glm_splines_5,glm_splines_6)
 
-
-
+View(Data)
 
 
 

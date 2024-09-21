@@ -46,7 +46,6 @@ View(Data)
 midpointsduration<-c((unique(Data$duration)[-1]+unique(Data$duration)[-length(unique(Data$duration))])/2,unique(Data$duration)[length(unique(Data$duration))])
 Data$duration_centered<-midpointsduration[match(Data$duration, unique(Data$duration))]
 
-View(AgeAgg)
 
 
 ######################################################
@@ -697,7 +696,6 @@ for (i in num_plots:num_plots) {
   abline(v = index_position, col = "pink", lwd = 2, lty = 2)
   text(x = index_position, y = max(predictions), labels = "Varighed: 3 år", pos = 4, col = "hotpink", cex = 0.8)
 }
-
 
 
 
