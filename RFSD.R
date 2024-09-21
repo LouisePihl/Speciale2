@@ -1,4 +1,4 @@
-Data <- read_csv("RF/RFSD.csv")
+Data <- read_csv("Data/RF/RFSD.csv")
 view(Data)
 Data$OE<-Data$O/Data$E
 
@@ -10,6 +10,7 @@ residplotduration<-function(model){qplot(Data$duration, .stdresid,data = model)+
     geom_smooth(method = "loess", size = 1, formula = y ~ x) +
     xlab("age") +
     ylab("fitted values")}
+
 #Prædiktionsplot
 predplot<-function(model){Data$predicted_O <- predict(model, type="response")
 Data$predicted_OE <- Data$predicted_O/Data$E
