@@ -46,7 +46,7 @@ View(Data)
 midpointsduration<-c((unique(Data$duration)[-1]+unique(Data$duration)[-length(unique(Data$duration))])/2,unique(Data$duration)[length(unique(Data$duration))])
 Data$duration_centered<-midpointsduration[match(Data$duration, unique(Data$duration))]
 
-View(Data)
+View(AgeAgg)
 
 
 ######################################################
@@ -478,7 +478,7 @@ AIC(glm_2indikator_poly1,glm_2indikator_poly2,glm_2indikator_poly4,glm_2indikato
 ######################################################
 
 #Indsæt den valgte model
-model <- glm_2indikator_poly6
+model <- glm_2indikator_poly18
 
 Data$predicted_O <- predict(model, type="response")
 
@@ -539,7 +539,7 @@ residplotduration(model)
 ######################################################
 
 # Definer MAX antallet af polynomiumgrader
-num_plots <- 8
+num_plots <- 18
 
 # Sekvenser for alder og varighed
 xseq <- seq(20, 67, 0.1)  # Alder fra 30 til 67
@@ -614,6 +614,92 @@ for (i in 1:num_plots) {
   abline(v = index_position, col = "pink", lwd = 2, lty = 2)
   text(x = index_position, y = max(predictions), labels = "Varighed: 3 år", pos = 4, col = "hotpink", cex = 0.8)
 }
+
+
+######################################################
+####     Hvad sker der efter duration = 3 år      ####
+####            specifikts polynomium             ####
+######################################################
+
+# Definer MAX antallet af polynomiumgrader
+num_plots <- 18
+
+# Sekvenser for alder og varighed
+xseq <- seq(30, 35, 0.1)  # Alder fra 30 til 67
+useq <- seq(0, 5, 0.1)   # Varighed fra 0 til 37
+
+# Funktion til at beregne prædiktioner baseret på en polynomiumgrad i
+predmodel_i <- function(x, u, i) {
+  # Opret 'new_data' med variablerne 'age' og 'duration_piecewise'
+  new_data <- data.frame(
+    age = x + u,        # Alder justeret for duration
+    duration = u,       # Duration
+    E = 1               # Eksponering sat til 1 for prædiktion
+  )
+  
+  # Fit modellen med variabel polynomiumgrad for 'duration'
+  model <- glm(O ~ poly(age, 2) + poly(duration, i) + I(duration >= 2/12) + I(duration >= 5.5/12), 
+               offset = log(E), family = poisson, data = Data)
+  
+  # Lav prædiktioner ved hjælp af modellen
+  pred <- predict(model, newdata = new_data, type = "response")
+  
+  return(as.numeric(pred))  # Returner prædiktionsværdien som et numerisk resultat
+}
+
+# Vis plots i grupper af 4
+for (start in seq(num_plots, num_plots, 4)) {
+  # Sæt op til at vise 4 plots i et vindue
+  par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
+  
+  # Plot for hver polynomiumgrad i den aktuelle gruppe
+  for (i in start:min(start + 3, num_plots)) {
+    # Vectorize funktionen for den aktuelle polynomiumgrad
+    predmodel_vec <- Vectorize(function(x, u) predmodel_i(x, u, i), vectorize.args = c("x", "u"))
+    
+    # Beregn prædiktioner
+    predictions <- predmodel_vec(x = xseq, u = useq)
+    
+    # Plot resultatet
+    plot(predictions, type = "l", col = "steelblue", lwd = 2, 
+         xlab = "Index", ylab = "Predicted OE Rate", 
+         main = paste("Degree", i))
+    
+    # Beregn den ønskede x-position for lodret linje
+    index_position <- 3 / 0.1  # Den ønskede index-position
+    
+    # Tilføj lodret linje ved den beregnede position
+    abline(v = index_position, col = "pink", lwd = 2, lty = 2)
+    text(x = index_position, y = max(predictions), labels = "Varighed: 3 år", pos = 4, col = "hotpink", cex = 0.8)
+  }
+}
+
+# Nulstil grafiske parametre til standard
+par(mfrow = c(1, 1))
+
+# Tilføj kode til at vise hvert plot enkeltvist
+for (i in num_plots:num_plots) {
+  # Vectorize funktionen for den aktuelle polynomiumgrad
+  predmodel_vec <- Vectorize(function(x, u) predmodel_i(x, u, i), vectorize.args = c("x", "u"))
+  
+  # Beregn prædiktioner
+  predictions <- predmodel_vec(x = xseq, u = useq)
+  
+  # Plot resultatet enkeltvist
+  plot(predictions, type = "l", col = "steelblue", lwd = 2, 
+       xlab = "Index", ylab = "Predicted OE Rate", 
+       main = paste("Degree", i))
+  
+  # Beregn den ønskede x-position for lodret linje
+  index_position <- 3 / 0.1  # Den ønskede index-position
+  
+  # Tilføj lodret linje ved den beregnede position
+  abline(v = index_position, col = "pink", lwd = 2, lty = 2)
+  text(x = index_position, y = max(predictions), labels = "Varighed: 3 år", pos = 4, col = "hotpink", cex = 0.8)
+}
+
+
+
 
 
 
