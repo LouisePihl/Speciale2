@@ -143,7 +143,7 @@ glm_linear_3 <- glm(O ~ duration, offset = log(E),
 
 
 
-
+summary(glm_linear_1)
 
 ######################################################
 ####                  POLYNIMIER                  ####
@@ -465,28 +465,28 @@ residplotduration(model)
 ######################################################
 ####                  2 INDIKATOR                 ####
 ######################################################
-glm_2indikator_poly1 <- glm(O ~ age + poly(duration, 1) + I(duration >= 2/12) + I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly1 <- glm(O ~ age + poly(duration, 1) + I(duration >= 2/12) + I(duration <= 6/12), offset = log(E), 
                             family = poisson, data = Data)
-glm_2indikator_poly2 <- glm(O ~ age + poly(duration, 2) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly2 <- glm(O ~ age + poly(duration, 2) + I(duration >= 2/12)+ I(duration <= 6/12), offset = log(E), 
                             family = poisson, data = Data)
-glm_2indikator_poly4 <- glm(O ~ age + poly(duration, 4) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly4 <- glm(O ~ age + poly(duration, 4) + I(duration >= 2/12)+ I(duration <= 6/12), offset = log(E), 
                             family = poisson, data = Data)
-glm_2indikator_poly6 <- glm(O ~ age + poly(duration, 6) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly6 <- glm(O ~ age + poly(duration, 6) + I(duration >= 2/12)+ I(duration <= 6/12), offset = log(E), 
                             family = poisson, data = Data)
-glm_2indikator_poly8 <- glm(O ~ age + poly(duration, 8) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly8 <- glm(O ~ age + poly(duration, 8) + I(duration >= 2/12)+ I(duration <= 6/12), offset = log(E), 
                             family = poisson, data = Data)
-glm_2indikator_poly10 <- glm(O ~ age + poly(duration, 10) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly10 <- glm(O ~ age + poly(duration, 10) + I(duration >= 2/12)+ I(duration <= 6/12), offset = log(E), 
                              family = poisson, data = Data)
 
-glm_2indikator_poly12 <- glm(O ~ age + poly(duration, 12) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly12 <- glm(O ~ age + poly(duration, 12) + I(duration >= 2/12)+ I(duration >= 6/12), offset = log(E), 
                              family = poisson, data = Data)
 
-glm_2indikator_poly14 <- glm(O ~ age + poly(duration, 14) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly14 <- glm(O ~ age + poly(duration, 14) + I(duration >= 2/12)+ I(duration >= 6/12), offset = log(E), 
                              family = poisson, data = Data)
-glm_2indikator_poly16 <- glm(O ~ age + poly(duration, 16) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly16 <- glm(O ~ age + poly(duration, 16) + I(duration >= 2/12)+ I(duration >= 6/12), offset = log(E), 
                              family = poisson, data = Data)
 
-glm_2indikator_poly18 <- glm(O ~ age + poly(duration, 18) + I(duration >= 2/12)+ I(duration >= 5.5/12), offset = log(E), 
+glm_2indikator_poly18 <- glm(O ~ age + poly(duration, 18) + I(duration >= 2/12)+ I(duration >= 6/12), offset = log(E), 
                              family = poisson, data = Data)
 
 AIC(glm_2indikator_poly1,glm_2indikator_poly2,glm_2indikator_poly4,glm_2indikator_poly6,glm_2indikator_poly8,glm_2indikator_poly10,glm_2indikator_poly12,glm_2indikator_poly14,glm_2indikator_poly16,glm_2indikator_poly18)
@@ -522,7 +522,7 @@ lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
 ######################################################
 
 #Indsæt den valgte model
-model <- glm_2indikator_poly2
+model <- glm_2indikator_poly8
 
 Data$predicted_O <- predict(model, type="response")
 
