@@ -169,7 +169,6 @@ AIC(glm_splines_5_age,glm_poly_6_age,glm_poly_4_2)
 ######################################################
 ####         Prædictions- og residualplot         ####
 ######################################################
-
 #Insæt den valgte model: 
 model <- glm_poly_4_2
 
