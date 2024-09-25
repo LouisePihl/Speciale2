@@ -31,6 +31,8 @@ summary(Data)
 midpointsduration<-c((unique(Data$duration)[-1]+unique(Data$duration)[-length(unique(Data$duration))])/2,unique(Data$duration)[length(unique(Data$duration))])
 Data$duration_centered<-midpointsduration[match(Data$duration, unique(Data$duration))]
 
+#fjerner sidste datapunkt for duration
+Data<-Data[Data$duration!=unique(Data$duration)[length(unique(Data$duration))],]
 
 
 ######################################################
@@ -56,6 +58,10 @@ residplotduration(glm_linear_1)
 ######################################################
 glm_linear_1 <- glm(O ~ duration, offset = log(E), 
                     family = poisson, data = Data)
+
+glm_int <- glm(O ~ offset(log(E)), 
+                    family = poisson, data = Data)
+
 
 
 ######################################################
@@ -89,10 +95,8 @@ predplot(model)
 glm_poly_1 <- glm(O ~ poly(duration, 1), offset = log(E), 
                   family = poisson, data = Data)
 
-glm_poly_2 <- glm(O ~ poly(duration, 2), offset = log(E), 
-                  family = poisson, data = Data)
 
-AIC(glm_linear_1,glm_poly_1,glm_poly_2)
+AIC(glm_linear_1,glm_poly_1)
 
 
 ######################################################
@@ -162,9 +166,6 @@ residplotduration(model)
 predplot(model)
 
 
-AIC(glm_linear_1,glm_poly_2,glm_splines_2,glm_splines_3,glm_splines_4,glm_splines_5,glm_splines_6)
-
-View(Data)
-
+AIC(glm_int,glm_linear_1,glm_splines_2,glm_splines_3,glm_splines_4,glm_splines_5,glm_splines_6)
 
 

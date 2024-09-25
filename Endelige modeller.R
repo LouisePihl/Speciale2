@@ -264,7 +264,6 @@ JAFJ_OE_endpoint #0.01640263
 ######################################
 
 
-
 ################ RFSD ################
 RFSD <- read_csv("Data/RF/RFSD.csv")
 
@@ -292,6 +291,25 @@ RFSD_OE_endpoint #0.0006416063
 ######################################
 
 
+################ LYSD ################
+LYSD <- read_csv("Data/LY/LYSD.csv")
+
+#OE-raten for varighed 3 (endepunktet):
+LYSD_filtered <- LYSD[LYSD$duration == 0.5, ]
+LYSD_filtered$OE <- LYSD_filtered$O/LYSD_filtered$E
+LYSD_OE_endpoint <- sum(LYSD_filtered$O)/sum(LYSD_filtered$E)
+
+#centrerer duration
+midpointsduration_LYSD <- c((unique(LYSD$duration)[-1] + unique(LYSD$duration)[-length(unique(LYSD$duration))]) / 2, unique(LYSD$duration)[length(unique(LYSD$duration))])
+LYSD$duration <- midpointsduration_LYSD[match(LYSD$duration, unique(LYSD$duration))]
+
+#fjerner sidste datapunkt for duration
+LYSD <- LYSD[LYSD$duration != unique(LYSD$duration)[length(unique(LYSD$duration))], ]
+
+LYSD_final <- glm(O ~ offset(log(E)), family = poisson, data = LYSD)
+
+#For duration større end 0.5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+LYSD_OE_endpoint #0.0002521938
 
 
 ######################################
