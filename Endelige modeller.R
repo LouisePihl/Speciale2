@@ -38,7 +38,7 @@ SDJA<-SDJA[SDJA$duration!=unique(SDJA$duration)[length(unique(SDJA$duration))],]
 
 SDJA_final <- glm(O ~ age + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 
-#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDJA_OE_endpoint #0.005942464
 
 
@@ -67,7 +67,7 @@ SDRF$duration<-midpointsduration_SDRF[match(SDRF$duration, unique(SDRF$duration)
 SDRF<-SDRF[SDRF$duration!=unique(SDRF$duration)[length(unique(SDRF$duration))],]
 
 SDRF_final <- #Indsæt model
-#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDRF_OE_endpoint #0.003950156
 
 
@@ -96,7 +96,7 @@ SDLY$duration<-midpointsduration_SDLY[match(SDLY$duration, unique(SDLY$duration)
 SDLY<-SDLY[SDLY$duration!=unique(SDLY$duration)[length(unique(SDLY$duration))],]
 
 SDLY_final <- #Indsæt model
-#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDLY_OE_endpoint #0.01155234
 
 
@@ -125,7 +125,7 @@ SDFJ$duration<-midpointsduration_SDFJ[match(SDFJ$duration, unique(SDFJ$duration)
 SDFJ<-SDFJ[SDFJ$duration!=unique(SDFJ$duration)[length(unique(SDFJ$duration))],]
 
 SDFJ_final <- #Indsæt model
-#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDFJ_OE_endpoint #0.00258375
 
 
@@ -153,7 +153,7 @@ SDFP$duration<-midpointsduration_SDFP[match(SDFP$duration, unique(SDFP$duration)
 SDFP<-SDFP[SDFP$duration!=unique(SDFP$duration)[length(unique(SDFP$duration))],]
 
 SDFP_final <- #Indsæt model
-#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDFP_OE_endpoint #0.002409844
 
 
@@ -187,16 +187,21 @@ JARF$duration<-midpointsduration_JARF[match(JARF$duration, unique(JARF$duration)
 JARF<-JARF[JARF$duration!=unique(JARF$duration)[length(unique(JARF$duration))],]
 
 JARF_final <- #Indsæt model
-#For duration større end 4 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+#For duration større end 4 (svarende til sidste punkt, dette benyttes ikke i modellen) sæt OE-raten konstant til: 
 JARF_OE_endpoint #0.03104505
 
 ################ JALY ################
 JALY <- read_csv("Data/JA/JALY.csv")
 
-#OE-raten for varighed 3 (endepunktet) for alle aldre
-JALY_filtered <- JALY[JALY$duration == 4.5, ]
-JALY_filtered$OE <- JALY_filtered$O/JALY_filtered$E
-JALY_OE_endpoint <- sum(JALY_filtered$O)/sum(JALY_filtered$E)
+#OE-raten for varighed 4.5 (endepunktet) for alle aldre
+JALY_filtered_dur <- JALY[JALY$duration == 4.5, ]
+JALY_filtered_dur$OE <- JALY_filtered_dur$O/JALY_filtered_dur$E
+JALY_OE_endpoint_dur <- sum(JALY_filtered_dur$O)/sum(JALY_filtered_dur$E)
+
+#OE-raten for alder 60 (endepunktet) for alle aldre
+JALY_filtered_age <- JALY[JALY$age == 60, ]
+JALY_filtered_age$OE <- JALY_filtered_age$O/JALY_filtered_age$E
+JALY_OE_endpoint_age <- sum(JALY_filtered_age$O)/sum(JALY_filtered_age$E)
 
 #Centrerer age
 unique_ages_JALY <- unique(JALY$age)
@@ -205,6 +210,9 @@ custom_last_point_JALY <- (67 - 60) / 2 + 60  # Brug 63.5 som værdi i højre en
 midpoints_JALY <- c(midpoints_JALY, custom_last_point_JALY)
 JALY$age <- midpoints_JALY[match(JALY$age, unique_ages_JALY)]
 
+#fjerner sidste datapunkt for age
+JALY <- JALY[JALY$age != unique(JALY$age)[length(unique(JALY$age))], ]
+
 #centrerer duration
 midpointsduration_JALY <- c((unique(JALY$duration)[-1] + unique(JALY$duration)[-length(unique(JALY$duration))]) / 2, unique(JALY$duration)[length(unique(JALY$duration))])
 JALY$duration <- midpointsduration_JALY[match(JALY$duration, unique(JALY$duration))]
@@ -212,9 +220,12 @@ JALY$duration <- midpointsduration_JALY[match(JALY$duration, unique(JALY$duratio
 #fjerner sidste datapunkt for duration
 JALY <- JALY[JALY$duration != unique(JALY$duration)[length(unique(JALY$duration))], ]
 
-JALY_final <- #Indsæt model
-#For duration større end 4.5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-JALY_OE_endpoint #0.02935461
+JALY_final <- glm(O ~ poly(age,2) + poly(duration, 3):I(duration <= 2), offset = log(E), 
+             family = poisson, data = JALY)
+
+#For duration større end 4.5 og 60 år (svarende til sidste punkt, dette benyttes ikke i modellen) sæt OE-raten konstant til: 
+JALY_OE_endpoint_dur #0.02935461
+JALY_OE_endpoint_age #0.02555102
 
 
 
@@ -254,6 +265,26 @@ JAFJ_OE_endpoint #0.01640263
 
 
 
+################ RFSD ################
+RFSD <- read_csv("Data/RF/RFSD.csv")
+
+#OE-raten for varighed 3 (endepunktet):
+RFSD_filtered <- RFSD[RFSD$duration == 3, ]
+RFSD_filtered$OE <- RFSD_filtered$O/RFSD_filtered$E
+RFSD_OE_endpoint <- sum(RFSD_filtered$O)/sum(RFSD_filtered$E)
+
+#centrerer duration
+midpointsduration_RFSD <- c((unique(RFSD$duration)[-1] + unique(RFSD$duration)[-length(unique(RFSD$duration))]) / 2, unique(RFSD$duration)[length(unique(RFSD$duration))])
+RFSD$duration <- midpointsduration_RFSD[match(RFSD$duration, unique(RFSD$duration))]
+
+#fjerner sidste datapunkt for duration
+RFSD <- RFSD[RFSD$duration != unique(RFSD$duration)[length(unique(RFSD$duration))], ]
+
+RFSD_final <- glm(O~ns(duration,df=3)+offset(log(E)),family = poisson(link="log"),data=RFSD)
+
+#For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+RFSD_OE_endpoint #0.0006416063
+
 
 
 ######################################
@@ -267,6 +298,25 @@ JAFJ_OE_endpoint #0.01640263
 ####           FLEKSJOB           ####
 ######################################
 
+################ FJSD ################
+FJSD <- read_csv("Data/FJ/FJSD.csv")
+
+#OE-raten for varighed 5 (endepunktet):
+FJSD_filtered <- FJSD[FJSD$duration == 5, ]
+FJSD_filtered$OE <- FJSD_filtered$O/FJSD_filtered$E
+FJSD_OE_endpoint <- sum(FJSD_filtered$O)/sum(FJSD_filtered$E)
+
+#centrerer duration
+midpointsduration_FJSD <- c((unique(FJSD$duration)[-1] + unique(FJSD$duration)[-length(unique(FJSD$duration))]) / 2, unique(FJSD$duration)[length(unique(FJSD$duration))])
+FJSD$duration <- midpointsduration_FJSD[match(FJSD$duration, unique(FJSD$duration))]
+
+#fjerner sidste datapunkt for duration
+FJSD <- FJSD[FJSD$duration != unique(FJSD$duration)[length(unique(FJSD$duration))], ]
+
+FJSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=FJSD)
+
+#For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+FJSD_OE_endpoint #0.001975652
 
 
 
