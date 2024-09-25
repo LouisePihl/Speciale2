@@ -77,8 +77,10 @@ AIC(modelpoly21_ind)
 
 #Indsæt den valgre model
 model <- modelpoly22_ind
+new_data=expand.grid(age = seq(30,67,0.5), duration = seq(0,3,0.1))
+new_data$E<-1
 
-SDLY$predicted_O <- predict(model, type="response")
+new_data$predicted_O <- predict(model, newdata=new_data, type="response")
 
 
 #Tjek efter trends
@@ -87,7 +89,10 @@ AgeAgg <- SDLY %>%
   summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
   mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
 
-
+AgeAgg_new <- new_data %>%
+  group_by(age) %>%
+  summarise(expoAgg = sum(E), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg/expoAgg)
 # Beregn OE-rater med de korrekte E-værdier
 
 
@@ -100,7 +105,7 @@ plot(AgeAgg$age, AgeAgg$OE,
      main = "OE-rates with additive model over Age")
 
 # Tilføj den korrekte splines kurve for OE-raterne
-lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
+plot(AgeAgg_new$age, AgeAgg_new$predicted_OE, col = "red", lwd = 2)
 
 #Tjek efter trends
 DurAgg <- SDLY %>%
