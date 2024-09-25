@@ -89,3 +89,5 @@ residplotage(modelns3)
 modelns4<-glm(O~ns(age,4)+duration+offset(log(E)),family = poisson(link="log"),data=FJFP)
 AIC(modelns4)
 residplotage(modelns4)
+
+

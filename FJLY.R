@@ -60,6 +60,10 @@ modelpoly2<-glm(O~age+poly(duration,2)+offset(log(E)),family = poisson(link="log
 AIC(modelpoly2)
 residplotduration(modelpoly2)
 
+modelpoly3<-glm(O~age+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=FJLY)
+AIC(modelpoly3)
+residplotduration(modelpoly3)
+
 modelpoly4<-glm(O~age+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=FJLY)
 AIC(modelpoly4)
 residplotduration(modelpoly4)
