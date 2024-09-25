@@ -22,7 +22,7 @@ t_seq<-seq(20,67,1/12)
 plot(t_seq,mu_21(t_seq,1), type="n",xlab="Age",ylab="mu_21")
 lines(t_seq,mu_21(t_seq,1),col="blue",lwd=2)
 
-plot(t_seq,mu_23(t_seq,1), type="n",xlab="Duration",ylab="")
+plot(t_seq,mu_23(t_seq,1), type="n",xlab="Age",ylab="")
 lines(t_seq,mu_23(t_seq,1),col="blue",lwd=2)
 lines(t_seq,mu_13(t_seq),col="green",lwd=2)
 legend("topleft", legend=c("mu_23 (duration=1)", "mu_13 (duration=1)"), col=c("blue", "green"), lwd=2,bty = "n")

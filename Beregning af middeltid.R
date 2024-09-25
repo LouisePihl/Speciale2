@@ -76,24 +76,34 @@ SDFP_OE<-sum(SDFP$O)/sum(SDFP$E)
 SDFJ<-read_csv("Data/SD/SDFJ.csv")
 SDFJ_OE<-sum(SDFJ$O)/sum(SDFJ$E)
 
+FJFP<-read_csv("Data/FJ/FJFP.csv")
+FJFP_OE<-sum(FJFP$O)/sum(FJFP$E)
+FJJA<-read_csv("Data/FJ/FJJA.csv")
+FJJA_OE<-sum(FJJA$O)/sum(FJJA$E)
+FJRF<-read_csv("Data/FJ/FJRF.csv")
+FJRF_OE<-sum(FJRF$O)/sum(FJRF$E)
+FJSD<-read_csv("Data/FJ/FJSD.csv")
+FJSD_OE<-sum(FJSD$O)/sum(FJSD$E)
+FJLY<-read_csv("Data/FJ/FJLY.csv")
+FJLY_OE<-sum(FJLY$O)/sum(FJLY$E)
+
 
 #Her kan modellen og startalder ændres ændres 
-age0<-40
+age0<-50
 xseq<-seq(age0,67,0.1)
 useq<-seq(0,67-age0,0.1)
 tseq<-seq(0,67-age0,0.1)
 
-model<-glm(O ~ age + poly(duration, 4) + I(duration >= 2/12), 
-           offset = log(E), family = poisson, data = SDJA)
+model<-glm(O~poly(age,4)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=FJLY)
 
 predictions <- predmodel_vec(x = xseq, u = useq)
 
-predictions[31:41] <- 0.0755537 #Observerede OE-rate ggregeret på alder 
-predictions[41:length(predictions)] <- 1000 #Observerede OE-rate ggregeret på alder 
+predictions[51:length(predictions)] <- 	0.03170921 #Observerede OE-rate ggregeret på alder 
+#predictions[41:length(predictions)] <- 1000 #Observerede OE-rate ggregeret på alder 
 
 
 predictions_mu2p<-predmodelmu2p_vec(xseq,useq)
-mu_SDp<-predictions+predictions_mu2p+SDRF_OE+SDLY_OE+SDFP_OE+SDFJ_OE
+mu_SDp<-predictions+predictions_mu2p+FJRF_OE+FJFP_OE+FJJA_OE+FJSD_OE
 
 
 integrand<-exp(-trapezoidal_integration_cum(tseq,mu_SDp))

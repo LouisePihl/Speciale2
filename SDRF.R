@@ -5,12 +5,12 @@ library(dplyr)
 library(stats)
 library(splines)
 library(hexbin)
-SDRF <- read_csv("SD/SDRF.csv")
+SDRF <- read_csv("Data/SD/SDRF.csv")
 SDRF$OE<-SDRF$O/SDRF$E
 midpointsage<-c((unique(SDRF$age)[-1]+unique(SDRF$age)[-length(unique(SDRF$age))])/2,unique(SDRF$age)[length(unique(SDRF$age))])
-SDRF$age_centered<-midpointsage[match(SDRF$age, unique(SDRF$age))]
+SDRF$age<-midpointsage[match(SDRF$age, unique(SDRF$age))]
 midpointsduration<-c((unique(SDRF$duration)[-1]+unique(SDRF$duration)[-length(unique(SDRF$duration))])/2,unique(SDRF$duration)[length(unique(SDRF$duration))])
-SDRF$duration_centered<-midpointsage[match(SDRF$duration, unique(SDRF$duration))]
+SDRF$duration<-midpointsduration[match(SDRF$duration, unique(SDRF$duration))]
 
 #PLot af OE rater
 plot(SDRF$OE)
@@ -48,15 +48,16 @@ residplotduration<-function(model){qplot(SDRF$duration, .stdresid,data = model)+
     xlab("duration") +
     ylab("fitted values")}
 
+#fjerner sidste datapunkt for duration
+SDRF<-SDRF[SDRF$duration!=unique(SDRF$duration)[length(unique(SDRF$duration))],]
+
 #Simpel additiv model
 modeladd<-glm(O~age+duration+offset(log(E)),family = poisson(link="log"),data=SDRF)
 summary(modeladd)
-drop1(modeladd)
 
 residplotage(modeladd)
 residplotduration(modeladd)
 AIC(modeladd)
-BIC(modeladd)
 
 #Tilføjer potensled
 modelp2<-glm(O~age+duration+I(duration^2)+offset(log(E)),family = poisson(link="log"),data=SDRF)
@@ -72,77 +73,57 @@ deviance(modelp3)
 
 #tilføjer ortogonale polynomier på duration
 modelpoly2<-glm(O~age+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelpoly2)
 residplotduration(modelpoly2)
 AIC(modelpoly2)
-BIC(modelpoly2)
 modelpoly3<-glm(O~age+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDRF)
 summary(modelpoly3)
 residplotduration(modelpoly3)
 AIC(modelpoly3)
-BIC(modelpoly3)
 modelpoly4<-glm(O~age+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=SDRF)
 summary(modelpoly4)
 residplotduration(modelpoly4)
 AIC(modelpoly4)
-BIC(modelpoly4)
-deviance(modelpoly4)
 modelpoly5<-glm(O~age+poly(duration,5)+offset(log(E)),family = poisson(link="log"),data=SDRF)
 summary(modelpoly5)
 residplotduration(modelpoly5)
 AIC(modelpoly5)
-BIC(modelpoly5)
-deviance(modelpoly5)
+
 
 #Tilføljer poly på age også
 modelpoly42<-glm(O~poly(age,2)+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelpoly42)
 residplotduration(modelpoly42)
 AIC(modelpoly42)
-BIC(modelpoly42)
-deviance(modelpoly42)
 
 modelpoly43<-glm(O~poly(age,3)+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelpoly43)
 residplotduration(modelpoly43)
 AIC(modelpoly43)
-BIC(modelpoly43)
-deviance(modelpoly43)
 
 modelpoly44<-glm(O~poly(age,4)+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelpoly44)
 residplotduration(modelpoly44)
 AIC(modelpoly44)
-BIC(modelpoly44)
-deviance(modelpoly44)
 
 modelpoly45<-glm(O~poly(age,5)+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelpoly45)
 residplotduration(modelpoly45)
 AIC(modelpoly45)
-BIC(modelpoly45)
-deviance(modelpoly45)
 
 modelpoly46<-glm(O~poly(age,6)+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelpoly46)
 residplotduration(modelpoly46)
 AIC(modelpoly46)
-BIC(modelpoly46)
-deviance(modelpoly46)
+
+modelpoly47<-glm(O~poly(age,7)+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=SDRF)
+residplotduration(modelpoly47)
+AIC(modelpoly47)
+
+modelpoly33<-glm(O~poly(age,3)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDRF)
+AIC(modelpoly33)
 
 #Tilføjer splines på duration
 modelns2<-glm(O~age+ns(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelns2)
 residplotduration(modelns2)
 AIC(modelns2)
-BIC(modelns2)
-deviance(modelns2)
 modelns3<-glm(O~age+ns(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelns3)
 residplotduration(modelns3)
 AIC(modelns3)
-BIC(modelns3)
-deviance(modelns3)
 #vælger knuderne ved 2 måneder og 5.5 måneder (samme antal som ovenfor)
 modelns3v2<-glm(O~age+ns(duration, knots = c(2/12,5.5/12))+offset(log(E)),family = poisson(link="log"),data=SDRF)
 summary(modelns3v2)
@@ -152,22 +133,18 @@ BIC(modelns3v2)
 deviance(modelns3v2)
 
 modelns4<-glm(O~age+ns(duration,4)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelns4)
 residplotduration(modelns4)
 AIC(modelns4)
-BIC(modelns4)
-deviance(modelns4)
+
+
 modelns5<-glm(O~age+ns(duration,5)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelns5)
 residplotduration(modelns5)
 AIC(modelns5)
-BIC(modelns5)
-deviance(modelns5)
+
 modelns8<-glm(O~age+ns(duration,8)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-summary(modelns8)
 residplotduration(modelns8)
 AIC(modelns8)
-BIC(modelns8)
+
 deviance(modelns8)
 modelns9<-glm(O~age+ns(duration,9)+offset(log(E)),family = poisson(link="log"),data=SDRF)
 summary(modelns9)
