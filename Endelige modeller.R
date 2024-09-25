@@ -6,12 +6,9 @@ library(stats)
 library(splines)
 library(hexbin)
 
-
-
 ######################################
 ####         SYGEDAGPENGE         ####
 ######################################
-
 
 ################ SDJA ################
 SDJA <- read_csv("Data/SD/SDJA.csv")
@@ -20,7 +17,6 @@ SDJA <- read_csv("Data/SD/SDJA.csv")
 SDJA_filtered <- SDJA[SDJA$duration == 3, ]
 SDJA_filtered$OE <- SDJA_filtered$O/SDJA_filtered$E
 SDJA_OE_endpoint<-sum(SDJA_filtered$O)/sum(SDJA_filtered$E)
-
 
 #Centrerer age
 unique_ages_SDJA <- unique(SDJA$age)
@@ -36,12 +32,10 @@ SDJA$duration<-midpointsduration_SDJA[match(SDJA$duration, unique(SDJA$duration)
 #fjerner sidste datapunkt for duration
 SDJA<-SDJA[SDJA$duration!=unique(SDJA$duration)[length(unique(SDJA$duration))],]
 
-SDJA_final <- glm(O ~ age + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
+SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDJA_OE_endpoint #0.005942464
-
-
 
 ################ SDRF ################
 SDRF <- read_csv("Data/SD/SDRF.csv")
@@ -50,7 +44,6 @@ SDRF <- read_csv("Data/SD/SDRF.csv")
 SDRF_filtered <- SDRF[SDRF$duration == 3, ]
 SDRF_filtered$OE <- SDRF_filtered$O/SDRF_filtered$E
 SDRF_OE_endpoint<-sum(SDRF_filtered$O)/sum(SDRF_filtered$E)
-
 
 #Centrerer age
 unique_ages_SDRF <- unique(SDRF$age)
@@ -66,10 +59,9 @@ SDRF$duration<-midpointsduration_SDRF[match(SDRF$duration, unique(SDRF$duration)
 #fjerner sidste datapunkt for duration
 SDRF<-SDRF[SDRF$duration!=unique(SDRF$duration)[length(unique(SDRF$duration))],]
 
-SDRF_final <- #Indsæt model
+SDRF_final <- glm(O~poly(age,3)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDRF)
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDRF_OE_endpoint #0.003950156
-
 
 
 ################ SDLY ################
@@ -79,7 +71,6 @@ SDLY <- read_csv("Data/SD/SDLY.csv")
 SDLY_filtered <- SDLY[SDLY$duration == 3, ]
 SDLY_filtered$OE <- SDLY_filtered$O/SDLY_filtered$E
 SDLY_OE_endpoint<-sum(SDLY_filtered$O)/sum(SDLY_filtered$E)
-
 
 #Centrerer age
 unique_ages_SDLY <- unique(SDLY$age)
@@ -95,10 +86,9 @@ SDLY$duration<-midpointsduration_SDLY[match(SDLY$duration, unique(SDLY$duration)
 #fjerner sidste datapunkt for duration
 SDLY<-SDLY[SDLY$duration!=unique(SDLY$duration)[length(unique(SDLY$duration))],]
 
-SDLY_final <- #Indsæt model
+SDLY_final <- glm(O~poly(age,2)+I(age>=60)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDLY)
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDLY_OE_endpoint #0.01155234
-
 
 
 ################ SDFJ ################
@@ -108,7 +98,6 @@ SDFJ <- read_csv("Data/SD/SDFJ.csv")
 SDFJ_filtered <- SDFJ[SDFJ$duration == 3, ]
 SDFJ_filtered$OE <- SDFJ_filtered$O/SDFJ_filtered$E
 SDFJ_OE_endpoint<-sum(SDFJ_filtered$O)/sum(SDFJ_filtered$E)
-
 
 #Centrerer age
 unique_ages_SDFJ <- unique(SDFJ$age)
@@ -136,7 +125,6 @@ SDFP <- read_csv("Data/SD/SDFP.csv")
 SDFP_filtered <- SDFP[SDFP$duration == 3, ]
 SDFP_filtered$OE <- SDFP_filtered$O/SDFP_filtered$E
 SDFP_OE_endpoint<-sum(SDFP_filtered$O)/sum(SDFP_filtered$E)
-
 
 #Centrerer age
 unique_ages_SDFP <- unique(SDFP$age)
@@ -228,10 +216,8 @@ JALY_OE_endpoint_dur #0.02935461
 JALY_OE_endpoint_age #0.02555102
 
 
-
 ################ JAFJ ################
 JAFJ <- read_csv("Data/JA/JAFJ.csv")
-
 
 #OE-raten for varighed 3 (endepunktet) for alle aldre
 JAFJ_filtered <- JAFJ[JAFJ$duration == 3, ]
@@ -255,8 +241,6 @@ JAFJ <- JAFJ[JAFJ$duration != unique(JAFJ$duration)[length(unique(JAFJ$duration)
 JAFJ_final <- #Indsæt model
 #For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
 JAFJ_OE_endpoint #0.01640263
-
-
 
 
 ######################################
@@ -285,7 +269,6 @@ RFSD_final <- glm(O~ns(duration,df=3)+offset(log(E)),family = poisson(link="log"
 RFSD_OE_endpoint #0.0006416063
 
 
-
 ######################################
 ####        LEDIGHEDSYDELSE       ####
 ######################################
@@ -311,6 +294,18 @@ LYSD_final <- glm(O ~ offset(log(E)), family = poisson, data = LYSD)
 #For duration større end 0.5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
 LYSD_OE_endpoint #0.0002521938
 
+################ LYFP ################
+LYFP <- read_csv("Data/LY/LYFP.csv")
+LYFP<-LYFP[-c(1,29,30,31,32),] #Fjerner første alders interval, samt aldre over 67 (har 0 occurences)
+
+#Centrerer age
+unique_ages_LYFP <- unique(LYFP$age)
+midpoints_LYFP <- (unique_ages_LYFP[-1] + unique_ages_LYFP[-length(unique_ages_LYFP)]) / 2
+custom_last_point_LYFP <- (67 + 60) / 2  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints_LYFP <- c(midpoints_LYFP, custom_last_point_LYFP)
+LYFP$age <- midpoints_LYFP[match(LYFP$age, unique_ages_LYFP)]
+
+LYFP_final<-glm(O~I(age<55) + poly(I(age*(age >= 55)), 3)+offset(log(E)),family = poisson(link="log"),data=LYFP)
 
 ######################################
 ####           FLEKSJOB           ####
@@ -336,7 +331,84 @@ FJSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log")
 #For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
 FJSD_OE_endpoint #0.001975652
 
+################ FJFP ################
+FJFP <- read_csv("Data/FJ/FJFP.csv")
 
+#OE-raten for varighed 3 (endepunktet):
+FJFP_filtered <- FJFP[FJFP$duration == 3, ]
+FJFP_filtered$OE <- FJFP_filtered$O/FJFP_filtered$E
+FJFP_OE_endpoint <- sum(FJFP_filtered$O)/sum(FJFP_filtered$E)
+
+#Centrerer age
+unique_ages_FJFP <- unique(FJFP$age)
+midpoints_FJFP <- (unique_ages_FJFP[-1] + unique_ages_FJFP[-length(unique_ages_FJFP)]) / 2
+custom_last_point_FJFP <- (67 + 60) / 2  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints_FJFP <- c(midpoints_FJFP, custom_last_point_FJFP)
+FJFP$age <- midpoints_FJFP[match(FJFP$age, unique_ages_FJFP)]
+
+#centrerer duration
+midpointsduration_FJFP <- c((unique(FJFP$duration)[-1] + unique(FJFP$duration)[-length(unique(FJFP$duration))]) / 2, unique(FJFP$duration)[length(unique(FJFP$duration))])
+FJFP$duration <- midpointsduration_FJFP[match(FJFP$duration, unique(FJFP$duration))]
+
+#fjerner sidste datapunkt for duration
+FJFP <- FJFP[FJFP$duration != unique(FJFP$duration)[length(unique(FJFP$duration))], ]
+
+#fjerner første datapunkt for age, da vi modellere dette seperat
+FJFP <- FJFP[FJFP$age != unique(FJFP$age)[1], ]
+
+FJFP_final <- glm(O~poly(age,3)+duration+offset(log(E)),family = poisson(link="log"),data=FJFP)
+
+#For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+FJFP_OE_endpoint #0.005760366
+
+################ FJRF ################
+
+FJRF <- read_csv("Data/FJ/FJRF.csv")
+
+#Kun et datapunkt, så sættes konstant
+FJRF_final<-sum(FJRF$O)/sum(FJRF$E)
+
+################ FJJA ################
+FJJA <- read_csv("Data/FJ/FJJA.csv")
+
+#OE-raten for varighed 3 (endepunktet):
+FJJA_filtered <- FJJA[FJJA$duration == 1.5, ]
+FJJA_filtered$OE <- FJJA_filtered$O/FJJA_filtered$E
+FJJA_OE_endpoint <- sum(FJJA_filtered$O)/sum(FJJA_filtered$E)
+
+#fjerner sidste datapunkt for duration
+FJJA <- FJJA[FJJA$duration != unique(FJJA$duration)[length(unique(FJJA$duration))], ]
+
+FJJA_final<-sum(FJJA$O)/sum(FJJA$E)
+#For duration over 1.5
+FJJA_OE_endpoint
+
+################ FJLY ################
+FJLY <- read_csv("Data/FJ/FJLY.csv")
+
+#OE-raten for varighed 3 (endepunktet):
+FJLY_filtered <- FJLY[FJLY$duration == 5, ]
+FJLY_filtered$OE <- FJLY_filtered$O/FJLY_filtered$E
+FJLY_OE_endpoint <- sum(FJLY_filtered$O)/sum(FJLY_filtered$E)
+
+#Centrerer age
+unique_ages_FJLY <- unique(FJLY$age)
+midpoints_FJLY <- (unique_ages_FJLY[-1] + unique_ages_FJLY[-length(unique_ages_FJLY)]) / 2
+custom_last_point_FJLY <- (67 + 60) / 2  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints_FJLY <- c(midpoints_FJLY, custom_last_point_FJLY)
+FJLY$age <- midpoints_FJLY[match(FJLY$age, unique_ages_FJLY)]
+
+#centrerer duration
+midpointsduration_FJLY <- c((unique(FJLY$duration)[-1] + unique(FJLY$duration)[-length(unique(FJLY$duration))]) / 2, unique(FJLY$duration)[length(unique(FJLY$duration))])
+FJLY$duration <- midpointsduration_FJLY[match(FJLY$duration, unique(FJLY$duration))]
+
+#fjerner sidste datapunkt for duration
+FJLY <- FJLY[FJLY$duration != unique(FJLY$duration)[length(unique(FJLY$duration))], ]
+
+FJLY_final<-glm(O~poly(age,4)+poly(duration,2)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
+
+#For duration over 5
+FJLY_OE_endpoint #0.03170921
 
 ######################################
 ####         FØRTIDSPENSION       ####

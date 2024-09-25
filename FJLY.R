@@ -56,6 +56,10 @@ residplotage(modeladd)
 residplotduration(modeladd)
 
 #polynomier på duration
+modelpoly2_ind<-glm(O~age+poly(duration,2)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
+AIC(modelpoly2_ind)
+residplotduration(modelpoly2_ind)
+
 modelpoly2<-glm(O~age+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=FJLY)
 AIC(modelpoly2)
 residplotduration(modelpoly2)
@@ -64,9 +68,17 @@ modelpoly3<-glm(O~age+poly(duration,3)+offset(log(E)),family = poisson(link="log
 AIC(modelpoly3)
 residplotduration(modelpoly3)
 
+modelpoly3_ind<-glm(O~age+poly(duration,3)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
+AIC(modelpoly3_ind)
+residplotduration(modelpoly3_ind)
+
 modelpoly4<-glm(O~age+poly(duration,4)+offset(log(E)),family = poisson(link="log"),data=FJLY)
 AIC(modelpoly4)
 residplotduration(modelpoly4)
+
+modelpoly4_ind<-glm(O~age+poly(duration,4)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
+AIC(modelpoly4_ind)
+residplotduration(modelpoly4_ind)
 
 modelpoly5<-glm(O~age+poly(duration,5)+offset(log(E)),family = poisson(link="log"),data=FJLY)
 AIC(modelpoly5)
@@ -111,3 +123,51 @@ modelpoly54<-glm(O~poly(age,4)+poly(duration,5)+offset(log(E)),family = poisson(
 AIC(modelpoly54)
 residplotage(modelpoly54)
 
+#Ny endelig
+modelpoly24_ind<-glm(O~poly(age,4)+poly(duration,2)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
+
+#Indsæt den valgre model
+model <- modelpoly24_ind
+
+FJLY$predicted_O <- predict(model, type="response")
+
+
+#Tjek efter trends
+AgeAgg <- FJLY %>%
+  group_by(age) %>%
+  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
+
+
+# Beregn OE-rater med de korrekte E-værdier
+
+
+# Plot OE-rates over age
+plot(AgeAgg$age, AgeAgg$OE, 
+     col = "blue", 
+     pch = 1, 
+     xlab = "Age",
+     ylab = "OE Rate",
+     main = "OE-rates with additive model over Age")
+
+# Tilføj den korrekte splines kurve for OE-raterne
+lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
+
+#Tjek efter trends
+DurAgg <- FJLY %>%
+  group_by(duration) %>%
+  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
+
+# Beregn OE-rater med de korrekte E-værdier
+
+# Plot OE-rates over age
+plot(DurAgg$duration, DurAgg$OE, 
+     col = "blue", 
+     pch = 1, 
+     xlab = "Duration",
+     ylab = "OE Rate",
+     main = "OE-rates with 16nd degree polynomial over Duration")
+
+# Tilføj den korrekte splines kurve for OE-raterne
+lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
