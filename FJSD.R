@@ -16,8 +16,6 @@ Data$OE <- Data$O / Data$E
 
 View(Data)
 
-getwd()
-
 #Dette datasæt har ingen inddeling af age, så vi har kun covariaten duration.
 
 ######################################################
@@ -33,10 +31,12 @@ plot(y = Data$OE, x = Data$duration)
 ####          CENTRERING AF COVARIATER            ####
 ######################################################
 
-# Centrering af duration
-midpointsduration <- c((unique(Data$duration)[-1] + unique(Data$duration)[-length(unique(Data$duration))]) / 2, 
-                       unique(Data$duration)[length(unique(Data$duration))])
-Data$age_centered <- midpointsage[match(Data$age, unique(Data$age))]
+#centrerer duration
+midpointsduration <- c((unique(Data$duration)[-1] + unique(Data$duration)[-length(unique(Data$duration))]) / 2, unique(Data$duration)[length(unique(Data$duration))])
+Data$duration <- midpointsduration[match(Data$duration, unique(Data$duration))]
+
+#fjerner sidste datapunkt for duration
+Data <- Data[Data$duration != unique(Data$duration)[length(unique(Data$duration))], ]
 
 # Vis centreret data
 View(Data)
