@@ -215,7 +215,6 @@ residplotduration(model)
 
 FPFJ_final <- glm(O ~ poly(age, 4) + poly(duration, 2), offset = log(E), family = poisson, data = Data)
 
-
 summary(FPFJ_final)
 
 AIC(FPFJ_final)
