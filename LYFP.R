@@ -1,13 +1,20 @@
-Data <- read_csv("LY/LYFP.csv")
-Data$OE<-Data$O/Data$E
-Data<-Data[-1,]
-Data<-Data[-c(1,29,30,31,32),]
-Data$age[1]<-(40+17)/2
+LYFP <- read_csv("Data/LY/LYFP.csv")
+LYFP$OE<-LYFP$O/LYFP$E
+#Data<-Data[-1,]
+plot(LYFP$age,Data$OE)
+plot(LYFP$age,Data$E)
+LYFP<-LYFP[-c(1,29,30,31,32),]
+#Data$age[1]<-(40+17)/2
 
-plot(Data$age,Data$OE)
-plot(Data$age,Data$E)
+#Centrerer age
+unique_ages_LYFP <- unique(LYFP$age)
+midpoints_LYFP <- (unique_ages_LYFP[-1] + unique_ages_LYFP[-length(unique_ages_LYFP)]) / 2
+custom_last_point_LYFP <- (67 + 60) / 2  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints_LYFP <- c(midpoints_LYFP, custom_last_point_LYFP)
+LYFP$age <- midpoints_LYFP[match(LYFP$age, unique_ages_LYFP)]
 
 #Model fit
+Data<-LYFP
 residplotage<-function(model){qplot(Data$age, .stdresid,data = model)+
     geom_smooth(method = "loess", size = 1, formula = y ~ x) +
     xlab("age") +
@@ -37,11 +44,15 @@ AIC(modelpoly2)
 residplotage(modelpoly2)
 predplot(modelpoly2)
 
-modelpoly3<-glm(O~I(age<57) + poly(I(age*(age >= 57)), 3)+offset(log(E)),family = poisson(link="log"),data=Data)
-summary(modelpoly3)
+modelpoly3<-glm(O~poly(age,3)+offset(log(E)),family = poisson(link="log"),data=Data)
 AIC(modelpoly3)
 residplotage(modelpoly3)
 predplot(modelpoly3)
+
+modelpoly3_ind<-glm(O~I(age<55) + poly(I(age*(age >= 55)), 3)+offset(log(E)),family = poisson(link="log"),data=Data)
+AIC(modelpoly3_ind)
+residplotage(modelpoly3_ind)
+predplot(modelpoly3_ind)
 
 modelpoly4<-glm(O~poly(age,4)+offset(log(E)),family = poisson(link="log"),data=Data)
 AIC(modelpoly4)
