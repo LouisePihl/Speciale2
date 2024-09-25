@@ -1,3 +1,12 @@
+#Pakker: 
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(stats)
+library(splines)
+library(hexbin)
+
+
 
 ######################################
 ####         SYGEDAGPENGE         ####
@@ -30,7 +39,7 @@ SDJA<-SDJA[SDJA$duration!=unique(SDJA$duration)[length(unique(SDJA$duration))],]
 SDJA_final <- glm(O ~ age + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 
 #For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-SDJA_OE_endpoint
+SDJA_OE_endpoint #0.005942464
 
 
 
@@ -59,7 +68,7 @@ SDRF<-SDRF[SDRF$duration!=unique(SDRF$duration)[length(unique(SDRF$duration))],]
 
 SDRF_final <- #Indsæt model
 #For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-SDRF_OE_endpoint
+SDRF_OE_endpoint #0.003950156
 
 
 
@@ -88,7 +97,7 @@ SDLY<-SDLY[SDLY$duration!=unique(SDLY$duration)[length(unique(SDLY$duration))],]
 
 SDLY_final <- #Indsæt model
 #For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-SDLY_OE_endpoint
+SDLY_OE_endpoint #0.01155234
 
 
 
@@ -117,7 +126,7 @@ SDFJ<-SDFJ[SDFJ$duration!=unique(SDFJ$duration)[length(unique(SDFJ$duration))],]
 
 SDFJ_final <- #Indsæt model
 #For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-SDFJ_OE_endpoint
+SDFJ_OE_endpoint #0.00258375
 
 
 ################ SDFP ################
@@ -144,8 +153,8 @@ SDFP$duration<-midpointsduration_SDFP[match(SDFP$duration, unique(SDFP$duration)
 SDFP<-SDFP[SDFP$duration!=unique(SDFP$duration)[length(unique(SDFP$duration))],]
 
 SDFP_final <- #Indsæt model
-  #For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-SDFP_OE_endpoint
+#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+SDFP_OE_endpoint #0.002409844
 
 
 ######################################
@@ -178,8 +187,8 @@ JARF$duration<-midpointsduration_JARF[match(JARF$duration, unique(JARF$duration)
 JARF<-JARF[JARF$duration!=unique(JARF$duration)[length(unique(JARF$duration))],]
 
 JARF_final <- #Indsæt model
-#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-JARF_OE_endpoint
+#For duration større end 4 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+JARF_OE_endpoint #0.03104505
 
 ################ JALY ################
 JALY <- read_csv("Data/JA/JALY.csv")
@@ -204,8 +213,8 @@ JALY$duration <- midpointsduration_JALY[match(JALY$duration, unique(JALY$duratio
 JALY <- JALY[JALY$duration != unique(JALY$duration)[length(unique(JALY$duration))], ]
 
 JALY_final <- #Indsæt model
-#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-JALY_OE_endpoint
+#For duration større end 4.5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+JALY_OE_endpoint #0.02935461
 
 
 
@@ -233,8 +242,8 @@ JAFJ$duration <- midpointsduration_JAFJ[match(JAFJ$duration, unique(JAFJ$duratio
 JAFJ <- JAFJ[JAFJ$duration != unique(JAFJ$duration)[length(unique(JAFJ$duration))], ]
 
 JAFJ_final <- #Indsæt model
-#For duration større end 2.875 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-JAFJ_OE_endpoint
+#For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+JAFJ_OE_endpoint #0.01640263
 
 
 
