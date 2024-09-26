@@ -43,35 +43,75 @@ residplotduration<-function(model){qplot(SDFJ$duration, .stdresid,data = model)+
     geom_smooth(method = "loess", size = 1, formula = y ~ x) +
     xlab("duration") +
     ylab("fitted values")}
-#Prædiktionsplot
-predplot_age<-function(model){SDFJ$predicted_O <- predict(model, type="response")
-SDFJ$predicted_OE <- SDFJ$predicted_O/SDFJ$E
-# Beregn OE-rater med de korrekte E-værdier
-
-# Plot OE-rates over age
-plot(SDFJ$age, SDFJ$OE, 
-     col = "blue", 
-     pch = 1, 
-     xlab = "Age",
-     ylab = "OE Rate",
-     main = "OE-rates with additive model over Duration")
-lines(SDFJ$age, Data$predicted_OE, col = "red", lwd = 2)}
-
-predplot_dur<-function(model){SDFJ$predicted_O <- predict(model, type="response")
-SDFJ$predicted_OE <- SDFJ$predicted_O/SDFJ$E
-# Beregn OE-rater med de korrekte E-værdier
-
-# Plot OE-rates over age
-plot(SDFJ$age, SDFJ$OE, 
-     col = "blue", 
-     pch = 1, 
-     xlab = "Duration",
-     ylab = "OE Rate",
-     main = "OE-rates with additive model over Duration")
-lines(SDFJ$duration, SDFJ$predicted_OE, col = "red", lwd = 2)}
 
 #Simpel additiv model
 modeladd<-glm(O~age+duration+offset(log(E)),family = poisson(link="log"),data=SDFJ)
 AIC(modeladd)
 residplotage(modeladd)
 residplotduration(modeladd)
+
+#Polynomier
+modelpoly2<-glm(O~age+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDFJ)
+AIC(modelpoly2)
+residplotduration(modelpoly2)
+
+modelpoly3<-glm(O~age+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDFJ)
+AIC(modelpoly3)
+residplotduration(modelpoly3)
+
+modelpoly2_ind<-glm(O~I(age>=60)+age+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDFJ)
+AIC(modelpoly2_ind)
+residplotage(modelpoly2_ind)
+
+modelpoly22<-glm(O~poly(age,2)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDFJ)
+AIC(modelpoly22)
+residplotage(modelpoly22)
+
+modelpoly22_ind<-glm(O~I(age>=60)+poly(age,2)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDFJ)
+AIC(modelpoly22_ind)
+residplotage(modelpoly22_ind)
+
+modelpoly23<-glm(O~poly(age,3)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDFJ)
+AIC(modelpoly23)
+residplotage(modelpoly23)
+
+#Prædiktionsplot
+
+SDFJ$predicted_O <- predict(modelpoly22_ind, type="response")
+
+#Tjek efter trends
+AgeAgg <- SDFJ %>%
+  group_by(age) %>%
+  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
+
+
+# Plot OE-rates over age
+plot(AgeAgg$age, AgeAgg$OE, 
+     col = "blue", 
+     pch = 1, 
+     xlab = "Age",
+     ylab = "OE Rate",
+     main = "OE-rates with additive model over Age")
+
+# Tilføj den korrekte splines kurve for OE-raterne
+lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
+
+#Tjek efter trends
+DurAgg <- SDFJ %>%
+  group_by(duration) %>%
+  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg/expoAgg, OE = occAgg/expoAgg)
+
+# Beregn OE-rater med de korrekte E-værdier
+
+# Plot OE-rates over age
+plot(DurAgg$duration, DurAgg$OE, 
+     col = "blue", 
+     pch = 1, 
+     xlab = "Duration",
+     ylab = "OE Rate",
+     main = "OE-rates with 16nd degree polynomial over Duration")
+
+# Tilføj den korrekte splines kurve for OE-raterne
+lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
