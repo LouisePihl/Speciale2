@@ -325,3 +325,15 @@ lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
 # Residualplot for lineær model
 residplotage(model)
 
+
+
+######################################################
+####                ENDELIG MODEL                 ####
+######################################################
+
+RFFJ_final <- glm(O ~ poly(age, 2) + poly(duration, 2) + I(age <= 40), offset = log(E), family = poisson, data = Data)
+
+
+
+
+
