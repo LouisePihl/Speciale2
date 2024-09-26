@@ -31,7 +31,7 @@ midpoints_JALY <- c(midpoints_JALY, custom_last_point_JALY)
 Data$age <- midpoints_JALY[match(Data$age, unique_ages_JALY)]
 
 #centrerer duration
-midpointsduration_JALY<-c((unique(Data$duration)[-1]+unique(Data$duration)[-length(unique(Data$duration))])/2,unique(SDJA$duration)[length(unique(SDJA$duration))])
+midpointsduration_JALY<-c((unique(Data$duration)[-1]+unique(Data$duration)[-length(unique(Data$duration))])/2,unique(Data$duration)[length(unique(Data$duration))])
 Data$duration<-midpointsduration_JALY[match(Data$duration, unique(Data$duration))]
 
 #fjerner sidste datapunkt for duration
