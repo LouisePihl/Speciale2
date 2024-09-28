@@ -16,7 +16,7 @@ Data <- read_csv("Data/RF/RFFJ.csv")
 Data$OE <- Data$O / Data$E
 
 #Vis data og opsummering
-#view(Data)
+view(Data)
 
 
 ######################################################
@@ -26,7 +26,7 @@ Data$OE <- Data$O / Data$E
 #Centrerer age
 unique_ages <- unique(Data$age)
 midpoints <- (unique_ages[-1] + unique_ages[-length(unique_ages)]) / 2
-custom_last_point <- (67 - 55) / 2 + 55  # Brug 61 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+custom_last_point <- (67 - 60) / 2 + 60  # Brug 63,5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
 midpoints <- c(midpoints, custom_last_point)
 Data$age <- midpoints[match(Data$age, unique_ages)]
 

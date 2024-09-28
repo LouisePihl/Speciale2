@@ -23,15 +23,19 @@ summary(Data)
 ####          CENTRERING AF COVARIATER            ####
 ######################################################
 
-# Centrering af age
-midpointsage <- c((unique(Data$age)[-1] + unique(Data$age)[-length(unique(Data$age))]) / 2, 
-                  unique(Data$age)[length(unique(Data$age))])
-Data$age_centered <- midpointsage[match(Data$age, unique(Data$age))]
+#Centrerer age
+unique_ages <- unique(Data$age)
+midpoints <- (unique_ages[-1] + unique_ages[-length(unique_ages)]) / 2
+custom_last_point <- (67 - 60) / 2 + 60  # Brug 63,5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints <- c(midpoints, custom_last_point)
+Data$age <- midpoints[match(Data$age, unique_ages)]
 
-# Centrering af duration
-midpointsduration <- c((unique(Data$duration)[-1] + unique(Data$duration)[-length(unique(Data$duration))]) / 2, 
-                       unique(Data$duration)[length(unique(Data$duration))])
-Data$duration_centered <- midpointsduration[match(Data$duration, unique(Data$duration))]
+#centrerer duration
+midpointsduration<-c((unique(Data$duration)[-1]+unique(Data$duration)[-length(unique(Data$duration))])/2,unique(Data$duration)[length(unique(Data$duration))])
+Data$duration<-midpointsduration[match(Data$duration, unique(Data$duration))]
+
+#fjerner sidste datapunkt for duration
+Data<-Data[Data$duration!=unique(Data$duration)[length(unique(Data$duration))],]
 
 # Vis centreret data
 View(Data)
@@ -136,7 +140,7 @@ residplotduration<-function(model){qplot(Data$duration, .stdresid,data = model)+
 # Lineær model med age og duration
 glm_linear_1 <- glm(O ~ age + duration, offset = log(E), family = poisson, data = Data)
 summary(glm_linear_1)
-
+AIC(glm_linear_1)
 
 
 ######################################################
@@ -153,12 +157,13 @@ AIC(glm_poly_1_dur, glm_poly_2_dur)
 # Polynomial modeller for age
 glm_poly_1_age <- glm(O ~ poly(age, 1) + duration, offset = log(E), family = poisson, data = Data)
 glm_poly_2_age <- glm(O ~ poly(age, 2) + duration, offset = log(E), family = poisson, data = Data)
+glm_poly_3_age <- glm(O ~ poly(age, 3) + duration, offset = log(E), family = poisson, data = Data)
 glm_poly_4_age <- glm(O ~ poly(age, 4) + duration, offset = log(E), family = poisson, data = Data)
 glm_poly_6_age <- glm(O ~ poly(age, 6) + duration, offset = log(E), family = poisson, data = Data)
 glm_poly_8_age <- glm(O ~ poly(age, 8) + duration, offset = log(E), family = poisson, data = Data)
 
 # Sammenlign AIC for polynomial modeller for age
-AIC(glm_poly_1_age, glm_poly_2_age, glm_poly_4_age, glm_poly_6_age, glm_poly_8_age)
+AIC(glm_poly_1_age, glm_poly_2_age, glm_poly_3_age, glm_poly_4_age, glm_poly_6_age, glm_poly_8_age)
 
 
 # Polynomial model med kombination af age og duration
@@ -199,47 +204,41 @@ AIC(glm_splines_2_age,glm_splines_3_age,glm_splines_4_age,glm_splines_5_age)
 ######################################################
 ####           FIT PÅ CENTRERET DATA              ####
 ######################################################
-glm_centered_poly1age_poly3dur <- glm(O ~ poly(age_centered,1) + poly(duration,3), offset = log(E), 
+glm_centered_poly1age_poly3dur <- glm(O ~ poly(age,1) + poly(duration,2), offset = log(E), 
                                       family = poisson, data = Data)
 
-glm_centered_poly2age_poly3dur <- glm(O ~ poly(age_centered,2) + poly(duration,3), offset = log(E), 
-                                      family = poisson, data = Data)
-
-glm_centered_poly2age_splines2dur <- glm(O ~ poly(age_centered,2) + ns(duration,df=3), offset = log(E), 
-                                         family = poisson, data = Data)
-
-glm_centered_poly2age_splines3dur <- glm(O ~ poly(age_centered,2) + ns(duration,df=4), offset = log(E), 
-                                         family = poisson, data = Data)
-
-glm_centered_poly3age_poly3dur <- glm(O ~ poly(age_centered,3) + poly(duration,3), offset = log(E), 
-                                      family = poisson, data = Data)
-
-glm_centered_poly4age_poly3dur <- glm(O ~ poly(age_centered,4) + poly(duration,3), offset = log(E), 
-                                      family = poisson, data = Data)
-
-glm_centered_poly5age_poly3dur <- glm(O ~ poly(age_centered,5) + poly(duration,3), offset = log(E), 
-                                      family = poisson, data = Data)
-
-glm_centered_poly6age_poly3dur <- glm(O ~ poly(age_centered,6) + poly(duration,3), offset = log(E), 
+glm_centered_poly2age_poly3dur <- glm(O ~ poly(age,2) + poly(duration,2), offset = log(E), 
                                       family = poisson, data = Data)
 
 
-AIC(glm_centered_poly1age_poly3dur,glm_centered_poly2age_poly3dur,glm_centered_poly3age_poly3dur,glm_centered_poly4age_poly3dur,glm_centered_poly5age_poly3dur,glm_centered_poly6age_poly3dur,glm_centered_poly2age_splines2dur,glm_centered_poly2age_splines3dur)
+glm_centered_poly3age_poly3dur <- glm(O ~ poly(age,3) + poly(duration,2), offset = log(E), 
+                                      family = poisson, data = Data)
+
+glm_centered_poly4age_poly3dur <- glm(O ~ poly(age,4) + poly(duration,2), offset = log(E), 
+                                      family = poisson, data = Data)
+
+glm_centered_poly5age_poly3dur <- glm(O ~ poly(age,5) + poly(duration,2), offset = log(E), 
+                                      family = poisson, data = Data)
+
+glm_centered_poly6age_poly3dur <- glm(O ~ poly(age,6) + poly(duration,2), offset = log(E), 
+                                      family = poisson, data = Data)
 
 
+AIC(glm_centered_poly1age_poly3dur ,glm_centered_poly2age_poly3dur,glm_centered_poly3age_poly3dur,glm_centered_poly4age_poly3dur,glm_centered_poly5age_poly3dur,glm_centered_poly6age_poly3dur )
+
+AIC(glm_poly_3_age)
 
 ######################################################
 ####         Prædictions- og residualplot         ####
 ######################################################
 
 #Insæt den valgte model: 
-model <- glm_linear_1
+model <- glm_poly_3_age
 
 # Beregn forudsagte O-værdier
 Data$predicted_O <- predict(model, type = "response")
 
-# Vis data med forudsagte værdier
-View(Data)
+
 
 # Aggreger forudsagte værdier efter age
 AgeAgg <- Data %>%
@@ -266,12 +265,18 @@ lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
 
 # Residualplot for lineær model
 residplotage(model)
-residplotduration(model)
 
-
+AIC(glm_poly_2_age,glm_poly_3_age,glm_linear_1)
+summary(glm_poly_2_age)
+summary(glm_poly_3_age)
+summary(glm_linear_1)
 
 ######################################################
 ####              ENDELIGE MODEL                  ####
 ######################################################
+
+
+JASD_final <- glm(O ~ poly(age, 3) + duration, offset = log(E), family = poisson, data = Data)
+
 
 

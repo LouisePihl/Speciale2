@@ -234,6 +234,75 @@ JAFJ_final <- #Indsæt model
 JAFJ_OE_endpoint #0.01640263
 
 
+
+################ JAFP ################
+JAFP <- read_csv("Data/JA/JAFP.csv")
+
+view(JAFP)
+
+#OE-raten for varighed 3 (endepunktet) for alle aldre
+JAFP_filtered <- JAFP[JAFP$duration == 3, ]
+JAFP_filtered$OE <- JAFP_filtered$O/JAFP_filtered$E
+JAFP_OE_endpoint <- sum(JAFP_filtered$O)/sum(JAFP_filtered$E)
+
+#OE-raten for alder 17-40 (endepunktet) for alle aldre
+JAFP_filtered_age <- JAFP[JAFP$age == 17, ]
+JAFP_filtered_age$OE <- JAFP_filtered_age$O/JAFP_filtered_age$E
+JAFP_OE_age_17 <- sum(JAFP_filtered_age$O)/sum(JAFP_filtered_age$E)
+
+
+#Centrerer age
+unique_ages_JAFP <- unique(JAFP$age)
+midpoints_JAFP <- (unique_ages_JAFP[-1] + unique_ages_JAFP[-length(unique_ages_JAFP)]) / 2
+custom_last_point_JAFP <- (67 - 64) / 2 + 64  # Brug 65.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints_JAFP <- c(midpoints_JAFP, custom_last_point_JAFP)
+JAFP$age <- midpoints_JAFP[match(JAFP$age, unique_ages_JAFP)]
+
+#Fjerner første datapunkt for age
+JAFP <- JAFP[JAFP$age != unique(JAFP$age)[1], ]
+
+#centrerer duration
+midpointsduration_JAFP <- c((unique(JAFP$duration)[-1] + unique(JAFP$duration)[-length(unique(JAFP$duration))]) / 2, unique(JAFP$duration)[length(unique(JAFP$duration))])
+JAFP$duration <- midpointsduration_JAFP[match(JAFP$duration, unique(JAFP$duration))]
+
+#fjerner sidste datapunkt for duration
+JAFP <- JAFP[JAFP$duration != unique(JAFP$duration)[length(unique(JAFP$duration))], ]
+
+JAFP_final <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2)*I(age >= 60), offset = log(E), 
+                  family = poisson, data = JAFP)
+
+#For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+JAFP_OE_endpoint #0.007713671
+JAFP_OE_age_17 #0.00207733
+
+
+################ JASD ################
+JASD <- read_csv("Data/JA/JASD.csv")
+
+#OE-raten for varighed 3 (endepunktet) for alle aldre
+JASD_filtered <- JASD[JASD$duration == 0.75, ]
+JASD_filtered$OE <- JASD_filtered$O/JASD_filtered$E
+JASD_OE_endpoint <- sum(JASD_filtered$O)/sum(JASD_filtered$E)
+
+#Centrerer age
+unique_ages_JASD <- unique(JASD$age)
+midpoints_JASD <- (unique_ages_JASD[-1] + unique_ages_JASD[-length(unique_ages_JASD)]) / 2
+custom_last_point_JASD <- (67 - 60) / 2 + 60  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints_JASD <- c(midpoints_JASD, custom_last_point_JASD)
+JASD$age <- midpoints_JASD[match(JASD$age, unique_ages_JASD)]
+
+#centrerer duration
+midpointsduration_JASD <- c((unique(JASD$duration)[-1] + unique(JASD$duration)[-length(unique(JASD$duration))]) / 2, unique(JASD$duration)[length(unique(JASD$duration))])
+JASD$duration <- midpointsduration_JASD[match(JASD$duration, unique(JASD$duration))]
+
+#fjerner sidste datapunkt for duration
+JASD <- JASD[JASD$duration != unique(JASD$duration)[length(unique(JASD$duration))], ]
+
+JASD_final <- glm(O ~ poly(age, 3) + duration, offset = log(E), family = poisson, data = JASD)
+
+#For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+JASD_OE_endpoint #0.002209448
+
 ######################################
 ####        RESSOURCEFORLØB       ####
 ######################################
