@@ -140,16 +140,29 @@ SDFP_OE_endpoint #0.002409844
 ####         JOBAFKLARING         ####
 ######################################
 
+################ JAFJ ################
+JAFJ <- read_csv("Data/JA/JAFJ.csv")
+midpointsage<-c((unique(JAFJ$age)[-1]+unique(JAFJ$age)[-length(unique(JAFJ$age))])/2,(unique(JAFJ$age)[length(unique(JAFJ$age))]+67)/2)
+JAFJ$age<-midpointsage[match(JAFJ$age, unique(JAFJ$age))]
+midpointsduration<-c((unique(JAFJ$duration)[-1]+unique(JAFJ$duration)[-length(unique(JAFJ$duration))])/2,unique(JAFJ$duration)[length(unique(JAFJ$duration))])
+JAFJ$duration<-midpointsduration[match(JAFJ$duration, unique(JAFJ$duration))]
+#fjerner sidste datapunkt for duration
+JAFJ<-JAFJ[JAFJ$duration!=unique(JAFJ$duration)[length(unique(JAFJ$duration))],]
+
+#OE-raten for varrighed 3 (endepunktet) for alle aldre
+JAFJ_filtered <- JAFJ[JAFJ$duration == 3, ]
+JAFJ_filtered$OE <- JAFJ_filtered$O/JAFJ_filtered$E
+JAFJ_OE_endpoint<-sum(JAFJ_filtered$O)/sum(JAFJ_filtered$E)
+
+JAFJ_final<-glm(O~poly(age,2)+I(age>=60)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=JAFJ)
+
 ################ JARF ################
 JARF <- read_csv("Data/JA/JARF.csv")
-
-View(JARF)
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 JARF_filtered <- JARF[JARF$duration == 4, ]
 JARF_filtered$OE <- JARF_filtered$O/JARF_filtered$E
 JARF_OE_endpoint<-sum(JARF_filtered$O)/sum(JARF_filtered$E)
-
 
 #Centrerer age
 unique_ages_JARF <- unique(JARF$age)
@@ -165,7 +178,7 @@ JARF$duration<-midpointsduration_JARF[match(JARF$duration, unique(JARF$duration)
 #fjerner sidste datapunkt for duration
 JARF<-JARF[JARF$duration!=unique(JARF$duration)[length(unique(JARF$duration))],]
 
-JARF_final <- #Indsæt model
+JARF_final <- glm(O~poly(age,4)+ns(duration,3)+offset(log(E)),family = poisson(link="log"),data=JARF)
 #For duration større end 4 (svarende til sidste punkt, dette benyttes ikke i modellen) sæt OE-raten konstant til: 
 JARF_OE_endpoint #0.03104505
 
@@ -205,35 +218,6 @@ JALY_final <- glm(O ~ poly(age,2) + poly(duration, 3):I(duration <= 2), offset =
 #For duration større end 4.5 og 60 år (svarende til sidste punkt, dette benyttes ikke i modellen) sæt OE-raten konstant til: 
 JALY_OE_endpoint_dur #0.02935461
 JALY_OE_endpoint_age #0.02555102
-
-
-################ JAFJ ################
-JAFJ <- read_csv("Data/JA/JAFJ.csv")
-
-#OE-raten for varighed 3 (endepunktet) for alle aldre
-JAFJ_filtered <- JAFJ[JAFJ$duration == 3, ]
-JAFJ_filtered$OE <- JAFJ_filtered$O/JAFJ_filtered$E
-JAFJ_OE_endpoint <- sum(JAFJ_filtered$O)/sum(JAFJ_filtered$E)
-
-#Centrerer age
-unique_ages_JAFJ <- unique(JAFJ$age)
-midpoints_JAFJ <- (unique_ages_JAFJ[-1] + unique_ages_JAFJ[-length(unique_ages_JAFJ)]) / 2
-custom_last_point_JAFJ <- (67 - 60) / 2 + 60  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
-midpoints_JAFJ <- c(midpoints_JAFJ, custom_last_point_JAFJ)
-JAFJ$age <- midpoints_JAFJ[match(JAFJ$age, unique_ages_JAFJ)]
-
-#centrerer duration
-midpointsduration_JAFJ <- c((unique(JAFJ$duration)[-1] + unique(JAFJ$duration)[-length(unique(JAFJ$duration))]) / 2, unique(JAFJ$duration)[length(unique(JAFJ$duration))])
-JAFJ$duration <- midpointsduration_JAFJ[match(JAFJ$duration, unique(JAFJ$duration))]
-
-#fjerner sidste datapunkt for duration
-JAFJ <- JAFJ[JAFJ$duration != unique(JAFJ$duration)[length(unique(JAFJ$duration))], ]
-
-JAFJ_final <- #Indsæt model
-#For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-JAFJ_OE_endpoint #0.01640263
-
-
 
 ################ JAFP ################
 JAFP <- read_csv("Data/JA/JAFP.csv")
