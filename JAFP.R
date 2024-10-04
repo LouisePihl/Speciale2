@@ -232,6 +232,10 @@ glm_ind_poly <- glm(O ~ poly(age,2) + poly(duration, 2) + I(age >= 60), offset =
 glm_ind_poly4 <- glm(O ~ poly(age,4) + poly(duration, 2) + I(age >= 60), offset = log(E), 
                             family = poisson, data = Data)
 
+glm_ind_poly3 <- glm(O ~ poly(age,3) + poly(duration, 2) + I(age >= 60), offset = log(E), 
+                     family = poisson, data = Data)
+
+
 AIC(glm_poly_2_2, glm_poly_4_2,glm_1indikator_add,glm_linear_1,glm_1indikator_poly,glm_1indikator_poly4,glm_2indikator_add,glm_2indikator_poly,glm_2indikator_poly4)
 
 AIC(glm_ind_add,glm_ind_poly,glm_ind_poly4,glm_ind_poly3)
@@ -285,5 +289,5 @@ JAFP_final <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2)*I(age >
                   family = poisson, data = Data)
 
 
-
+summary(JAFP_final)
 
