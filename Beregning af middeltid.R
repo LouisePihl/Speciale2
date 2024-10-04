@@ -58,15 +58,15 @@ trapezoidal_integration <- function(x, y) {
   return(integration_result)
 }
 
-mu_21 <- function(t,z){exp(-0.042168-0.092455*t)*(z>5)+exp(-0.4808001-0.0309126*t-0.335552*z)*(5>=z&z>2)+exp(0.3766531-0.0309126*t-0.7642786*z)*(2>=z&z>0.2291667)+exp(-0.9148875-0.0309126*t+4.8715347*z)*(0.2291667>=z)}
-mu_23 <- function(t,z){exp(-11.9169277+0.1356766*t)*(z>5)+(exp(-6.1057464+0.0635736*t-0.2891195*z))*(z<=5)}
+mu_21 <- function(t,z){exp(0.5640359-0.1035612*t)*(z>5)+exp(0.4279071-0.0314083*t-0.4581508*z)*(5>=z&z>2)+exp(1.517019-0.0314083*t-1.0027067*z)*(2>=z&z>0.2291667)+exp(0.8694878-0.0314083*t+1.8228841*z)*(0.2291667>=z)}
+mu_23 <- function(t,z){exp(-8.2226723+0.0696388*t)*(z>5)+(exp(-7.0243455+0.0685318*t-0.2207053*z))*(z<=5)}
 mu_2p<-function(t,z){mu_21(t,z)+mu_23(t,z)}
-predmodelmu2p_vec <- Vectorize(mu_2p, vectorize.args = c("t", "z"))
+mu2p_vec <- Vectorize(mu_2p, vectorize.args = c("t", "z"))
 
 #Nedenstående skal ændres så det er de 4 andre intensiteter ud fra tilstanden
-SDJA<-read_csv("Data/SD/SDJA.csv")
-SDJA_OE<-sum(SDJA$O)/sum(SDJA$E)
-SDJA$OE<-SDJA$O/SDJA$E
+#SDJA<-read_csv("Data/SD/SDJA.csv")
+#SDJA_OE<-sum(SDJA$O)/sum(SDJA$E)
+#SDJA$OE<-SDJA$O/SDJA$E
 SDRF<-read_csv("Data/SD/SDRF.csv")
 SDRF_OE<-sum(SDRF$O)/sum(SDRF$E)
 SDLY<-read_csv("Data/SD/SDLY.csv")
@@ -94,15 +94,15 @@ xseq<-seq(age0,67,0.1)
 useq<-seq(0,67-age0,0.1)
 tseq<-seq(0,67-age0,0.1)
 
-model<-glm(O~poly(age,4)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=FJLY)
+model<-SDJA_final
 
 predictions <- predmodel_vec(x = xseq, u = useq)
 
-predictions[51:length(predictions)] <- 	0.03170921 #Observerede OE-rate ggregeret på alder 
+predictions[31:length(predictions)] <- 	SDJA_OE_endpoint #Observerede OE-rate ggregeret på alder 
 #predictions[41:length(predictions)] <- 1000 #Observerede OE-rate ggregeret på alder 
 
 
-predictions_mu2p<-predmodelmu2p_vec(xseq,useq)
+predictions_mu2p<-mu2p_vec(xseq,useq)
 mu_SDp<-predictions+predictions_mu2p+FJRF_OE+FJFP_OE+FJJA_OE+FJSD_OE
 
 
