@@ -78,7 +78,7 @@ plot(AgeAgg_FJFP$age, AgeAgg_FJFP$OE)
 
 # Opret første plot med linjer
 plot(AgeAgg_SDFP$age, AgeAgg_SDFP$OE, type = "l", col = "blue", lwd = 2.5, 
-     xlab = "Age", ylab = "OE", main = "OE-rates for different age groups")
+     xlab = "Age", ylab = "OE", main = "OE-rates for different age groups", ylim=c(0,0.09), xlim=c(18,70))
 
 # Tilføj yderligere linjer til plottet
 lines(AgeAgg_JAFP$age, AgeAgg_JAFP$OE, col = "aquamarine3", lwd = 2.5)
