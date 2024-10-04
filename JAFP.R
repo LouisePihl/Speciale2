@@ -90,15 +90,21 @@ plot(DurAgg$duration, DurAgg$occAgg,xlab="Duration aggregated", ylab="Occurance"
 ######################################################
 
 #Centrer middelværdien: 
-residplotage<-function(model){qplot(Data$age, .stdresid,data = model)+
+residplotage <- function(model) {
+  qplot(Data$age, .stdresid, data = model) +
     geom_smooth(method = "loess", size = 1, formula = y ~ x) +
-    xlab("age") +
-    ylab("fitted values")}
+    xlab("Age") +
+    ylab("Fitted Values") +
+    theme_minimal()
+}
 
-residplotduration<-function(model){qplot(Data$duration, .stdresid,data = model)+
+residplotduration <- function(model) {
+  qplot(Data$duration, .stdresid, data = model) +
     geom_smooth(method = "loess", size = 1, formula = y ~ x) +
-    xlab("duration") +
-    ylab("fitted values")}
+    xlab("Duration") +
+    ylab("Fitted Values") +
+    theme_minimal()
+}
 
 
 
@@ -212,8 +218,6 @@ glm_1indikator_poly4 <- glm(O ~ poly(age,4) + poly(duration, 2) + I(duration >= 
 glm_2indikator_add <- glm(O ~ age + poly(duration, 1) + I(duration >= 2) + I(age >= 60), offset = log(E), 
                           family = poisson, data = Data)
 
-glm_2indikator_poly <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2)*I(age >= 60), offset = log(E), 
-                           family = poisson, data = Data)
 
 glm_2indikator_poly4 <- glm(O ~ poly(age,4) + poly(duration, 2) + I(duration >= 2) + I(age >= 60), offset = log(E), 
                             family = poisson, data = Data)
@@ -242,6 +246,81 @@ summary(glm_2indikator_poly)
 summary(glm_ind_poly)
 summary(glm_ind_poly4)
 summary(glm_2indikator_poly)
+
+
+######################################################
+####                  1 INDIKATOR                 ####
+######################################################
+glm_2poly <- glm(O ~ poly(age,2) + poly(duration, 2), offset = log(E), 
+                 family = poisson, data = Data)
+
+glm_indi_dur <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2), offset = log(E), 
+                           family = poisson, data = Data)
+
+glm_indi_age <- glm(O ~ poly(age,2) + poly(duration, 2) + I(age >= 60), offset = log(E), 
+                           family = poisson, data = Data)
+
+glm_indi_add <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2) + I(age >= 60), offset = log(E), 
+                    family = poisson, data = Data)
+
+glm_indi_multi <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2):I(age >= 60), offset = log(E), 
+                      family = poisson, data = Data)
+
+glm_indi_multi_add <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2)*I(age >= 60), offset = log(E), 
+                      family = poisson, data = Data)
+
+
+AIC(glm_2poly, glm_indi_dur, glm_indi_age, glm_indi_add, glm_indi_multi, glm_indi_multi_add)
+
+anova(glm_indi_multi,glm_indi_multi_add,test="LRT")
+
+summary(glm_indi_dur)
+summary(glm_indi_age)
+summary(glm_indi_add)
+summary(glm_indi_multi)
+summary(glm_indi_multi_add)
+
+
+######################################################
+####         Prædictions- og residualplot         ####
+######################################################
+
+#Insæt den valgte model: 
+model <- glm_indi_multi_add
+
+# Beregn forudsagte O-værdier
+Data$predicted_O <- predict(model, type = "response")
+
+# Aggreger forudsagte værdier efter age
+AgeAgg <- Data %>%
+  group_by(age) %>%
+  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg / expoAgg, OE = occAgg / expoAgg)
+
+# Plot OE-rater over alder
+plot(AgeAgg$age, AgeAgg$OE, bg = "blue", pch = 21, xlab = "Age", ylab = "O/E rate", 
+     main = "O/E rates over age")
+lines(AgeAgg$age, AgeAgg$predicted_OE, col = "lightblue3", lwd = 2)
+abline(v = 60, col = "black", lty = 2)
+
+
+# Aggreger forudsagte værdier efter duration
+DurAgg <- Data %>%
+  group_by(duration) %>%
+  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg / expoAgg, OE = occAgg / expoAgg)
+
+# Plot OE-rater over duration
+plot(DurAgg$duration, DurAgg$OE, bg = "blue", pch = 21, xlab = "Duration", ylab = "O/E rate", 
+     main = "O/E rates over duration")
+lines(DurAgg$duration, DurAgg$predicted_OE, col = "lightblue3", lwd = 2)
+abline(v = 2, col = "black", lty = 2)
+
+# Residualplot for lineær model
+residplotage(model)
+residplotduration(model)
+
+
 
 
 ######################################################
