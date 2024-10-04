@@ -74,20 +74,14 @@ DurAgg <- Data %>%
 
 
 # Plots af trends
-plot(AgeAgg$age, AgeAgg$OE)
-plot(DurAgg$duration, DurAgg$OE)
+plot(AgeAgg$age, AgeAgg$OE,xlab="Age aggregated", ylab="OE rates", pch=21, bg="steelblue")
+plot(DurAgg$duration, DurAgg$OE,xlab="Duration aggregated", ylab="OE rates", pch=21, bg="darkseagreen4")
 
-plot(AgeAgg$age, AgeAgg$occAgg)
-plot(DurAgg$duration, DurAgg$occAgg)
+plot(AgeAgg$age, AgeAgg$expoAgg,xlab="Age aggregated", ylab="Exposure", pch=21, bg="steelblue")
+plot(DurAgg$duration, DurAgg$expoAgg,xlab="Duration aggregated", ylab="Exposure", pch=21, bg="darkseagreen4")
 
-plot(AgeAgg$age, AgeAgg$OE)
-plot(DurAgg$duration, DurAgg$OE)
-
-plot(AgeAgg$age, AgeAgg$occAgg)
-plot(DurAgg$duration, DurAgg$occAgg)
-
-plot(AgeAgg$age, AgeAgg$expoAgg)
-plot(DurAgg$duration, DurAgg$expoAgg)
+plot(AgeAgg$age, AgeAgg$occAgg,xlab="Age aggregated", ylab="Occurance")
+plot(DurAgg$duration, DurAgg$occAgg,xlab="Duration aggregated", ylab="Occurance")
 
 
 
@@ -137,10 +131,11 @@ AIC(glm_linear_1)
 glm_poly_1_dur <- glm(O ~ age + poly(duration, 1), offset = log(E), family = poisson, data = Data)
 glm_poly_2_dur <- glm(O ~ age + poly(duration, 2), offset = log(E), family = poisson, data = Data)
 glm_poly_3_dur <- glm(O ~ age + poly(duration, 3), offset = log(E), family = poisson, data = Data)
+glm_poly_4_dur <- glm(O ~ age + poly(duration, 4), offset = log(E), family = poisson, data = Data)
 
 
 # Sammenlign AIC for polynomial modeller for duration
-AIC(glm_poly_1_dur, glm_poly_2_dur, glm_poly_3_dur)
+AIC(glm_poly_1_dur, glm_poly_2_dur, glm_poly_3_dur,glm_poly_4_dur)
 #Anden grads bedst
 
 residplotduration(glm_poly_2_dur)
@@ -181,9 +176,9 @@ AgeAgg <- Data %>%
   mutate(predicted_OE = predictedAgg / expoAgg, OE = occAgg / expoAgg)
 
 # Plot OE-rater over alder
-plot(AgeAgg$age, AgeAgg$OE, col = "blue", pch = 1, xlab = "Age", ylab = "OE Rate", 
-     main = "OE-rates with additive model over Age")
-lines(AgeAgg$age, AgeAgg$predicted_OE, col = "red", lwd = 2)
+plot(AgeAgg$age, AgeAgg$OE, bg = "blue", pch = 21, xlab = "Age", ylab = "OE Rate", 
+     main = "OE-rates over Age")
+lines(AgeAgg$age, AgeAgg$predicted_OE, col = "lightblue3", lwd = 2)
 
 # Aggreger forudsagte værdier efter duration
 DurAgg <- Data %>%
@@ -192,9 +187,9 @@ DurAgg <- Data %>%
   mutate(predicted_OE = predictedAgg / expoAgg, OE = occAgg / expoAgg)
 
 # Plot OE-rater over duration
-plot(DurAgg$duration, DurAgg$OE, col = "blue", pch = 1, xlab = "Duration", ylab = "OE Rate", 
-     main = "OE-rates with additive model over Duration")
-lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
+plot(DurAgg$duration, DurAgg$OE, bg = "blue", pch = 21, xlab = "Duration", ylab = "OE Rate", 
+     main = "OE-rates over Duration")
+lines(DurAgg$duration, DurAgg$predicted_OE, col = "lightblue3", lwd = 2)
 
 
 # Residualplot for lineær model
