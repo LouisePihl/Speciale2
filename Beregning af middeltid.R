@@ -89,21 +89,33 @@ FJLY_OE<-sum(FJLY$O)/sum(FJLY$E)
 
 
 #Her kan modellen og startalder ændres ændres 
-age0<-50
-xseq<-seq(age0,67,0.1)
-useq<-seq(0,67-age0,0.1)
-tseq<-seq(0,67-age0,0.1)
+age0<-40
+xseq<-seq(age0,67,1/12)
+useq<-seq(0,67-age0,1/12)
+tseq<-seq(0,67-age0,1/12)
 
 model<-SDJA_final
 
 predictions <- predmodel_vec(x = xseq, u = useq)
 
-predictions[31:length(predictions)] <- 	SDJA_OE_endpoint #Observerede OE-rate ggregeret på alder 
-#predictions[41:length(predictions)] <- 1000 #Observerede OE-rate ggregeret på alder 
+#Vælger ekstrapolering herunder
+#predictions[(3*12+1):length(predictions)] <- SDJA_OE_endpoint #Observerede OE-rate ggregeret på alder 
+#predictions[round(2.875*12+1):length(predictions)] <- SDJA_OE_endpoint 
+SDJA_original<-read_csv("Data/SD/SDJA.csv")
+SDJA_maxdur<-SDJA_original[SDJA_original$duration==3,] 
+SDJA_maxdur<-SDJA_maxdur[SDJA_maxdur$age>=max(SDJA_maxdur$age[SDJA_maxdur$age<40+2.875]),]
+SDJA_maxdur$OE<-SDJA_maxdur$O/SDJA_maxdur$E
+age_range<-c(SDJA_maxdur$age,67)
+predictions[round(2.875*12)+1:((SDJA_maxdur$age[1]-40)*12)]<-SDJA_maxdur$OE[1]
+for (i in 2:length(age_range)){
+    predictions[((age_range[i-1]-40)*12+1):((age_range[i]-40)*12)]<-SDJA_maxdur$OE[i-1]
+}
+predictions[length(predictions)]<-SDJA_maxdur$OE[length(SDJA_maxdur$OE)]
 
+predictions[(3*12+1):length(predictions)]<-0
 
 predictions_mu2p<-mu2p_vec(xseq,useq)
-mu_SDp<-predictions+predictions_mu2p+FJRF_OE+FJFP_OE+FJJA_OE+FJSD_OE
+mu_SDp<-predictions+predictions_mu2p+SDRF_OE+SDLY_OE+SDFP_OE+SDFJ_OE
 
 
 integrand<-exp(-trapezoidal_integration_cum(tseq,mu_SDp))
