@@ -362,6 +362,5 @@ heatmap_predicted
 JAFP_final <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2)*I(age >= 60), offset = log(E), 
                   family = poisson, data = Data)
 
-
 summary(JAFP_final)
 
