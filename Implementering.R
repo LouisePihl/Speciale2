@@ -56,12 +56,12 @@ for (n in 0:((slut-t_0)/h-1)){
     integrand_pos[,j]<-0
     for (k in 1:6){
       if (k!=j){
-        integrand_pos[,j]<-integrand_pos[,j]+delta[,k]*mean_of_mu(as.numeric(lapply(seq(0,u+n*h,h),function(z) mu_(k,j,t_0+n*h,z))))
+        integrand_pos[,j]<-integrand_pos[,j]+delta[,k]*mean_of_mu(as.numeric(lapply(seq(0,u+n*h,h),function(z) mu(k,j,t_0+n*h,z))))
         }
       }
     intval_pos[j]<-sum(integrand_pos[,j])
-    for (z in 0:(n+u/h)){ #fill out a row for all to states
-      
+    for (z in 0:(n+u/h)){ #fill out a row for end state j
+      ssh[n+2,z+2,i,j]<-ssh[n+1,z+1,i,j]+h*(-intval_neq[z+1,j]+intval_pos[j])
     }
   }
 }
