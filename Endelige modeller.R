@@ -16,6 +16,8 @@ new_data <- data.frame(
   E=1
 )
 
+#setwd("/Users/louisepihl/Documents/Speciale")
+
 ######################################
 ####         SYGEDAGPENGE         ####
 ######################################
