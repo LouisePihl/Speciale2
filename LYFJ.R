@@ -8,6 +8,9 @@ library(stats)
 library(splines)
 library(hexbin)
 
+#setwd("/Users/frejalundfredholm/Desktop/Speciale")
+
+
 # Indlæs data:
 Data <- read_csv("Data/LY/LYFJ.csv")
 
@@ -61,6 +64,11 @@ ggplot(Data, aes(x = duration, y = OE)) +
   geom_point(aes(color = age)) +
   facet_wrap(~ age)
 
+# Vi har forskellige slut varrigheder for de forskellige aldre. For første observeret alder
+# 24 år = max varrighed 2.375
+# 32.5  = max varrighed 3.375
+# 37.5  = max varrighed 3.375
+# 42.5+ = max varrighed 4.500  (Men her har man fjernet sidste obs = 5.00, har vi ikke for de andre)
 
 ######################################################
 ####                  HEATMAPS                    ####
@@ -78,14 +86,6 @@ heatmap_observed <- ggplot(Data, aes(y = duration, x = age, fill = observed_rate
 
 heatmap_observed
 
-# Heatmap for centrerede observerede OE-rater
-heatmap_observed_center <- ggplot(Data, aes(y = duration_centered, x = age_centered, fill = observed_rate)) +
-  geom_tile(color = "white") +
-  scale_fill_gradient(low = "blue", high = "red") +
-  labs(title = "Heatmap af Centerede Observerede OE-Rater", y = "Duration", x = "Age", fill = "Observed OE-Rate") +
-  theme_minimal()
-
-heatmap_observed_center
 
 ######################################################
 ####      AGGREGERING OG IKKE-LINEARE TRENDS      ####
@@ -119,7 +119,6 @@ plot(DurAgg$duration, DurAgg$expoAgg)
 ######################################################
 
 
-#Centrer middelværdien: 
 residplotage<-function(model){qplot(Data$age, .stdresid,data = model)+
     geom_smooth(method = "loess", size = 1, formula = y ~ x) +
     xlab("age") +
@@ -132,7 +131,63 @@ residplotduration<-function(model){qplot(Data$duration, .stdresid,data = model)+
 
 
 
+######################################################
+####                  GLM MODELLER                ####
+######################################################
+glm_OE <- glm(O ~ offset(log(E)), 
+                    family = poisson, data = Data)
 
+glm_linear_1 <- glm(O ~ age + duration, offset = log(E), 
+                    family = poisson, data = Data)
+
+glm_linear_2 <- glm(O ~ age, offset = log(E), 
+                    family = poisson, data = Data)
+
+glm_linear_3 <- glm(O ~ duration, offset = log(E), 
+                    family = poisson, data = Data)
+
+
+summary(glm_linear_1)
+
+AIC(glm_OE,glm_linear_2,glm_linear_3,glm_linear_1)
+
+#Tilføjelsen af duration gør klart mest for AIC, men begge er signifikante. 
+
+
+
+######################################################
+####                  POLYNIMIER                  ####
+######################################################
+
+glm_poly_1 <- glm(O ~ age + poly(duration, 1), offset = log(E), 
+                  family = poisson, data = Data)
+
+glm_poly_2 <- glm(O ~ age + poly(duration, 2), offset = log(E), 
+                  family = poisson, data = Data)
+
+glm_poly_4 <- glm(O ~ age + poly(duration, 4), offset = log(E), 
+                  family = poisson, data = Data)
+
+glm_poly_6 <- glm(O ~ age + poly(duration, 6), offset = log(E), 
+                  family = poisson, data = Data)
+
+glm_poly_8 <- glm(O ~ age + poly(duration, 8), offset = log(E), 
+                  family = poisson, data = Data)
+
+glm_poly_10 <- glm(O ~ age + poly(duration, 10), offset = log(E), 
+                   family = poisson, data = Data)
+
+glm_poly_12 <- glm(O ~ age + poly(duration, 12), offset = log(E), 
+                   family = poisson, data = Data)
+
+glm_poly_14 <- glm(O ~ age + poly(duration, 14), offset = log(E), 
+                   family = poisson, data = Data)
+
+glm_poly_16 <- glm(O ~ age + poly(duration, 16), offset = log(E), 
+                   family = poisson, data = Data)
+
+
+AIC(glm_poly_1,glm_poly_2,glm_poly_4,glm_poly_6,glm_poly_8,glm_poly_10,glm_poly_12,glm_poly_14,glm_poly_16)
 
 
 
