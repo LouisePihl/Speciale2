@@ -523,6 +523,39 @@ LYRF_OE_endpoint #0.002309027
 predictions <- predict(LYRF_final, newdata = new_data, type = "response")
 mu_int[,,4,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 
+
+################ LYFJ ################
+LYFJ <- read_csv("Data/LY/LYFJ.csv")
+
+#OE-raten for varighed 5 (endepunktet):
+LYFJ_filtered <- LYFJ[LYFJ$duration == 5, ]
+LYFJ_filtered$OE <- LYFJ_filtered$O/LYFJ_filtered$E
+LYFJ_OE_endpoint <- sum(LYFJ_filtered$O)/sum(LYFJ_filtered$E)
+
+#Centrerer age
+unique_ages_LYFJ <- unique(LYFJ$age)
+midpoints_LYFJ <- (unique_ages_LYFJ[-1] + unique_ages_LYFJ[-length(unique_ages_LYFJ)]) / 2
+custom_last_point_LYFJ <- (67 - 60) / 2 + 60  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
+midpoints_LYFJ <- c(midpoints_LYFJ, custom_last_point_LYFJ)
+LYFJ$age <- midpoints_LYFJ[match(LYFJ$age, unique_ages_LYFJ)]
+
+#centrerer duration
+midpointsduration_LYFJ <- c((unique(LYFJ$duration)[-1] + unique(LYFJ$duration)[-length(unique(LYFJ$duration))]) / 2, unique(LYFJ$duration)[length(unique(LYFJ$duration))])
+LYFJ$duration <- midpointsduration_LYFJ[match(LYFJ$duration, unique(LYFJ$duration))]
+
+#fjerner sidste datapunkt for duration
+LYFJ <- LYFJ[LYFJ$duration != unique(LYFJ$duration)[length(unique(LYFJ$duration))], ]
+
+LYFJ_final <-  glm(O ~ poly(age,4) + ns(duration, df = 5), offset = log(E), family = poisson, data = LYFJ)
+
+#For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
+LYFJ_OE_endpoint #0.0002521938
+
+predictions <- predict(LYFJ_final, newdata = new_data, type = "response")
+mu_int[,,4,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+
+
+
 ################ LYFP ################
 LYFP <- read_csv("Data/LY/LYFP.csv")
 LYFP<-LYFP[-c(1,29,30,31,32),] #Fjerner første alders interval, samt aldre over 67 (har 0 occurences)
