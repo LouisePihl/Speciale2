@@ -13,7 +13,7 @@ saveRDS(mu_int, file = "mu_array.rds")
 mu_int <- readRDS("mu_array.rds")
 
 mu<-function(i,j,t,u){
-  mu_int[t/h+1,u/h+1,i,j]
+  mu_int[(t-t_0)/h+1,u/h+1,i,j]
 }
 
 #filling in matrices for disability mortality and reactivation 
@@ -52,5 +52,5 @@ saveRDS(mu_p_int, file = "mu_p_array.rds")
 mu_p_int <- readRDS("mu_p_array.rds")
 
 mu_p<-function(i,t,u){
-  mu_p_int[t/h+1,u/h+1,i]
+  mu_p_int[(t-t_0)/h+1,u/h+1,i]
 }
