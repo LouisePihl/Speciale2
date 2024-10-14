@@ -2,6 +2,10 @@
 
 #Function that calculates mean of mu used in Trapez rule
 mean_of_mu <- function(row) {
+  if (length(row)==1){
+    return(row)
+  }
+  else{
   # Initialize a vector to store the results
   summed_row <- numeric(length(row))
   # First element doesn't have a left neighbor, so it stays the same
@@ -12,13 +16,14 @@ mean_of_mu <- function(row) {
   }
   # Return the last 3 entries of the summed row
   return(tail(summed_row, length(row)-1))
+  }
 }
 
 #Define grid
 t_0<-30
-u<-1/12
-slut<-31
-h<-1/12
+u<-0
+slut<-67
+h<-1/12 #has to be the same or larger as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
 ssh<-array(NA,c(N_time+1,N_duration+1,6,6)) #Time, duration, from state, end state
@@ -32,8 +37,10 @@ mu_p<-function(i,t,u){
   7*0.005
 }
 
-for (i in 1:1){ #change to 1:6 to run for all from states
-  i<-1 #i denotes the from state, specify here or remove to run for all from states
+start.time <- Sys.time()
+
+for (i in 1:1){ #change to 1:6 to run for all "from" states
+  i<-1 #i denotes the "from" state, specify here or remove to run for all "from" states
   #Boundary conditions
   for (j in 1:6){ #loop through all end states
     if (i==j){
@@ -69,3 +76,6 @@ for (i in 1:1){ #change to 1:6 to run for all from states
   }
 }
 
+end.time <- Sys.time() #Measures endtime
+time.taken <- round(end.time - start.time,2)
+time.taken #time it takes

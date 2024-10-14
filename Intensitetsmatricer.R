@@ -7,7 +7,7 @@ u_slut<-t_slut-t_0
 h<-1/12
 N_time<-round((t_slut-t_0)/h)
 N_duration<-round((u_slut-u_0)/h)
-mu_int<-array(NA,c(N_time+1,N_duration+1,6,8)) 
+mu_int<-array(0,c(N_time+1,N_duration+1,6,8)) 
 
 saveRDS(mu_int, file = "mu_array.rds")
 mu_int <- readRDS("mu_array.rds")
@@ -37,43 +37,9 @@ for (j in 2:6){
   mu_int[,,j,7]<-mu_int[,,1,7]
 }
 
-#Tester udfyldning for SBJA, svarende til 1 til 2 (første del er kopieret fra filen endelige modeller)
+#Run file "endelige modeller" to fill out the array with predicted intensities
 
-SDJA <- read_csv("Data/SD/SDJA.csv")
-
-#OE-raten for varrighed 3 (endepunktet) for alle aldre
-SDJA_filtered <- SDJA[SDJA$duration == 3, ]
-SDJA_filtered$OE <- SDJA_filtered$O/SDJA_filtered$E
-SDJA_OE_endpoint<-sum(SDJA_filtered$O)/sum(SDJA_filtered$E)
-
-#Centrerer age
-unique_ages_SDJA <- unique(SDJA$age)
-midpoints_SDJA <- (unique_ages_SDJA[-1] + unique_ages_SDJA[-length(unique_ages_SDJA)]) / 2
-custom_last_point_SDJA <- (67 - 60) / 2 + 60  # Brug 63.5 som værdi i højre endepunkt da det sidste datapunkt er 60 år
-midpoints_SDJA <- c(midpoints_SDJA, custom_last_point_SDJA)
-SDJA$age <- midpoints_SDJA[match(SDJA$age, unique_ages_SDJA)]
-
-#centrerer duration
-midpointsduration_SDJA<-c((unique(SDJA$duration)[-1]+unique(SDJA$duration)[-length(unique(SDJA$duration))])/2,unique(SDJA$duration)[length(unique(SDJA$duration))])
-SDJA$duration<-midpointsduration_SDJA[match(SDJA$duration, unique(SDJA$duration))]
-
-#fjerner sidste datapunkt for duration
-SDJA<-SDJA[SDJA$duration!=unique(SDJA$duration)[length(unique(SDJA$duration))],]
-
-SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
-
-grid <- expand.grid(age = t_seq, duration = u_seq)
-new_data <- data.frame(
-  age = grid$age,
-  duration = grid$duration,
-  E=1
-)
-
-#mu_p array and sum that sums all intensities out of a state
-predictions <- predict(SDJA_final, newdata = new_data, type = "response")
-mu_int[,,1,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-
-mu_p_int<-array(NA,c(N_time+1,N_duration+1,6)) 
+mu_p_int<-array(0,c(N_time+1,N_duration+1,6)) 
 for (i in 1:6){
   mu_p_int[,,i]<-mu_p_int[,,i]+mu_int[,,i,7]+mu_int[,,i,8]
   for (j in 1:6){
@@ -86,5 +52,5 @@ saveRDS(mu_p_int, file = "mu_p_array.rds")
 mu_p_int <- readRDS("mu_p_array.rds")
 
 mu_p<-function(i,t,u){
-  mu_p_int[i,t/h+1,u/h+1]
+  mu_p_int[t/h+1,u/h+1,i]
 }

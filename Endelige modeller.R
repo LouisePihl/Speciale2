@@ -256,8 +256,6 @@ mu_int[,,2,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 ################ JAFP ################
 JAFP <- read_csv("Data/JA/JAFP.csv")
 
-view(JAFP)
-
 #OE-raten for varighed 3 (endepunktet) for alle aldre
 JAFP_filtered <- JAFP[JAFP$duration == 3, ]
 JAFP_filtered$OE <- JAFP_filtered$O/JAFP_filtered$E
@@ -267,7 +265,6 @@ JAFP_OE_endpoint <- sum(JAFP_filtered$O)/sum(JAFP_filtered$E)
 JAFP_filtered_age <- JAFP[JAFP$age == 17, ]
 JAFP_filtered_age$OE <- JAFP_filtered_age$O/JAFP_filtered_age$E
 JAFP_OE_age_17 <- sum(JAFP_filtered_age$O)/sum(JAFP_filtered_age$E)
-
 
 #Centrerer age
 unique_ages_JAFP <- unique(JAFP$age)
@@ -470,7 +467,6 @@ mu_int[,,3,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 ####        LEDIGHEDSYDELSE       ####
 ######################################
 
-
 ################ LYSD ################
 LYSD <- read_csv("Data/LY/LYSD.csv")
 
@@ -497,15 +493,12 @@ mu_int[,,4,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 ################ LYJA ################
 LYJA  <- read_csv("Data/LY/LYJA.csv")
 
-view(LYJA)
-
 #OE-raten, for det ene punkt som er:
 LYJA_OE_endpoint <- LYJA$O/LYJA$E
 
-LYJA_final <- LYSD_OE_endpoint #0.000264376
+LYJA_final <- LYJA_OE_endpoint #0.000264376
 
-predictions <- predict(LYJA_final, newdata = new_data, type = "response")
-mu_int[,,4,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,,4,2]<-LYJA_final
 
 ################ LYRF ################
 LYRF <- read_csv("Data/LY/LYRF.csv")
@@ -613,8 +606,7 @@ FJRF <- read_csv("Data/FJ/FJRF.csv")
 #Kun et datapunkt, så sættes konstant
 FJRF_final<-sum(FJRF$O)/sum(FJRF$E)
 
-predictions <- predict(FJRF_final, newdata = new_data, type = "response")
-mu_int[,,5,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,,5,3]<-FJRF_final
 
 ################ FJJA ################
 FJJA <- read_csv("Data/FJ/FJJA.csv")
@@ -631,8 +623,7 @@ FJJA_final<-sum(FJJA$O)/sum(FJJA$E)
 #For duration over 1.5
 FJJA_OE_endpoint
 
-predictions <- predict(FJJA_final, newdata = new_data, type = "response")
-mu_int[,,5,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,,5,2]<-FJJA_final
 
 ################ FJLY ################
 FJLY <- read_csv("Data/FJ/FJLY.csv")
@@ -696,7 +687,7 @@ FPFJ_final<-glm(O~poly(age,4)+poly(duration,2)+offset(log(E)),family = poisson(l
 #For duration over 5
 FPFJ_OE_endpoint #0.004464665
 
-predictions <- predict(FJJA_final, newdata = new_data, type = "response")
+predictions <- predict(FPFJ_final, newdata = new_data, type = "response")
 mu_int[,,6,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 
 
