@@ -2,7 +2,7 @@
 
 #Function that calculates mean of mu used in Trapez rule
 mean_of_mu <- function(row) {
-  if (length(row)==1){
+  if (length(row)==1){ 
     return(row)
   }
   else{
@@ -23,21 +23,21 @@ mean_of_mu <- function(row) {
 t_0<-30
 u<-0
 slut<-67
-h<-1/12 #has to be the same or larger as h used in "Intensitetsmatricer"
+h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
 ssh<-array(NA,c(N_time+1,N_duration+1,6,6)) #Time, duration, from state, end state
 
 #Defines mu functions for testing
-mu<-function(i,j,t,u){
-  0.005
-}
+#mu<-function(i,j,t,u){
+#  0.005
+#}
+#
+#mu_p<-function(i,t,u){
+#  7*0.005
+#}
 
-mu_p<-function(i,t,u){
-  7*0.005
-}
-
-start.time <- Sys.time()
+#start.time <- Sys.time() #To measure run time
 
 for (i in 1:1){ #change to 1:6 to run for all "from" states
   i<-1 #i denotes the "from" state, specify here or remove to run for all "from" states
@@ -63,7 +63,7 @@ for (i in 1:1){ #change to 1:6 to run for all "from" states
       intval_neq<-c(0,cumsum(integrand_neq))
       
       integrand_pos<-0
-      for (k in 1:6){
+      for (k in 1:6){ #positive part consists of sum over the 5 other states
         if (k!=j){
           integrand_pos<-integrand_pos+delta[,k]*mean_of_mu(as.numeric(lapply(seq(0,u+n*h,h),function(z) mu(k,j,t_0+n*h,z))))
         }
@@ -76,6 +76,6 @@ for (i in 1:1){ #change to 1:6 to run for all "from" states
   }
 }
 
-end.time <- Sys.time() #Measures endtime
-time.taken <- round(end.time - start.time,2)
-time.taken #time it takes
+#end.time <- Sys.time() #Measures endtime
+#time.taken <- round(end.time - start.time,2)
+#time.taken #time it takes
