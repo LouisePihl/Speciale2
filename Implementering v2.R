@@ -48,7 +48,6 @@ for (i in 1:1){ #change to 1:6 to run for all "from" states
     }
     else{
       ssh[1:(N_time+1),1,i,j] <- 0 ; ssh[1,1:(u/h+1),i,j]<-0
-      ssh[1:(N_time+1),1,i,j] <- 0 ; ssh[1,1:(u/h+1),i,j]<-0
     }
   }
   
