@@ -1,5 +1,4 @@
 
-
 #Function that calculates mean of mu used in Trapez rule
 mean_of_mu <- function(row) {
   if (length(row)==1){ 
@@ -19,23 +18,36 @@ mean_of_mu <- function(row) {
   }
 }
 
+#Defines mu functions for testing
+#mu<-function(i,j,t,u){
+#  0.005
+#}
+#
+#mu_p<-function(i,t,u){
+#  7*0.005
+#}
+
+#Load array with intensities and define mu and mu_p functions
+mu_int <- readRDS("mu_array.rds")
+
+mu<-function(i,j,t,u){
+  mu_int[(t-t_0)/h+1,u/h+1,i,j]
+}
+
+mu_p_int <- readRDS("mu_p_array.rds")
+
+mu_p<-function(i,t,u){
+  mu_p_int[(t-t_0)/h+1,u/h+1,i]
+}
+
 #Define grid
 t_0<-30
 u<-0
-slut<-31
+slut<-33
 h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
 ssh<-array(NA,c(N_time+1,N_duration+1,6,8)) #Time, duration, from state, end state
-
-#Defines mu functions for testing
-mu<-function(i,j,t,u){
-  0.005
-}
-
-mu_p<-function(i,t,u){
-  7*0.005
-}
 
 #start.time <- Sys.time() #To measure run time
 
@@ -72,17 +84,17 @@ for (i in 1:1){ #change to 1:6 to run for all "from" states
         ssh[n+2,z+2,i,j]<-ssh[n+1,z+1,i,j]+h*(-intval_neq[z+1]+intval_pos)
       }
     }
-    #below is a separate part for death and reactivation
+    #below is a separate part for death and reactivation 
+    #Not needed in cash flow, but implemented for sanity checks of output
     integrand_neq_7<-delta[,7]*mean_of_mu(as.numeric(lapply(seq(0,u+n*h,h),function(z) mu(7,8,t_0+n*h,z))))
     intval_neq_7<-c(0,cumsum(integrand_neq_7))
     
     integrand_pos_7<-0
     for (k in 1:6){ 
-      integrand_pos_8<-integrand_pos_7+delta[,k]*mean_of_mu(as.numeric(lapply(seq(0,u+n*h,h),function(z) mu(k,7,t_0+n*h,z))))
+      integrand_pos_7<-integrand_pos_7+delta[,k]*mean_of_mu(as.numeric(lapply(seq(0,u+n*h,h),function(z) mu(k,7,t_0+n*h,z))))
     }
     intval_pos_7<-sum(integrand_pos_7)
     
-    integrand_neq_8<-0
     intval_neq_8<-0
     
     integrand_pos_8<-0
@@ -90,9 +102,10 @@ for (i in 1:1){ #change to 1:6 to run for all "from" states
         integrand_pos_8<-integrand_pos_8+delta[,k]*mean_of_mu(as.numeric(lapply(seq(0,u+n*h,h),function(z) mu(k,8,t_0+n*h,z))))
     }
     intval_pos_8<-sum(integrand_pos_8)
+    
     for (z in 0:(n+u/h)){ #fill out a row for end state dead and reactivation
       ssh[n+2,z+2,i,7]<-ssh[n+1,z+1,i,7]+h*(-intval_neq_7[z+1]+intval_pos_7)
-      ssh[n+2,z+2,i,8]<-ssh[n+1,z+1,i,8]+h*(-intval_neq_8[z+1]+intval_pos_8)
+      ssh[n+2,z+2,i,8]<-ssh[n+1,z+1,i,8]+h*(-intval_neq_8+intval_pos_8)
     }
   }
 }
@@ -100,3 +113,16 @@ for (i in 1:1){ #change to 1:6 to run for all "from" states
 #end.time <- Sys.time() #Measures endtime
 #time.taken <- round(end.time - start.time,2)
 #time.taken #time it takes
+
+#Check that probabilities sum to one
+diag<-0
+for (j in 1:8){
+  diag<-diag+diag(ssh[,(u/h):N_duration+1,1,j])
+}
+diag
+
+#Plot transition probabilities with maximum duration
+for (j in 1:8){
+  plot(diag(ssh[,(u/h):N_duration+1,1,j]), type="l",main=j)
+}
+
