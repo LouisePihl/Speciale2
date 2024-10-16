@@ -49,6 +49,7 @@ SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), off
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDJA_OE_endpoint #0.005942464
 
+
 predictions <- predict(SDJA_final, newdata = new_data, type = "response")
 mu_int[,,1,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 
@@ -432,7 +433,8 @@ RFSD$duration <- midpointsduration_RFSD[match(RFSD$duration, unique(RFSD$duratio
 #fjerner sidste datapunkt for duration
 RFSD <- RFSD[RFSD$duration != unique(RFSD$duration)[length(unique(RFSD$duration))], ]
 
-RFSD_final <- glm(O~ns(duration,df=3)+offset(log(E)),family = poisson(link="log"),data=RFSD)
+RFSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=RFSD)
+summary(RFSD_final)
 
 #For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
 RFSD_OE_endpoint #0.0006416063
