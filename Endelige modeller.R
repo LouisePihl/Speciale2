@@ -16,7 +16,7 @@ new_data <- data.frame(
   E=1
 )
 
-#setwd("/Users/louisepihl/Documents/Speciale")
+setwd("/Users/louisepihl/Documents/Speciale")
 
 ######################################
 ####         SYGEDAGPENGE         ####
@@ -500,7 +500,8 @@ LYJA_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = LYJA)
 
 LYJA_final <- LYJA_OE_endpoint #0.000264376 = intercept: -8.238
 
-mu_int[,,4,2]<-LYJA_final
+predictions <- predict(LYJA_final, newdata = new_data, type = "response")
+mu_int[,,4,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 
 ################ LYRF ################
 LYRF <- read_csv("Data/LY/LYRF.csv")
@@ -643,8 +644,8 @@ FJRF_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = FJRF)
 
 FJRF_final <- FJRF_OE_endpoint #0.00087 = intercept: -9.351
 
-
-mu_int[,,5,3]<-FJRF_final
+predictions <- predict(FJFP_final, newdata = new_data, type = "response")
+mu_int[,,5,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 
 ################ FJJA ################
 FJJA <- read_csv("Data/FJ/FJJA.csv")
@@ -657,12 +658,14 @@ FJJA_OE_endpoint <- sum(FJJA_filtered$O)/sum(FJJA_filtered$E)
 #fjerner sidste datapunkt for duration
 FJJA <- FJJA[FJJA$duration != unique(FJJA$duration)[length(unique(FJJA$duration))], ]
 
-FJJA_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
+FJJA_final <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
 
 #For duration over 1.5
 FJJA_OE_endpoint
 
-mu_int[,,5,2]<-FJJA_final
+predictions <- predict(FJFP_final, newdata = new_data, type = "response")
+mu_int[,,5,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+
 
 ################ FJLY ################
 FJLY <- read_csv("Data/FJ/FJLY.csv")
