@@ -496,9 +496,9 @@ mu_int[,,4,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 LYJA  <- read_csv("Data/LY/LYJA.csv")
 
 #OE-raten, for det ene punkt som er:
-LYJA_OE_endpoint <- LYJA$O/LYJA$E
+LYJA_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = LYJA)
 
-LYJA_final <- LYJA_OE_endpoint #0.000264376
+LYJA_final <- LYJA_OE_endpoint #0.000264376 = intercept: -8.238
 
 mu_int[,,4,2]<-LYJA_final
 
@@ -639,7 +639,10 @@ mu_int[,,5,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 FJRF <- read_csv("Data/FJ/FJRF.csv")
 
 #Kun et datapunkt, så sættes konstant
-FJRF_final<-sum(FJRF$O)/sum(FJRF$E)
+FJRF_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = FJRF)
+
+FJRF_final <- FJRF_OE_endpoint #0.00087 = intercept: -9.351
+
 
 mu_int[,,5,3]<-FJRF_final
 
@@ -654,7 +657,8 @@ FJJA_OE_endpoint <- sum(FJJA_filtered$O)/sum(FJJA_filtered$E)
 #fjerner sidste datapunkt for duration
 FJJA <- FJJA[FJJA$duration != unique(FJJA$duration)[length(unique(FJJA$duration))], ]
 
-FJJA_final<-sum(FJJA$O)/sum(FJJA$E)
+FJJA_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
+
 #For duration over 1.5
 FJJA_OE_endpoint
 
