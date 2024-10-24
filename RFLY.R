@@ -92,13 +92,22 @@ plot(AgeAgg$age, AgeAgg$expoAgg)
 plot(DurAgg$duration, DurAgg$expoAgg)
 
 
+# Plots af trends
+plot(AgeAgg$age, AgeAgg$OE,xlab="Age aggregated", ylab="O/E rates", pch=21, bg="steelblue")
+plot(DurAgg$duration, DurAgg$OE,xlab="Duration aggregated", ylab="O/E rates", pch=21, bg="darkseagreen4")
+
+plot(AgeAgg$age, AgeAgg$expoAgg,xlab="Age aggregated", ylab="Exposure", pch=21, bg="steelblue")
+plot(DurAgg$duration, DurAgg$expoAgg,xlab="Duration aggregated", ylab="Exposure", pch=21, bg="darkseagreen4")
+
+plot(AgeAgg$age, AgeAgg$occAgg,xlab="Age aggregated", ylab="Occurance")
+plot(DurAgg$duration, DurAgg$occAgg,xlab="Duration aggregated", ylab="Occurance")
+
 
 ######################################################
 ####                  Residualplots               ####
 ######################################################
 
 
-#Centrer middelværdien: 
 residplotage<-function(model){qplot(Data$age, .stdresid,data = model)+
     geom_smooth(method = "loess", size = 1, formula = y ~ x) +
     xlab("age") +
@@ -118,6 +127,7 @@ residplotduration<-function(model){qplot(Data$duration, .stdresid,data = model)+
 # Lineær model med age og duration
 glm_konstant <- glm(O ~ offset(log(E)), family = poisson, data = Data)
 glm_linear_1 <- glm(O ~ age + duration, offset = log(E), family = poisson, data = Data)
+
 
 
 summary(glm_linear_1)
@@ -149,6 +159,11 @@ residplotduration(glm_poly_2_dur)
 residplotduration(glm_poly_4_dur)
 residplotduration(glm_poly_6_dur)
 
+summary(glm_poly_1_dur)
+summary(glm_poly_2_dur)
+summary(glm_poly_4_dur)
+summary(glm_poly_5_dur)
+
 # Polynomial modeller for age
 glm_poly_1_age <- glm(O ~ poly(age, 1) + duration, offset = log(E), family = poisson, data = Data)
 glm_poly_2_age <- glm(O ~ poly(age, 2) + duration, offset = log(E), family = poisson, data = Data)
@@ -157,6 +172,11 @@ glm_poly_5_age <- glm(O ~ poly(age, 5) + duration, offset = log(E), family = poi
 
 # Sammenlign AIC for polynomial modeller for age
 AIC(glm_poly_1_age, glm_poly_2_age, glm_poly_4_age, glm_poly_5_age)
+
+summary(glm_poly_1_age)
+summary(glm_poly_2_age)
+summary(glm_poly_4_age)
+summary(glm_poly_5_age)
 
 #Vælger 2. gradspolynpmium på age
 
@@ -378,7 +398,7 @@ lines(DurAgg$duration, DurAgg$predicted_OE, col = "red", lwd = 2)
 ####         Prædictions- og residualplot         ####
 ######################################################
 #Insæt den valgte model: 
-model <- glm_poly_2
+model <- glm_poly_1
 
 # Beregn forudsagte O-værdier
 Data$predicted_O <- predict(model, type = "response")
@@ -429,19 +449,89 @@ glm_poly_4 <- glm(O ~ poly(duration, 4), offset = log(E), family = poisson, data
 glm_poly_5 <- glm(O ~ poly(duration, 5), offset = log(E), family = poisson, data = Data)
 glm_poly_6 <- glm(O ~ poly(duration, 6), offset = log(E), family = poisson, data = Data)
 
+#Splines: 
+glm_splines_2 <- glm(O ~ ns(duration, df=3), offset = log(E), family = poisson, data = Data)
+glm_splines_1 <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, data = Data)
+glm_splines_3 <- glm(O ~ ns(duration, df=4), offset = log(E), family = poisson, data = Data)
+glm_splines_4 <- glm(O ~ ns(duration, df=5), offset = log(E), family = poisson, data = Data)
+glm_splines_7 <- glm(O ~ ns(duration, df=8), offset = log(E), family = poisson, data = Data)
+
 
 # Sammenlign AIC for polynomial modeller for duration
-AIC(glm_poly_1, glm_poly_2,glm_poly_3,glm_poly_4,glm_poly_5,glm_poly_6, glm_poly_2_2)
+AIC(glm_poly_1, glm_poly_2,glm_splines_1,glm_splines_2,glm_splines_3,glm_splines_4,glm_splines_7)
 
+summary(glm_splines_7)
+
+summary(glm_poly_1)
+summary(glm_poly_2)
+summary(glm_poly_3)
+summary(glm_poly_4)
+summary(glm_poly_5)
+summary(glm_poly_6)
 
 
 ######################################################
 ####                ENDELIGE MODEL.               ####
 ######################################################
 #Insæt den valgte model: 
-RFLY_final <- glm(O ~ poly(duration, 2), offset = log(E), family = poisson, data = Data)
+RFLY_final <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, data = Data)
 
 summary(RFLY_final)
 
 
+######################################################
+####                   PLOTS                      ####
+######################################################
+residplotage <- function(model) {
+  qplot(Data$age, .stdresid, data = model) +
+    geom_smooth(method = "loess", size = 1, formula = y ~ x) +
+    xlab("Age") +
+    ylab("Fitted Values") +
+    theme_minimal()
+}
 
+residplotduration <- function(model) {
+  qplot(Data$duration, .stdresid, data = model) +
+    geom_smooth(method = "loess", size = 1, formula = y ~ x) +
+    xlab("Duration") +
+    ylab("Fitted Values") +
+    theme_minimal()
+}
+
+
+
+
+
+
+#Insæt den valgte model: 
+model <- glm_splines_1
+
+# Beregn forudsagte O-værdier
+Data$predicted_O <- predict(model, type = "response")
+
+# Aggreger forudsagte værdier efter age
+AgeAgg <- Data %>%
+  group_by(age) %>%
+  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg / expoAgg, OE = occAgg / expoAgg)
+
+# Plot OE-rater over alder
+plot(AgeAgg$age, AgeAgg$OE, bg = "blue", pch = 21, xlab = "Age", ylab = "O/E Rate", 
+     main = "O/E-rates over Age")
+lines(AgeAgg$age, AgeAgg$predicted_OE, col = "lightblue3", lwd = 2)
+
+# Aggreger forudsagte værdier efter duration
+DurAgg <- Data %>%
+  group_by(duration) %>%
+  summarise(expoAgg = sum(E), occAgg = sum(O), predictedAgg = sum(predicted_O)) %>%
+  mutate(predicted_OE = predictedAgg / expoAgg, OE = occAgg / expoAgg)
+
+# Plot OE-rater over duration
+plot(DurAgg$duration, DurAgg$OE, bg = "blue", pch = 21, xlab = "Duration", ylab = "O/E Rate", 
+     main = "O/E-rates over Duration")
+lines(DurAgg$duration, DurAgg$predicted_OE, col = "lightblue3", lwd = 2)
+
+
+# Residualplot for lineær model
+residplotage(model)
+residplotduration(model)
