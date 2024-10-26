@@ -51,14 +51,14 @@ mu_p<-function(i,t,u){
 
 #Define grid
 t_0<-40
-u<-1/12
-slut<-43
+u<-0
+slut<-40+1/12
 h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
 ssh<-array(NA,c(N_time+1,N_duration+1,6,8)) #Time, duration, from state, end state
-
-for (i in 1:6){ #change to 1:6 to run for all "from" states
+start.time <- Sys.time() #To measure run time
+for (i in 1:1){ #change to 1:6 to run for all "from" states
   i<-1 #i denotes the "from" state, specify here or remove to run for all "from" states
   #Boundary conditions
   for (j in 1:6){ #loop through all end states
@@ -71,14 +71,27 @@ for (i in 1:6){ #change to 1:6 to run for all "from" states
   }
   
   for (n in 0:((slut-t_0)/h-1)){ #loop over all rows 
-    
-    delta<-array(NA,c((u/h+n),6)) #Last entrance denotes the end state
+    if (u/h+n==0){
+      delta<-array(NA,c(1,6))
+    }
+    else{
+    delta<-array(NA,c((u/h+n),6))
+    }
+     #Last entrance denotes the end state
     for (j in 1:6){ #loop through all end states
+      if (u/h+n==0){
+        delta[,j]<-ssh[n+1,(u/h+1+n),i,j]
+      }
+      else{
       delta[,j]<-ssh[n+1,2:(u/h+1+n),i,j]-ssh[n+1,1:(u/h+n),i,j] #calculate increments of previous ssh
+      }
     }
     for (j in 1:6){ #loop through all end states
       integrand_neq<-delta[,j]*mean_of_mu(as.numeric(lapply(seq(0,u+n*h,h),function(z) mu_p(j,t_0+n*h,z))))
       intval_neq<-c(0,cumsum(integrand_neq))
+      if ((n+u/h)==0){
+        intval_neq<-cumsum(integrand_neq)
+      }
       
       integrand_pos<-0
       for (k in 1:6){ #positive part consists of sum over the 5 other states
@@ -93,7 +106,9 @@ for (i in 1:6){ #change to 1:6 to run for all "from" states
     }
   }
 }
-
+end.time <- Sys.time() #Measures endtime
+time.taken <- round(end.time - start.time,2)
+time.taken #time it takes
 #Check that probabilities sum to one
 diag<-0
 for (j in 1:6){
@@ -104,7 +119,7 @@ diag
 #Plot transition probabilities with maximum duration
 for (j in 1:6){
   data <- data.frame(
-    time = seq(40,43,1/12),
+    time = seq(t_0,slut,h),
     p_1j = diag(ssh[,(u/h):N_duration+1,1,j])
   )
   p<-ggplot(data, aes(x = time, y = p_1j)) +
@@ -115,7 +130,70 @@ for (j in 1:6){
   #plot(diag(ssh[,(u/h):N_duration+1,1,j]), type="l",main=j)
 }
 
-#Second probabilities in the 3 state model. Disabled, reactivated, dead is calculated
+#Probability of staying in DI is calculated by a simple integral
 
+mu_21 <- function(t,z){exp(0.5640359-0.1035612*t)*(z>5)+exp(0.4279071-0.0314083*t-0.4581508*z)*(5>=z&z>2)+exp(1.517019-0.0314083*t-1.0027067*z)*(2>=z&z>0.2291667)+exp(0.8694878-0.0314083*t+1.8228841*z)*(0.2291667>=z)}
+mu_23 <- function(t,z){exp(-8.2226723+0.0696388*t)*(z>5)+(exp(-7.0243455+0.0685318*t-0.2207053*z))*(z<=5)}
 
+integrand <- function(t, z) {
+  mu_21(t, z) + mu_23(t, z)
+}
 
+# Opret en sekvens af t og z værdier med trin h = 1/12 (månedlige trin)
+t_values <- seq(t_0, slut, by = h)
+z_values <- seq(u, u+slut-t_0, by = h)
+
+# Initialiser en vektor til at gemme resultaterne og den akkumulerede sum
+results <- numeric(length(t_values))
+accumulated_sum <- 0
+
+# Start første trin ved at evaluere ved første t og z
+t_lower <- t_values[1]
+z_lower <- z_values[1]
+
+# Loop over de resterende værdier af t og z, og akkumuler kun det nye inkrement
+for (i in 2:length(t_values)) {
+  t_upper <- t_values[i]
+  z_upper <- z_values[i]
+  
+  # Integrer kun over det lille interval fra forrige til nuværende step
+  increment <- integrand(t_upper, z_upper) * h
+  
+  # Læg inkrementet til den akkumulerede sum
+  accumulated_sum <- accumulated_sum + increment
+  results[i] <- accumulated_sum
+}
+
+exp(-results)
+
+for (j in 1:6){
+  data <- data.frame(
+    time = seq(t_0,slut,h),
+    p_1j = diag(ssh[,(u/h):N_duration+1,1,j])*exp(-results)
+  )
+  p<-ggplot(data, aes(x = time, y = p_1j)) +
+    geom_line() +               # Add a line plot
+    #geom_point() +             # Add points to the plot
+    labs(x = "Time", y = paste("p_1",j))
+  print(p)
+  #plot(diag(ssh[,(u/h):N_duration+1,1,j]), type="l",main=j)
+}
+
+#Summen af de 6 ssh'er skal give ssh for at forblive syg
+diag<-0
+for (j in 1:6){
+  diag<-diag+diag(ssh[,(u/h):N_duration+1,1,j])*exp(-results[(u/h):N_duration+1])
+}
+diag==exp(-results)
+deviation <- abs(diag - exp(-results))
+deviation<10^(-10) #stemmer på min. 10'ende decimal
+
+data <- data.frame(
+  time = seq(t_0,slut,h),
+  p_DIDI = exp(-results)
+)
+p<-ggplot(data, aes(x = time, y = p_DIDI)) +
+  geom_line() +               # Add a line plot
+  #geom_point() +             # Add points to the plot
+  labs(x = "Time", y = paste("p_DIDI"))
+print(p)

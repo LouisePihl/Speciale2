@@ -42,7 +42,7 @@ mu_p<-function(i,t,u){
 
 #Define grid
 t_0<-40
-u<-1/12
+u<-0
 slut<-43
 h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
