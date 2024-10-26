@@ -16,7 +16,10 @@ new_data <- data.frame(
   E=1
 )
 
-setwd("/Users/louisepihl/Documents/Speciale")
+#setwd("/Users/louisepihl/Documents/Speciale")
+#setwd("/Users/frejalundfredholm/Desktop/Speciale")
+
+
 
 ######################################
 ####         SYGEDAGPENGE         ####
@@ -350,7 +353,7 @@ RFLY$duration<-midpointsduration_RFLY[match(RFLY$duration, unique(RFLY$duration)
 #fjerner sidste datapunkt for duration
 RFLY<-RFLY[RFLY$duration!=unique(RFLY$duration)[length(unique(RFLY$duration))],]
 
-RFLY_final <- glm(O ~ poly(duration, 2), offset = log(E), family = poisson, data = RFLY)
+RFLY_final <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, data = RFLY)
 
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 RFLY_OE_endpoint #0.0338517
@@ -670,6 +673,8 @@ mu_int[,,5,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 ################ FJLY ################
 FJLY <- read_csv("Data/FJ/FJLY.csv")
 
+View(FJLY)
+
 #OE-raten for varighed 3 (endepunktet):
 FJLY_filtered <- FJLY[FJLY$duration == 5, ]
 FJLY_filtered$OE <- FJLY_filtered$O/FJLY_filtered$E
@@ -694,7 +699,7 @@ FJLY_final<-glm(O~poly(age,4)+poly(duration,2)+I(duration>=2/12)+offset(log(E)),
 #For duration over 5
 FJLY_OE_endpoint #0.03170921
 
-predictions <- predict(FJSD_final, newdata = new_data, type = "response")
+predictions <- predict(FJLY_final, newdata = new_data, type = "response")
 mu_int[,,5,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 
 ######################################
