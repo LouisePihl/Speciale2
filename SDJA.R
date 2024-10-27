@@ -409,7 +409,7 @@ AIC(glm_indikator_poly1,glm_indikator_poly2,glm_indikator_poly4,glm_indikator_po
 ######################################################
 
 #Indsæt den valgre model
-model <- glm_poly_16
+model <- glm_raw
 
 Data$predicted_O <- predict(model, type="response")
 
@@ -461,6 +461,61 @@ residplotduration(model)
 #abline(v = my_knots, col = "green", lty = 2)
 
 
+# Antag, at begge modeller, glm_raw og SDJA_final, er estimerede modeller
+
+# Forudsig med begge modeller
+Data$predicted_O_glm_raw <- predict(glm_raw, type = "response")
+Data$predicted_O_SDJA_final <- predict(SDJA_final, type = "response")
+
+# Aggregér data efter alder og beregn OE-rater
+AgeAgg <- Data %>%
+  group_by(age) %>%
+  summarise(expoAgg = sum(E), 
+            occAgg = sum(O), 
+            predictedAgg_glm_raw = sum(predicted_O_glm_raw),
+            predictedAgg_SDJA_final = sum(predicted_O_SDJA_final)) %>%
+  mutate(OE = occAgg / expoAgg,
+         predicted_OE_glm_raw = predictedAgg_glm_raw / expoAgg,
+         predicted_OE_SDJA_final = predictedAgg_SDJA_final / expoAgg)
+
+# Plot OE-rater over age for begge modeller
+plot(AgeAgg$age, AgeAgg$OE, 
+     col = "blue", 
+     pch = 1, 
+     xlab = "Age",
+     ylab = "OE Rate",
+     main = "OE-rates over Age for glm_raw and SDJA_final")
+
+# Tilføj linjerne for begge modeller
+lines(AgeAgg$age, AgeAgg$predicted_OE_SDJA_final, col = "green", lwd = 2) 
+lines(AgeAgg$age, AgeAgg$predicted_OE_glm_raw, col = "red", lwd = 2, lty = 2) # Stiplet linje til glm_raw
+     # Fuld linje til SDJA_final
+
+
+# Aggregér data efter varighed og beregn OE-rater
+DurAgg <- Data %>%
+  group_by(duration) %>%
+  summarise(expoAgg = sum(E), 
+            occAgg = sum(O), 
+            predictedAgg_glm_raw = sum(predicted_O_glm_raw),
+            predictedAgg_SDJA_final = sum(predicted_O_SDJA_final)) %>%
+  mutate(OE = occAgg / expoAgg,
+         predicted_OE_glm_raw = predictedAgg_glm_raw / expoAgg,
+         predicted_OE_SDJA_final = predictedAgg_SDJA_final / expoAgg)
+
+# Plot OE-rater over varighed for begge modeller
+plot(DurAgg$duration, DurAgg$OE, 
+     col = "blue", 
+     pch = 1, 
+     xlab = "Duration",
+     ylab = "OE Rate",
+     main = "OE-rates over Duration for glm_raw and SDJA_final")
+
+# Tilføj linjerne for begge modeller
+lines(DurAgg$duration, DurAgg$predicted_OE_SDJA_final, col = "green", lwd = 2)      # Fuld linje til SDJA_final
+lines(DurAgg$duration, DurAgg$predicted_OE_glm_raw, col = "red", lwd = 2, lty = 2) # Stiplet linje til glm_raw
+
+
 
 ######################################################
 ####                  2 INDIKATOR                 ####
@@ -491,6 +546,11 @@ glm_2indikator_poly18 <- glm(O ~ age + poly(duration, 18) + I(duration >= 2/12)+
 
 AIC(glm_2indikator_poly1,glm_2indikator_poly2,glm_2indikator_poly4,glm_2indikator_poly6,glm_2indikator_poly8,glm_2indikator_poly10,glm_2indikator_poly12,glm_2indikator_poly14,glm_2indikator_poly16,glm_2indikator_poly18)
 
+
+
+
+glm_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration^3)  + I(duration^4) + I(duration >= 2/12), offset = log(E), family = poisson, data = Data)
+SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = Data)
 
 
 #Tjek efter trends
