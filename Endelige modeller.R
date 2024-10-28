@@ -50,9 +50,6 @@ SDJA<-SDJA[SDJA$duration!=unique(SDJA$duration)[length(unique(SDJA$duration))],]
 SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 #SDJA_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration^3)  + I(duration^4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 
-summary(SDJA_final)
-summary(SDJA_final_raw)
-
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
 SDJA_OE_endpoint #0.005942464
 
