@@ -48,7 +48,7 @@ SDJA$duration<-midpointsduration_SDJA[match(SDJA$duration, unique(SDJA$duration)
 SDJA<-SDJA[SDJA$duration!=unique(SDJA$duration)[length(unique(SDJA$duration))],]
 
 SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
-SDJA_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration^3)  + I(duration^4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
+#SDJA_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration^3)  + I(duration^4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 
 summary(SDJA_final)
 summary(SDJA_final_raw)
@@ -83,7 +83,7 @@ SDRF$duration<-midpointsduration_SDRF[match(SDRF$duration, unique(SDRF$duration)
 SDRF<-SDRF[SDRF$duration!=unique(SDRF$duration)[length(unique(SDRF$duration))],]
 
 SDRF_final <- glm(O~poly(age,3)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDRF)
-SDRF_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = SDJA)
+#SDRF_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = SDRF)
 
 
 
@@ -116,7 +116,7 @@ SDLY$duration<-midpointsduration_SDLY[match(SDLY$duration, unique(SDLY$duration)
 SDLY<-SDLY[SDLY$duration!=unique(SDLY$duration)[length(unique(SDLY$duration))],]
 
 SDLY_final <- glm(O~poly(age,2)+I(age>=60)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDLY)
-SDLY_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2), offset = log(E), family = poisson, data = SDJA)
+#SDLY_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2), offset = log(E), family = poisson, data = SDLY)
 
 
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
@@ -142,7 +142,7 @@ SDFJ$duration<-midpointsduration[match(SDFJ$duration, unique(SDFJ$duration))]
 SDFJ<-SDFJ[SDFJ$duration!=unique(SDFJ$duration)[length(unique(SDFJ$duration))],]
 
 SDFJ_final<-glm(O~I(age>=60)+poly(age,2)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDFJ)
-SDFJ_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2), offset = log(E), family = poisson, data = SDJA)
+#SDFJ_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2), offset = log(E), family = poisson, data = SDFJ)
 
 
 
@@ -172,7 +172,7 @@ SDFP<-SDFP[SDFP$duration!=unique(SDFP$duration)[length(unique(SDFP$duration))],]
 SDFP<-SDFP[SDFP$age!=unique(SDFP$age)[1],]
 
 SDFP_final<-glm(O~ns(age,3)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDFP)
-SDFP_final_raw <- glm(O ~ ns(age,3) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = SDJA)
+#SDFP_final_raw <- glm(O ~ ns(age,3) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = SDFP)
 
 
 #Duration over 3 år
@@ -200,7 +200,7 @@ JAFJ_filtered$OE <- JAFJ_filtered$O/JAFJ_filtered$E
 JAFJ_OE_endpoint<-sum(JAFJ_filtered$O)/sum(JAFJ_filtered$E)
 
 JAFJ_final<-glm(O~poly(age,2)+I(age>=60)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=JAFJ)
-JAFJ_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = SDJA)
+#JAFJ_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = JAFJ)
 
 
 predictions <- predict(SDJA_final, newdata = new_data, type = "response")
@@ -229,7 +229,7 @@ JARF$duration<-midpointsduration_JARF[match(JARF$duration, unique(JARF$duration)
 JARF<-JARF[JARF$duration!=unique(JARF$duration)[length(unique(JARF$duration))],]
 
 JARF_final <- glm(O~poly(age,4)+ns(duration,3)+offset(log(E)),family = poisson(link="log"),data=JARF)
-JARF_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + ns(duration,3), offset = log(E), family = poisson, data = SDJA)
+#JARF_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + ns(duration,3), offset = log(E), family = poisson, data = JARF)
 
 
 #For duration større end 4 (svarende til sidste punkt, dette benyttes ikke i modellen) sæt OE-raten konstant til: 
@@ -269,8 +269,7 @@ JALY$duration <- midpointsduration_JALY[match(JALY$duration, unique(JALY$duratio
 JALY <- JALY[JALY$duration != unique(JALY$duration)[length(unique(JALY$duration))], ]
 
 JALY_final <- glm(O ~ poly(age,2) + poly(duration, 3):I(duration <= 2), offset = log(E), family = poisson, data = JALY)
-JALY_final_raw <- glm(O ~ age + I(age^2) + duration:I(duration <= 2) + I(duration^2):I(duration <= 2) + I(duration^3):I(duration <= 2), offset = log(E), family = poisson, data = SDJA)
-
+#JALY_final_raw <- glm(O ~ age + I(age^2) + duration:I(duration <= 2) + I(duration^2):I(duration <= 2) + I(duration^3):I(duration <= 2), offset = log(E), family = poisson, data = JALY)
 
 #For duration større end 4.5 og 60 år (svarende til sidste punkt, dette benyttes ikke i modellen) sæt OE-raten konstant til: 
 JALY_OE_endpoint_dur #0.02935461
@@ -310,7 +309,7 @@ JAFP$duration <- midpointsduration_JAFP[match(JAFP$duration, unique(JAFP$duratio
 JAFP <- JAFP[JAFP$duration != unique(JAFP$duration)[length(unique(JAFP$duration))], ]
 
 JAFP_final <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2)*I(age >= 60), offset = log(E), family = poisson, data = JAFP)
-JAFP_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration >= 2)*I(age >= 60), offset = log(E), family = poisson, data = JAFP)
+#JAFP_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration >= 2)*I(age >= 60), offset = log(E), family = poisson, data = JAFP)
 
 
 #For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -343,7 +342,7 @@ JASD$duration <- midpointsduration_JASD[match(JASD$duration, unique(JASD$duratio
 JASD <- JASD[JASD$duration != unique(JASD$duration)[length(unique(JASD$duration))], ]
 
 JASD_final <- glm(O ~ poly(age, 3) + duration, offset = log(E), family = poisson, data = JASD)
-JASD_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration, offset = log(E), family = poisson, data = JAFP)
+#JASD_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration, offset = log(E), family = poisson, data = JASD)
 
 
 #For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -379,7 +378,7 @@ RFLY$duration<-midpointsduration_RFLY[match(RFLY$duration, unique(RFLY$duration)
 RFLY<-RFLY[RFLY$duration!=unique(RFLY$duration)[length(unique(RFLY$duration))],]
 
 RFLY_final <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, data = RFLY)
-RFLY_final_raw <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, data = RFLY)
+#RFLY_final_raw <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, data = RFLY)
 
 
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
@@ -411,7 +410,7 @@ RFFJ$duration<-midpointsduration_RFFJ[match(RFFJ$duration, unique(RFFJ$duration)
 RFFJ<-RFFJ[RFFJ$duration!=unique(RFFJ$duration)[length(unique(RFFJ$duration))],]
 
 RFFJ_final <- glm(O ~ poly(age, 2) + poly(duration, 2) + I(age <= 40), offset = log(E), family = poisson, data = RFFJ)
-RFFJ_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(age <= 40), offset = log(E), family = poisson, data = JAFP)
+#RFFJ_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(age <= 40), offset = log(E), family = poisson, data = RFFJ)
 
 
 #For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
@@ -443,7 +442,7 @@ RFFP$duration<-midpointsduration_RFFP[match(RFFP$duration, unique(RFFP$duration)
 RFFP<-RFFP[RFFP$duration!=unique(RFFP$duration)[length(unique(RFFP$duration))],]
 
 RFFP_final <- glm(O ~ poly(age, 3) + poly(duration, 2) + I(duration <= 3), offset = log(E), family = poisson, data = RFFP)
-RFFP_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration + I(duration^2) + I(duration <= 3), offset = log(E), family = poisson, data = JAFP)
+#RFFP_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration + I(duration^2) + I(duration <= 3), offset = log(E), family = poisson, data = RFFP)
 
 
 #For duration større end 3.5 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
@@ -468,7 +467,7 @@ RFSD$duration <- midpointsduration_RFSD[match(RFSD$duration, unique(RFSD$duratio
 RFSD <- RFSD[RFSD$duration != unique(RFSD$duration)[length(unique(RFSD$duration))], ]
 
 RFSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=RFSD)
-RFSD_final_raw <- glm(O ~ duration + I(duration^2), offset = log(E), family = poisson, data = JAFP)
+#RFSD_final_raw <- glm(O ~ duration + I(duration^2), offset = log(E), family = poisson, data = RFSD)
 
 
 #For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -493,7 +492,7 @@ RFJA$duration <- midpointsduration_RFJA[match(RFJA$duration, unique(RFJA$duratio
 RFJA <- RFJA[RFJA$duration != unique(RFJA$duration)[length(unique(RFJA$duration))], ]
 
 RFJA_final <- glm(O ~ duration + offset(log(E)),family = poisson(link="log"),data=RFJA)
-RFJA_final_raw <- glm(O ~ duration + offset(log(E)),family = poisson(link="log"),data=RFJA)
+#RFJA_final_raw <- glm(O ~ duration + offset(log(E)),family = poisson(link="log"),data=RFJA)
 
 
 #For duration større end 1.5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -522,7 +521,7 @@ LYSD$duration <- midpointsduration_LYSD[match(LYSD$duration, unique(LYSD$duratio
 LYSD <- LYSD[LYSD$duration != unique(LYSD$duration)[length(unique(LYSD$duration))], ]
 
 LYSD_final <- glm(O ~ offset(log(E)), family = poisson, data = LYSD)
-LYSD_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = LYSD)
+#LYSD_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = LYSD)
 
 
 #For duration større end 0.5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -538,7 +537,7 @@ LYJA  <- read_csv("Data/LY/LYJA.csv")
 LYJA_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = LYJA)
 
 LYJA_final <- LYJA_OE_endpoint #0.000264376 = intercept: -8.238
-LYJA_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = LYJA) #0.000264376 = intercept: -8.238
+#LYJA_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = LYJA) #0.000264376 = intercept: -8.238
 
 
 predictions <- predict(LYJA_final, newdata = new_data, type = "response")
@@ -560,7 +559,7 @@ LYRF$duration <- midpointsduration_LYRF[match(LYRF$duration, unique(LYRF$duratio
 LYRF <- LYRF[LYRF$duration != unique(LYRF$duration)[length(unique(LYRF$duration))], ]
 
 LYRF_final <- glm(O ~ poly(duration,2)+offset(log(E)), family = poisson, data = LYRF)
-LYRF_final_raw <- glm(O ~ duration + I(duration^2), offset = log(E), family = poisson, data = JAFP)
+#LYRF_final_raw <- glm(O ~ duration + I(duration^2), offset = log(E), family = poisson, data = LYRF)
 
 
 #For duration større end 4 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -593,7 +592,7 @@ LYFJ$duration <- midpointsduration_LYFJ[match(LYFJ$duration, unique(LYFJ$duratio
 LYFJ <- LYFJ[LYFJ$duration != unique(LYFJ$duration)[length(unique(LYFJ$duration))], ]
 
 LYFJ_final <-  glm(O ~ poly(age,4) + ns(duration, df = 5), offset = log(E), family = poisson, data = LYFJ)
-LYFJ_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + ns(duration, df = 5), offset = log(E), family = poisson, data = JAFP)
+#LYFJ_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + ns(duration, df = 5), offset = log(E), family = poisson, data = LYFJ)
 
 
 #For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -616,7 +615,7 @@ midpoints_LYFP <- c(midpoints_LYFP, custom_last_point_LYFP)
 LYFP$age <- midpoints_LYFP[match(LYFP$age, unique_ages_LYFP)]
 
 LYFP_final<-glm(O ~ I(age<55) + poly(I(age*(age >= 55)), 3)+offset(log(E)),family = poisson(link="log"),data=LYFP)
-LYFP_final_raw <- glm(O ~ I(age*(age >= 55)) + I(I(age*(age >= 55))^2) + I(I(age*(age >= 55))^3) + I(age<55), offset = log(E), family = poisson, data = LYFP)
+#LYFP_final_raw <- glm(O ~ I(age*(age >= 55)) + I(I(age*(age >= 55))^2) + I(I(age*(age >= 55))^3) + I(age<55), offset = log(E), family = poisson, data = LYFP)
 
 
 predictions <- predict(LYFP_final, newdata = new_data, type = "response")
@@ -642,7 +641,7 @@ FJSD$duration <- midpointsduration_FJSD[match(FJSD$duration, unique(FJSD$duratio
 FJSD <- FJSD[FJSD$duration != unique(FJSD$duration)[length(unique(FJSD$duration))], ]
 
 FJSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=FJSD)
-FJSD_final_raw <- glm(O~duration + I(duration^2)+offset(log(E)),family = poisson(link="log"),data=FJSD)
+#FJSD_final_raw <- glm(O~duration + I(duration^2)+offset(log(E)),family = poisson(link="log"),data=FJSD)
 
 
 #For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -677,7 +676,7 @@ FJFP <- FJFP[FJFP$duration != unique(FJFP$duration)[length(unique(FJFP$duration)
 FJFP <- FJFP[FJFP$age != unique(FJFP$age)[1], ]
 
 FJFP_final <- glm(O~poly(age,3)+duration+offset(log(E)),family = poisson(link="log"),data=FJFP)
-FJSD_final_raw <- glm(O~ age + I(age^2) + I(age^3) + duration +offset(log(E)),family = poisson(link="log"),data=FJSD)
+#FJSD_final_raw <- glm(O~ age + I(age^2) + I(age^3) + duration +offset(log(E)),family = poisson(link="log"),data=FJFP)
 
 
 #For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
@@ -694,7 +693,7 @@ FJRF <- read_csv("Data/FJ/FJRF.csv")
 FJRF_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = FJRF)
 
 FJRF_final <- FJRF_OE_endpoint #0.00087 = intercept: -9.351
-FJRF_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = FJRF) #0.00087 = intercept: -9.351
+#FJRF_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = FJRF) #0.00087 = intercept: -9.351
 
 
 predictions <- predict(FJFP_final, newdata = new_data, type = "response")
@@ -712,7 +711,7 @@ FJJA_OE_endpoint <- sum(FJJA_filtered$O)/sum(FJJA_filtered$E)
 FJJA <- FJJA[FJJA$duration != unique(FJJA$duration)[length(unique(FJJA$duration))], ]
 
 FJJA_final <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
-FJJA_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
+#FJJA_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
 
 
 #For duration over 1.5
@@ -745,7 +744,7 @@ FJLY$duration <- midpointsduration_FJLY[match(FJLY$duration, unique(FJLY$duratio
 FJLY <- FJLY[FJLY$duration != unique(FJLY$duration)[length(unique(FJLY$duration))], ]
 
 FJLY_final<-glm(O~poly(age,4)+poly(duration,2)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
-FJLY_final_raw<-glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + duration + I(duration^2)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
+#FJLY_final_raw<-glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + duration + I(duration^2)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
 
 #For duration over 5
 FJLY_OE_endpoint #0.03170921
@@ -781,7 +780,7 @@ FPFJ$duration <- midpointsduration_FPFJ[match(FPFJ$duration, unique(FPFJ$duratio
 FPFJ <- FPFJ[FPFJ$duration != unique(FPFJ$duration)[length(unique(FPFJ$duration))], ]
 
 FPFJ_final<-glm(O~poly(age,4)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=FPFJ)
-FPFJ_final_raw<-glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + duration + I(duration^2) + offset(log(E)),family = poisson(link="log"),data=FPFJ)
+#FPFJ_final_raw<-glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + duration + I(duration^2) + offset(log(E)),family = poisson(link="log"),data=FPFJ)
 
 
 #For duration over 5
