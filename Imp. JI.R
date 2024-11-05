@@ -169,16 +169,25 @@ for (i in 2:length(t_values)) {
 
 exp(-results)
 
+setwd("/Users/louisepihl/Documents/Speciale")
 for (j in 1:6){
   data <- data.frame(
     time = seq(t_0,slut,h),
-    p_1j = diag(ssh[,(u/h):N_duration+1,1,j])*exp(-results)
+    p_1j = diag(ssh[,(u/h):N_duration+1,1,j])#*exp(-results)
+    #p_1j = diag(ssh[1:(12*3+1),1:(12*5+1),1,j])*exp(-results)[1:(12*3+1)]
   )
   p<-ggplot(data, aes(x = time, y = p_1j)) +
     geom_line() +               # Add a line plot
     #geom_point() +             # Add points to the plot
-    labs(x = "Time", y = paste("p_1",j))
+    theme(
+      axis.text.x = element_text(size = 10), 
+      axis.text.y = element_text(size = 10),
+      axis.title.x = element_text(size = 12),     
+      axis.title.y = element_text(size = 12)
+    )+
+    labs(x = "Age", y = "Probability")
   print(p)
+  #ggsave(paste0("p1", j, "_4067.png"), plot = p, width = 6, height = 3, dpi = 300)
   #plot(diag(ssh[,(u/h):N_duration+1,1,j]), type="l",main=j)
 }
 
