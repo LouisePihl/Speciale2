@@ -55,12 +55,3 @@ setwd("/Users/louisepihl/Documents/Speciale2")
 saveRDS(mu_int, file = "mu_array.rds")
 saveRDS(mu_p_int, file = "mu_p_array.rds")
 
-#Below is moved to "Implementering v3"
-#mu_int <- readRDS("mu_array.rds")
-#mu_p_int <- readRDS("mu_p_array.rds")
-#mu<-function(i,j,t,u){
-#  mu_int[(t-t_0)/h+1,u/h+1,i,j]
-#}
-#mu_p<-function(i,t,u){
-#  mu_p_int[(t-t_0)/h+1,u/h+1,i]
-#}

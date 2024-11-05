@@ -19,10 +19,12 @@ mean_of_mu <- function(row) {
 }
 
 #Load array with intensities and define mu and mu_p functions
+setwd("/Users/louisepihl/Documents/Speciale2")
+#setwd("/Users/frejalundfredholm/Desktop/Speciale2")
 mu_int <- readRDS("mu_array.rds")
 
 mu<-function(i,j,t,u){
-  mu_int[(t-t_0)/h+1,u/h+1,i,j]
+  mu_int[(t-18)/h+1,u/h+1,i,j]
 }
 
 #Define new mu_p without death and reactivation
@@ -44,7 +46,7 @@ for (i in 1:6){
 }
 
 mu_p<-function(i,t,u){
-  mu_p_int[(t-t_0)/h+1,u/h+1,i]
+  mu_p_int[(t-18)/h+1,u/h+1,i]
 }
 
 #First transition probabilities within J^I is calculated
@@ -52,12 +54,13 @@ mu_p<-function(i,t,u){
 #Define grid
 t_0<-40
 u<-0
-slut<-40+1/12
+slut<-67
 h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
 ssh<-array(NA,c(N_time+1,N_duration+1,6,8)) #Time, duration, from state, end state
-start.time <- Sys.time() #To measure run time
+
+#start.time <- Sys.time() #To measure run time
 for (i in 1:1){ #change to 1:6 to run for all "from" states
   i<-1 #i denotes the "from" state, specify here or remove to run for all "from" states
   #Boundary conditions
@@ -106,9 +109,9 @@ for (i in 1:1){ #change to 1:6 to run for all "from" states
     }
   }
 }
-end.time <- Sys.time() #Measures endtime
-time.taken <- round(end.time - start.time,2)
-time.taken #time it takes
+#end.time <- Sys.time() #Measures endtime
+#time.taken <- round(end.time - start.time,2)
+#time.taken #time it takes
 #Check that probabilities sum to one
 diag<-0
 for (j in 1:6){
