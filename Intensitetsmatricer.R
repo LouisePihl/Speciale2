@@ -51,6 +51,7 @@ for (i in 1:6){
 
 #Save arrays with intensities - they will be loaded in "Implementering"
 setwd("/Users/louisepihl/Documents/Speciale2")
+#setwd("/Users/frejalundfredholm/Desktop/Speciale2")
 saveRDS(mu_int, file = "mu_array.rds")
 saveRDS(mu_p_int, file = "mu_p_array.rds")
 

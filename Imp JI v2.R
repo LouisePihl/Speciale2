@@ -20,6 +20,7 @@ mean_of_mu <- function(row) {
 
 #Load array with intensities and define mu and mu_p functions
 setwd("/Users/louisepihl/Documents/Speciale2")
+#setwd("/Users/frejalundfredholm/Desktop/Speciale")
 mu_int <- readRDS("mu_array.rds")
 
 mu<-function(i,j,t,u){
