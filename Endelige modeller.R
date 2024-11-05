@@ -16,10 +16,8 @@ new_data <- data.frame(
   E=1
 )
 
-#setwd("/Users/louisepihl/Documents/Speciale")
+setwd("/Users/louisepihl/Documents/Speciale")
 #setwd("/Users/frejalundfredholm/Desktop/Speciale")
-
-
 
 ######################################
 ####         SYGEDAGPENGE         ####
@@ -30,7 +28,6 @@ SDJA <- read_csv("Data/SD/SDJA.csv")
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 SDJA_filtered <- SDJA[SDJA$duration == 3, ]
-SDJA_filtered$OE <- SDJA_filtered$O/SDJA_filtered$E
 SDJA_OE_endpoint<-sum(SDJA_filtered$O)/sum(SDJA_filtered$E)
 
 #Centrerer age
@@ -50,19 +47,15 @@ SDJA<-SDJA[SDJA$duration!=unique(SDJA$duration)[length(unique(SDJA$duration))],]
 SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 #SDJA_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration^3)  + I(duration^4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 
-#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
-SDJA_OE_endpoint #0.005942464
-
-
 predictions <- predict(SDJA_final, newdata = new_data, type = "response")
 mu_int[,,1,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],1,2]<-SDJA_OE_endpoint
 
 ################ SDRF ################
 SDRF <- read_csv("Data/SD/SDRF.csv")
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 SDRF_filtered <- SDRF[SDRF$duration == 3, ]
-SDRF_filtered$OE <- SDRF_filtered$O/SDRF_filtered$E
 SDRF_OE_endpoint<-sum(SDRF_filtered$O)/sum(SDRF_filtered$E)
 
 #Centrerer age
@@ -82,20 +75,15 @@ SDRF<-SDRF[SDRF$duration!=unique(SDRF$duration)[length(unique(SDRF$duration))],]
 SDRF_final <- glm(O~poly(age,3)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDRF)
 #SDRF_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = SDRF)
 
-
-
-#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
-SDRF_OE_endpoint #0.003950156
-
 predictions <- predict(SDRF_final, newdata = new_data, type = "response")
 mu_int[,,1,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],1,3]<-SDRF_OE_endpoint
 
 ################ SDLY ################
 SDLY <- read_csv("Data/SD/SDLY.csv")
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 SDLY_filtered <- SDLY[SDLY$duration == 3, ]
-SDLY_filtered$OE <- SDLY_filtered$O/SDLY_filtered$E
 SDLY_OE_endpoint<-sum(SDLY_filtered$O)/sum(SDLY_filtered$E)
 
 #Centrerer age
@@ -115,19 +103,15 @@ SDLY<-SDLY[SDLY$duration!=unique(SDLY$duration)[length(unique(SDLY$duration))],]
 SDLY_final <- glm(O~poly(age,2)+I(age>=60)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDLY)
 #SDLY_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2), offset = log(E), family = poisson, data = SDLY)
 
-
-#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
-SDLY_OE_endpoint #0.01155234
-
 predictions <- predict(SDLY_final, newdata = new_data, type = "response")
 mu_int[,,1,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],1,4]<-SDLY_OE_endpoint
 
 ################ SDFJ ################
 SDFJ <- read_csv("Data/SD/SDFJ.csv")
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 SDFJ_filtered <- SDFJ[SDFJ$duration == 3, ]
-SDFJ_filtered$OE <- SDFJ_filtered$O/SDFJ_filtered$E
 SDFJ_OE_endpoint<-sum(SDFJ_filtered$O)/sum(SDFJ_filtered$E)
 
 midpointsage<-c((unique(SDFJ$age)[-1]+unique(SDFJ$age)[-length(unique(SDFJ$age))])/2,(unique(SDFJ$age)[length(unique(SDFJ$age))]+67)/2)
@@ -141,21 +125,20 @@ SDFJ<-SDFJ[SDFJ$duration!=unique(SDFJ$duration)[length(unique(SDFJ$duration))],]
 SDFJ_final<-glm(O~I(age>=60)+poly(age,2)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=SDFJ)
 #SDFJ_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2), offset = log(E), family = poisson, data = SDFJ)
 
-
-
-#Duration over 3 år
-SDFJ_OE_endpoint #0.00258375
-
 predictions <- predict(SDFJ_final, newdata = new_data, type = "response")
 mu_int[,,1,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],1,5]<-SDFJ_OE_endpoint
 
 ################ SDFP ################
 SDFP <- read_csv("Data/SD/SDFP.csv")
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 SDFP_filtered <- SDFP[SDFP$duration == 3, ]
-SDFP_filtered$OE <- SDFP_filtered$O/SDFP_filtered$E
 SDFP_OE_endpoint<-sum(SDFP_filtered$O)/sum(SDFP_filtered$E)
+
+#O/E rate for alder 18-40
+SDFP_filtered2 <- SDFJ[SDFJ$age == 18, ]
+SDFP_OE_18<-sum(SDFJ_filtered2$O)/sum(SDFJ_filtered2$E)
 
 midpointsage<-c((unique(SDFP$age)[-1]+unique(SDFP$age)[-length(unique(SDFP$age))])/2,(unique(SDFP$age)[length(unique(SDFP$age))]+67)/2)
 SDFP$age<-midpointsage[match(SDFP$age, unique(SDFP$age))]
@@ -171,12 +154,10 @@ SDFP<-SDFP[SDFP$age!=unique(SDFP$age)[1],]
 SDFP_final<-glm(O~ns(age,3)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=SDFP)
 #SDFP_final_raw <- glm(O ~ ns(age,3) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = SDFP)
 
-
-#Duration over 3 år
-SDFP_OE_endpoint #0.002409844
-
 predictions <- predict(SDFP_final, newdata = new_data, type = "response")
 mu_int[,,1,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],1,6]<-SDFP_OE_endpoint
+mu_int[1:((40-18)*12),,1,6]<-SDFP_OE_18
 
 ######################################
 ####         JOBAFKLARING         ####
@@ -184,31 +165,31 @@ mu_int[,,1,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 
 ################ JAFJ ################
 JAFJ <- read_csv("Data/JA/JAFJ.csv")
+
+#OE-raten for varrighed 3 (endepunktet) for alle aldre
+JAFJ_filtered <- JAFJ[JAFJ$duration == 3, ]
+JAFJ_OE_endpoint<-sum(JAFJ_filtered$O)/sum(JAFJ_filtered$E)
+
 midpointsage<-c((unique(JAFJ$age)[-1]+unique(JAFJ$age)[-length(unique(JAFJ$age))])/2,(unique(JAFJ$age)[length(unique(JAFJ$age))]+67)/2)
 JAFJ$age<-midpointsage[match(JAFJ$age, unique(JAFJ$age))]
 midpointsduration<-c((unique(JAFJ$duration)[-1]+unique(JAFJ$duration)[-length(unique(JAFJ$duration))])/2,unique(JAFJ$duration)[length(unique(JAFJ$duration))])
 JAFJ$duration<-midpointsduration[match(JAFJ$duration, unique(JAFJ$duration))]
+
 #fjerner sidste datapunkt for duration
 JAFJ<-JAFJ[JAFJ$duration!=unique(JAFJ$duration)[length(unique(JAFJ$duration))],]
-
-#OE-raten for varrighed 3 (endepunktet) for alle aldre
-JAFJ_filtered <- JAFJ[JAFJ$duration == 3, ]
-JAFJ_filtered$OE <- JAFJ_filtered$O/JAFJ_filtered$E
-JAFJ_OE_endpoint<-sum(JAFJ_filtered$O)/sum(JAFJ_filtered$E)
 
 JAFJ_final<-glm(O~poly(age,2)+I(age>=60)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=JAFJ)
 #JAFJ_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = JAFJ)
 
-
 predictions <- predict(SDJA_final, newdata = new_data, type = "response")
 mu_int[,,2,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],2,5]<-JAFJ_OE_endpoint
 
 ################ JARF ################
 JARF <- read_csv("Data/JA/JARF.csv")
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 JARF_filtered <- JARF[JARF$duration == 4, ]
-JARF_filtered$OE <- JARF_filtered$O/JARF_filtered$E
 JARF_OE_endpoint<-sum(JARF_filtered$O)/sum(JARF_filtered$E)
 
 #Centrerer age
@@ -228,24 +209,19 @@ JARF<-JARF[JARF$duration!=unique(JARF$duration)[length(unique(JARF$duration))],]
 JARF_final <- glm(O~poly(age,4)+ns(duration,3)+offset(log(E)),family = poisson(link="log"),data=JARF)
 #JARF_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + ns(duration,3), offset = log(E), family = poisson, data = JARF)
 
-
-#For duration større end 4 (svarende til sidste punkt, dette benyttes ikke i modellen) sæt OE-raten konstant til: 
-JARF_OE_endpoint #0.03104505
-
 predictions <- predict(JAFJ_final, newdata = new_data, type = "response")
 mu_int[,,2,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(4*12+1):dim(mu_int)[2],2,3]<-JARF_OE_endpoint
 
 ################ JALY ################
 JALY <- read_csv("Data/JA/JALY.csv")
 
 #OE-raten for varighed 4.5 (endepunktet) for alle aldre
 JALY_filtered_dur <- JALY[JALY$duration == 4.5, ]
-JALY_filtered_dur$OE <- JALY_filtered_dur$O/JALY_filtered_dur$E
 JALY_OE_endpoint_dur <- sum(JALY_filtered_dur$O)/sum(JALY_filtered_dur$E)
 
 #OE-raten for alder 60 (endepunktet) for alle aldre
 JALY_filtered_age <- JALY[JALY$age == 60, ]
-JALY_filtered_age$OE <- JALY_filtered_age$O/JALY_filtered_age$E
 JALY_OE_endpoint_age <- sum(JALY_filtered_age$O)/sum(JALY_filtered_age$E)
 
 #Centrerer age
@@ -268,24 +244,20 @@ JALY <- JALY[JALY$duration != unique(JALY$duration)[length(unique(JALY$duration)
 JALY_final <- glm(O ~ poly(age,2) + poly(duration, 3):I(duration <= 2), offset = log(E), family = poisson, data = JALY)
 #JALY_final_raw <- glm(O ~ age + I(age^2) + duration:I(duration <= 2) + I(duration^2):I(duration <= 2) + I(duration^3):I(duration <= 2), offset = log(E), family = poisson, data = JALY)
 
-#For duration større end 4.5 og 60 år (svarende til sidste punkt, dette benyttes ikke i modellen) sæt OE-raten konstant til: 
-JALY_OE_endpoint_dur #0.02935461
-JALY_OE_endpoint_age #0.02555102
-
 predictions <- predict(JALY_final, newdata = new_data, type = "response")
 mu_int[,,2,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(4.5*12+1):dim(mu_int)[2],2,4]<-JALY_OE_endpoint_dur
+mu_int[((60-18)*12+1):dim(mu_int)[1],,2,4]<-JALY_OE_endpoint_age
 
 ################ JAFP ################
 JAFP <- read_csv("Data/JA/JAFP.csv")
 
 #OE-raten for varighed 3 (endepunktet) for alle aldre
 JAFP_filtered <- JAFP[JAFP$duration == 3, ]
-JAFP_filtered$OE <- JAFP_filtered$O/JAFP_filtered$E
 JAFP_OE_endpoint <- sum(JAFP_filtered$O)/sum(JAFP_filtered$E)
 
 #OE-raten for alder 17-40 (endepunktet) for alle aldre
 JAFP_filtered_age <- JAFP[JAFP$age == 17, ]
-JAFP_filtered_age$OE <- JAFP_filtered_age$O/JAFP_filtered_age$E
 JAFP_OE_age_17 <- sum(JAFP_filtered_age$O)/sum(JAFP_filtered_age$E)
 
 #Centrerer age
@@ -308,20 +280,16 @@ JAFP <- JAFP[JAFP$duration != unique(JAFP$duration)[length(unique(JAFP$duration)
 JAFP_final <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2)*I(age >= 60), offset = log(E), family = poisson, data = JAFP)
 #JAFP_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration >= 2)*I(age >= 60), offset = log(E), family = poisson, data = JAFP)
 
-
-#For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-JAFP_OE_endpoint #0.007713671
-JAFP_OE_age_17 #0.00207733
-
 predictions <- predict(JAFP_final, newdata = new_data, type = "response")
 mu_int[,,2,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],2,6]<-JAFP_OE_endpoint
+mu_int[1:((40-18)*12),,2,6]<-JAFP_OE_age_17
 
 ################ JASD ################
 JASD <- read_csv("Data/JA/JASD.csv")
 
 #OE-raten for varighed 3 (endepunktet) for alle aldre
 JASD_filtered <- JASD[JASD$duration == 0.75, ]
-JASD_filtered$OE <- JASD_filtered$O/JASD_filtered$E
 JASD_OE_endpoint <- sum(JASD_filtered$O)/sum(JASD_filtered$E)
 
 #Centrerer age
@@ -341,12 +309,9 @@ JASD <- JASD[JASD$duration != unique(JASD$duration)[length(unique(JASD$duration)
 JASD_final <- glm(O ~ poly(age, 3) + duration, offset = log(E), family = poisson, data = JASD)
 #JASD_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration, offset = log(E), family = poisson, data = JASD)
 
-
-#For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-JASD_OE_endpoint #0.002209448
-
 predictions <- predict(JASD_final, newdata = new_data, type = "response")
 mu_int[,,2,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(0.75*12+1):dim(mu_int)[2],2,1]<-JASD_OE_endpoint
 
 ######################################
 ####        RESSOURCEFORLØB       ####
@@ -357,7 +322,6 @@ RFLY <- read_csv("Data/RF/RFLY.csv")
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 RFLY_filtered <- RFLY[RFLY$duration == 3, ]
-RFLY_filtered$OE <- RFLY_filtered$O/RFLY_filtered$E
 RFLY_OE_endpoint<-sum(RFLY_filtered$O)/sum(RFLY_filtered$E)
 
 #Centrerer age
@@ -377,19 +341,15 @@ RFLY<-RFLY[RFLY$duration!=unique(RFLY$duration)[length(unique(RFLY$duration))],]
 RFLY_final <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, data = RFLY)
 #RFLY_final_raw <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, data = RFLY)
 
-
-#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
-RFLY_OE_endpoint #0.0338517
-
 predictions <- predict(RFLY_final, newdata = new_data, type = "response")
 mu_int[,,3,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],3,4]<-RFLY_OE_endpoint
 
 ################ RFFJ ################
 RFFJ <- read_csv("Data/RF/RFFJ.csv")
 
 #OE-raten for varrighed 3 (endepunktet) for alle aldre
 RFFJ_filtered <- RFFJ[RFFJ$duration == 3, ]
-RFFJ_filtered$OE <- RFFJ_filtered$O/RFFJ_filtered$E
 RFFJ_OE_endpoint<-sum(RFFJ_filtered$O)/sum(RFFJ_filtered$E)
 
 #Centrerer age
@@ -409,20 +369,20 @@ RFFJ<-RFFJ[RFFJ$duration!=unique(RFFJ$duration)[length(unique(RFFJ$duration))],]
 RFFJ_final <- glm(O ~ poly(age, 2) + poly(duration, 2) + I(age <= 40), offset = log(E), family = poisson, data = RFFJ)
 #RFFJ_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(age <= 40), offset = log(E), family = poisson, data = RFFJ)
 
-
-#For duration større end 3 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
-RFFJ_OE_endpoint #0.01571686
-
 predictions <- predict(RFFJ_final, newdata = new_data, type = "response")
 mu_int[,,3,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],3,5]<-RFFJ_OE_endpoint
 
 ################ RFFP ################
 RFFP <- read_csv("Data/RF/RFFP.csv")
 
 #OE-raten for varrighed 3.5 (endepunktet) for alle aldre
 RFFP_filtered <- RFFP[RFFP$duration == 3.5, ]
-RFFP_filtered$OE <- RFFP_filtered$O/RFFP_filtered$E
 RFFP_OE_endpoint<-sum(RFFP_filtered$O)/sum(RFFP_filtered$E)
+
+#OE-raten for alder 17-40
+RFFP_filtered2 <- RFFP[RFFP$age == 17, ]
+RFFP_OE_17<-sum(RFFP_filtered2$O)/sum(RFFP_filtered2$E)
 
 #Centrerer age
 unique_ages_RFFP <- unique(RFFP$age)
@@ -441,19 +401,16 @@ RFFP<-RFFP[RFFP$duration!=unique(RFFP$duration)[length(unique(RFFP$duration))],]
 RFFP_final <- glm(O ~ poly(age, 3) + poly(duration, 2) + I(duration <= 3), offset = log(E), family = poisson, data = RFFP)
 #RFFP_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + duration + I(duration^2) + I(duration <= 3), offset = log(E), family = poisson, data = RFFP)
 
-
-#For duration større end 3.5 (svarende til sidste punkt, dette benyttes ikke i modellen)  sæt OE-raten konstant til: 
-RFFP_OE_endpoint #0.007848569
-
 predictions <- predict(RFFP_final, newdata = new_data, type = "response")
 mu_int[,,3,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3.5*12+1):dim(mu_int)[2],3,6]<-RFFP_OE_endpoint
+mu_int[1:((40-18)*12),,3,6]<-RFFP_OE_17
 
 ################ RFSD ################
 RFSD <- read_csv("Data/RF/RFSD.csv")
 
 #OE-raten for varighed 3 (endepunktet):
 RFSD_filtered <- RFSD[RFSD$duration == 3, ]
-RFSD_filtered$OE <- RFSD_filtered$O/RFSD_filtered$E
 RFSD_OE_endpoint <- sum(RFSD_filtered$O)/sum(RFSD_filtered$E)
 
 #centrerer duration
@@ -466,19 +423,15 @@ RFSD <- RFSD[RFSD$duration != unique(RFSD$duration)[length(unique(RFSD$duration)
 RFSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=RFSD)
 #RFSD_final_raw <- glm(O ~ duration + I(duration^2), offset = log(E), family = poisson, data = RFSD)
 
-
-#For duration større end 3 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-RFSD_OE_endpoint #0.0006416063
-
 predictions <- predict(RFSD_final, newdata = new_data, type = "response")
 mu_int[,,3,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],3,1]<-RFSD_OE_endpoint
 
 ################ RFJA ################
 RFJA <- read_csv("Data/RF/RFJA.csv")
 
 #OE-raten for varighed 1.5 (endepunktet):
 RFJA_filtered <- RFJA[RFJA$duration ==  1.5, ]
-RFJA_filtered$OE <- RFJA_filtered$O/RFJA_filtered$E
 RFJA_OE_endpoint <- sum(RFJA_filtered$O)/sum(RFJA_filtered$E)
 
 #centrerer duration
@@ -491,12 +444,9 @@ RFJA <- RFJA[RFJA$duration != unique(RFJA$duration)[length(unique(RFJA$duration)
 RFJA_final <- glm(O ~ duration + offset(log(E)),family = poisson(link="log"),data=RFJA)
 #RFJA_final_raw <- glm(O ~ duration + offset(log(E)),family = poisson(link="log"),data=RFJA)
 
-
-#For duration større end 1.5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-RFJA_OE_endpoint #0.0003691616
-
 predictions <- predict(RFJA_final, newdata = new_data, type = "response")
 mu_int[,,3,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(1.5*12+1):dim(mu_int)[2],3,2]<-RFJA_OE_endpoint
 
 ######################################
 ####        LEDIGHEDSYDELSE       ####
@@ -507,7 +457,6 @@ LYSD <- read_csv("Data/LY/LYSD.csv")
 
 #OE-raten for varighed 3 (endepunktet):
 LYSD_filtered <- LYSD[LYSD$duration == 0.5, ]
-LYSD_filtered$OE <- LYSD_filtered$O/LYSD_filtered$E
 LYSD_OE_endpoint <- sum(LYSD_filtered$O)/sum(LYSD_filtered$E)
 
 #centrerer duration
@@ -520,12 +469,9 @@ LYSD <- LYSD[LYSD$duration != unique(LYSD$duration)[length(unique(LYSD$duration)
 LYSD_final <- glm(O ~ offset(log(E)), family = poisson, data = LYSD)
 #LYSD_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = LYSD)
 
-
-#For duration større end 0.5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-LYSD_OE_endpoint #0.0002521938
-
 predictions <- predict(LYSD_final, newdata = new_data, type = "response")
 mu_int[,,4,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(0.5*12+1):dim(mu_int)[2],4,1]<-LYSD_OE_endpoint
 
 ################ LYJA ################
 LYJA  <- read_csv("Data/LY/LYJA.csv")
@@ -536,7 +482,6 @@ LYJA_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = LYJA)
 LYJA_final <- LYJA_OE_endpoint #0.000264376 = intercept: -8.238
 #LYJA_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = LYJA) #0.000264376 = intercept: -8.238
 
-
 predictions <- predict(LYJA_final, newdata = new_data, type = "response")
 mu_int[,,4,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 
@@ -545,7 +490,6 @@ LYRF <- read_csv("Data/LY/LYRF.csv")
 
 #OE-raten for varighed 4 (endepunktet):
 LYRF_filtered <- LYRF[LYRF$duration == 4, ]
-LYRF_filtered$OE <- LYRF_filtered$O/LYRF_filtered$E
 LYRF_OE_endpoint <- sum(LYRF_filtered$O)/sum(LYRF_filtered$E)
 
 #centrerer duration
@@ -558,20 +502,15 @@ LYRF <- LYRF[LYRF$duration != unique(LYRF$duration)[length(unique(LYRF$duration)
 LYRF_final <- glm(O ~ poly(duration,2)+offset(log(E)), family = poisson, data = LYRF)
 #LYRF_final_raw <- glm(O ~ duration + I(duration^2), offset = log(E), family = poisson, data = LYRF)
 
-
-#For duration større end 4 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-LYRF_OE_endpoint #0.002309027
-
 predictions <- predict(LYRF_final, newdata = new_data, type = "response")
 mu_int[,,4,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-
+mu_int[,(4*12+1):dim(mu_int)[2],4,3]<-LYRF_OE_endpoint
 
 ################ LYFJ ################
 LYFJ <- read_csv("Data/LY/LYFJ.csv")
 
 #OE-raten for varighed 5 (endepunktet):
 LYFJ_filtered <- LYFJ[LYFJ$duration == 5, ]
-LYFJ_filtered$OE <- LYFJ_filtered$O/LYFJ_filtered$E
 LYFJ_OE_endpoint <- sum(LYFJ_filtered$O)/sum(LYFJ_filtered$E)
 
 #Centrerer age
@@ -591,18 +530,17 @@ LYFJ <- LYFJ[LYFJ$duration != unique(LYFJ$duration)[length(unique(LYFJ$duration)
 LYFJ_final <-  glm(O ~ poly(age,4) + ns(duration, df = 5), offset = log(E), family = poisson, data = LYFJ)
 #LYFJ_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + ns(duration, df = 5), offset = log(E), family = poisson, data = LYFJ)
 
-
-#For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-LYFJ_OE_endpoint #0.0002521938
-
 predictions <- predict(LYFJ_final, newdata = new_data, type = "response")
 mu_int[,,4,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-
-
+mu_int[,(5*12+1):dim(mu_int)[2],4,5]<-LYFJ_OE_endpoint
 
 ################ LYFP ################
 LYFP <- read_csv("Data/LY/LYFP.csv")
 LYFP<-LYFP[-c(1,29,30,31,32),] #Fjerner første alders interval, samt aldre over 67 (har 0 occurences)
+
+#OE-raten for alder 17-40:
+LYFP_filtered2 <- LYFP[LYFP$age == 17, ]
+LYFP_OE_17 <- sum(LYFP_filtered2$O)/sum(LYFP_filtered2$E)
 
 #Centrerer age
 unique_ages_LYFP <- unique(LYFP$age)
@@ -614,9 +552,9 @@ LYFP$age <- midpoints_LYFP[match(LYFP$age, unique_ages_LYFP)]
 LYFP_final<-glm(O ~ I(age<55) + poly(I(age*(age >= 55)), 3)+offset(log(E)),family = poisson(link="log"),data=LYFP)
 #LYFP_final_raw <- glm(O ~ I(age*(age >= 55)) + I(I(age*(age >= 55))^2) + I(I(age*(age >= 55))^3) + I(age<55), offset = log(E), family = poisson, data = LYFP)
 
-
 predictions <- predict(LYFP_final, newdata = new_data, type = "response")
 mu_int[,,4,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[1:((40-18)*12),,4,6]<-LYFP_OE_17
 
 ######################################
 ####           FLEKSJOB           ####
@@ -627,7 +565,6 @@ FJSD <- read_csv("Data/FJ/FJSD.csv")
 
 #OE-raten for varighed 5 (endepunktet):
 FJSD_filtered <- FJSD[FJSD$duration == 5, ]
-FJSD_filtered$OE <- FJSD_filtered$O/FJSD_filtered$E
 FJSD_OE_endpoint <- sum(FJSD_filtered$O)/sum(FJSD_filtered$E)
 
 #centrerer duration
@@ -640,20 +577,20 @@ FJSD <- FJSD[FJSD$duration != unique(FJSD$duration)[length(unique(FJSD$duration)
 FJSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=FJSD)
 #FJSD_final_raw <- glm(O~duration + I(duration^2)+offset(log(E)),family = poisson(link="log"),data=FJSD)
 
-
-#For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-FJSD_OE_endpoint #0.001975652
-
 predictions <- predict(FJSD_final, newdata = new_data, type = "response")
 mu_int[,,5,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(5*12+1):dim(mu_int)[2],5,1]<-FJSD_OE_endpoint
 
 ################ FJFP ################
 FJFP <- read_csv("Data/FJ/FJFP.csv")
 
 #OE-raten for varighed 3 (endepunktet):
 FJFP_filtered <- FJFP[FJFP$duration == 3, ]
-FJFP_filtered$OE <- FJFP_filtered$O/FJFP_filtered$E
 FJFP_OE_endpoint <- sum(FJFP_filtered$O)/sum(FJFP_filtered$E)
+
+#OE-raten for alder :
+FJFP_filtered2 <- FJFP[FJFP$age == 18, ]
+FJFP_OE_18 <- sum(FJFP_filtered2$O)/sum(FJFP_filtered2$E)
 
 #Centrerer age
 unique_ages_FJFP <- unique(FJFP$age)
@@ -675,15 +612,12 @@ FJFP <- FJFP[FJFP$age != unique(FJFP$age)[1], ]
 FJFP_final <- glm(O~poly(age,3)+duration+offset(log(E)),family = poisson(link="log"),data=FJFP)
 #FJSD_final_raw <- glm(O~ age + I(age^2) + I(age^3) + duration +offset(log(E)),family = poisson(link="log"),data=FJFP)
 
-
-#For duration større end 5 (svarende til andet sidste punkt/sidste punkt som benyttes i modellen) sæt OE-raten konstant til: 
-FJFP_OE_endpoint #0.005760366
-
 predictions <- predict(FJFP_final, newdata = new_data, type = "response")
 mu_int[,,5,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],5,6]<-FJFP_OE_endpoint
+mu_int[1:((40-18)*12),,5,6]<-FJFP_OE_18
 
 ################ FJRF ################
-
 FJRF <- read_csv("Data/FJ/FJRF.csv")
 
 #Kun et datapunkt, så sættes konstant
@@ -691,7 +625,6 @@ FJRF_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = FJRF)
 
 FJRF_final <- FJRF_OE_endpoint #0.00087 = intercept: -9.351
 #FJRF_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = FJRF) #0.00087 = intercept: -9.351
-
 
 predictions <- predict(FJFP_final, newdata = new_data, type = "response")
 mu_int[,,5,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
@@ -701,7 +634,6 @@ FJJA <- read_csv("Data/FJ/FJJA.csv")
 
 #OE-raten for varighed 3 (endepunktet):
 FJJA_filtered <- FJJA[FJJA$duration == 1.5, ]
-FJJA_filtered$OE <- FJJA_filtered$O/FJJA_filtered$E
 FJJA_OE_endpoint <- sum(FJJA_filtered$O)/sum(FJJA_filtered$E)
 
 #fjerner sidste datapunkt for duration
@@ -710,20 +642,15 @@ FJJA <- FJJA[FJJA$duration != unique(FJJA$duration)[length(unique(FJJA$duration)
 FJJA_final <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
 #FJJA_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
 
-
-#For duration over 1.5
-FJJA_OE_endpoint
-
 predictions <- predict(FJFP_final, newdata = new_data, type = "response")
 mu_int[,,5,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-
+mu_int[,(1.5*12+1):dim(mu_int)[2],5,2]<-FJJA_OE_endpoint
 
 ################ FJLY ################
 FJLY <- read_csv("Data/FJ/FJLY.csv")
 
 #OE-raten for varighed 3 (endepunktet):
 FJLY_filtered <- FJLY[FJLY$duration == 5, ]
-FJLY_filtered$OE <- FJLY_filtered$O/FJLY_filtered$E
 FJLY_OE_endpoint <- sum(FJLY_filtered$O)/sum(FJLY_filtered$E)
 
 #Centrerer age
@@ -743,23 +670,19 @@ FJLY <- FJLY[FJLY$duration != unique(FJLY$duration)[length(unique(FJLY$duration)
 FJLY_final<-glm(O~poly(age,4)+poly(duration,2)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
 #FJLY_final_raw<-glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + duration + I(duration^2)+I(duration>=2/12)+offset(log(E)),family = poisson(link="log"),data=FJLY)
 
-#For duration over 5
-FJLY_OE_endpoint #0.03170921
-
 predictions <- predict(FJLY_final, newdata = new_data, type = "response")
 mu_int[,,5,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+mu_int[,(3*12+1):dim(mu_int)[2],5,4]<-FJLY_OE_endpoint
 
 ######################################
 ####         FØRTIDSPENSION       ####
 ######################################
-
 
 ################ FPFJ ################
 FPFJ <- read_csv("Data/FP/FPFJ.csv")
 
 #OE-raten for varighed 3 (endepunktet):
 FPFJ_filtered <- FPFJ[FPFJ$duration == 3, ]
-FPFJ_filtered$OE <- FPFJ_filtered$O/FPFJ_filtered$E
 FPFJ_OE_endpoint <- sum(FPFJ_filtered$O)/sum(FPFJ_filtered$E)
 
 #Centrerer age
@@ -779,13 +702,9 @@ FPFJ <- FPFJ[FPFJ$duration != unique(FPFJ$duration)[length(unique(FPFJ$duration)
 FPFJ_final<-glm(O~poly(age,4)+poly(duration,2)+offset(log(E)),family = poisson(link="log"),data=FPFJ)
 #FPFJ_final_raw<-glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + duration + I(duration^2) + offset(log(E)),family = poisson(link="log"),data=FPFJ)
 
-
-#For duration over 5
-FPFJ_OE_endpoint #0.004464665
-
 predictions <- predict(FPFJ_final, newdata = new_data, type = "response")
 mu_int[,,6,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-
+mu_int[,(3*12+1):dim(mu_int)[2],6,5]<-FPFJ_OE_endpoint
 
 
 
