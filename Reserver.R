@@ -1,5 +1,5 @@
 library("readxl")
-
+#Reserve regning
 
 #-----------------Sætter offentlige og forsikring ydelser-----------------------
 Benefits <- data.frame(Public_1= numeric(6),Insurance_1= numeric(6),Public_2= numeric(6),Insurance_2= numeric(6))
