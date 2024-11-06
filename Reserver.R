@@ -88,10 +88,10 @@ s_sequence <- seq(0, t_slut - t_0, h)
 # Anvend discount-funktionen på hver værdi i s_sequence
 discount_vector <- sapply(s_sequence, discount)
 
-
+sum(integrand[-length(integrand)])
 integrand<-expec_cash_flow_Insurance_1$total*discount_vector
-integrand_func<-function(t){integrand[round(t/h)+1]}
-integrate(integrand_func,0,t_slut-t_0,subdivisions = 1000)
+integrand_func<-function(t){integrand[round(t)+1]}
+integrate(integrand_func,0,t_slut*12-t_0*12,subdivisions = 1000)
 
 
 #Produkt 2
