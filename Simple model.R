@@ -4,17 +4,21 @@
 
 
 #------------- Generelle værdier -------------
-t_0 <- 41
+t_0 <- 40
 t_slut <- 67
 h <- 1/12  # En måned som trinlængde
 w <- 0 #start varrighed
+
+#   981.031,3 - Reserve t=40,   w=0
+# 1.447.199   - Reserve t=40.5, w=0.5
+# 1.745.392.  - Reserve t=41,   w=1
 
 # Antal tidspunkter (325) svarende til månedlige trin fra 40 til 67 år
 num_months <- (t_slut-t_0)*1/h+1
 
 # Opret sekvenser for t (alder) og w (varighed)
 t_values <- seq(t_0, t_slut, by = h)[1:num_months]  # Værdier af t fra 40 til 67 med trin h
-w_values <- seq(w, w+t_slut-t_0, by = h)[1:num_months]  # w ændres på samme måde som t
+w_values <- seq(w, t_slut-t_0+w, by = h)[1:num_months]  # w ændres på samme måde som t
 
 
 
@@ -23,15 +27,16 @@ Benefits_simple <- data.frame(Public_simple = numeric(5),Insurance_simple= numer
 Benefits_simple$Public_simple<-c(18780,0,12330,26830,18490)
 Benefits_simple$Insurance_simple<-c(13220,32000,19670,5170,13510)
 
-b <- function(z) {Benefits_simple$Insurance_simple[1]*(z<=5.5/12)+Benefits_simple$Insurance_simple[2]*(5.5/12<z&z<=41.5/12)+Benefits_simple$Insurance_simple[3]*(41.5/12<z&z<=49.5/12)+Benefits_simple$Insurance_simple[4]*(49.5/12<z&z<=109.5/12)+Benefits_simple$Insurance_simple[5]*(109.5/12<z&z<=(t_slut-t_0))}
+b <- function(z) {Benefits_simple$Insurance_simple[1]*(z<=5.5/12)+Benefits_simple$Insurance_simple[2]*(5.5/12<z&z<=41.5/12)+Benefits_simple$Insurance_simple[3]*(41.5/12<z&z<=49.5/12)+Benefits_simple$Insurance_simple[4]*(49.5/12<z&z<=109.5/12)+Benefits_simple$Insurance_simple[5]*(109.5/12<z&z<=(t_slut-t_0+w))}
 # i år
 b_vektor <- sapply(w_values,b)
 
+
 #manuelt sætter ydelserne som skiller midt i en måned til gennemsnittet 
-b_vektor[6] <- 1/2*Benefits_simple$Insurance_simple[1]+1/2*Benefits_simple$Insurance_simple[2]
-b_vektor[42] <- 1/2*Benefits_simple$Insurance_simple[2]+1/2*Benefits_simple$Insurance_simple[3]
-b_vektor[50] <- 1/2*Benefits_simple$Insurance_simple[3]+1/2*Benefits_simple$Insurance_simple[4]
-b_vektor[110] <- 1/2*Benefits_simple$Insurance_simple[4]+1/2*Benefits_simple$Insurance_simple[5]
+#b_vektor[6-w/h] <- 1/2*Benefits_simple$Insurance_simple[1]+1/2*Benefits_simple$Insurance_simple[2]
+#b_vektor[42-w/h] <- 1/2*Benefits_simple$Insurance_simple[2]+1/2*Benefits_simple$Insurance_simple[3]
+#b_vektor[50-w/h] <- 1/2*Benefits_simple$Insurance_simple[3]+1/2*Benefits_simple$Insurance_simple[4]
+#b_vektor[110-w/h] <- 1/2*Benefits_simple$Insurance_simple[4]+1/2*Benefits_simple$Insurance_simple[5]
 
 
 #---------------- Intensiteter ----------------
@@ -99,9 +104,10 @@ for (i in 2:length(t_values)) {
 
 p_22_vektor <- exp(-results)
 
+
 #--------------- Cash flow ----------------
 
-cashflow_values <- p_22_values*b_vektor
+cashflow_values <- p_22_vektor*b_vektor
 
 #--------------- Reserve ----------------
 library("readxl")
@@ -125,8 +131,8 @@ s_sequence <- seq(0, t_slut - t_0, h)
 discount_vector <- sapply(s_sequence, discount)
 
 integrand<-cashflow_values*discount_vector
-integrand_func<-function(t){integrand[round(t)+1]}
-integrate(integrand_func,0,t_slut*12-t_0*12,subdivisions = 1000)
+#integrand_func<-function(t){integrand[round(t)+1]}
+#integrate(integrand_func,0,t_slut*1/h-t_0*1/h,subdivisions = 1000)
 sum(integrand[-length(integrand)])
 
 
