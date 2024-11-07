@@ -5,7 +5,7 @@ library("readxl")
 Benefits <- data.frame(Public_1= numeric(6),Insurance_1= numeric(6),Public_2= numeric(6),Insurance_2= numeric(6))
 
 Benefits$Public_1<-c(28780,12330,12330,22330,36830,29540)
-Benefits$Insurance_1<-rep(10000,6)
+Benefits$Insurance_1<-rep(13220,6)
 Benefits$Public_2<-c(18780,0,0,12330,26830,18490)
 Benefits$Insurance_2<-c(13220,32000,32000,19670,5170,13510)
 
@@ -13,7 +13,7 @@ Benefits$Insurance_2<-c(13220,32000,32000,19670,5170,13510)
 
 #-----------------------------Regner cashflows---------------------------------
 #Starting in SB
-expec_cash_flow_Insurance_1<-data.frame(SB=numeric(N_duration+1))
+expec_cash_flow_Insurance_1<-data.frame(SB=numeric(N_duration+1-u/h))
 expec_cash_flow_Insurance_1$SB<-diag(ssh[,(u/h):N_duration+1,1,1])*Benefits$Insurance_1[1]*exp(-results)
 expec_cash_flow_Insurance_1$JC<-diag(ssh[,(u/h):N_duration+1,1,2])*Benefits$Insurance_1[2]*exp(-results)
 expec_cash_flow_Insurance_1$RS<-diag(ssh[,(u/h):N_duration+1,1,3])*Benefits$Insurance_1[3]*exp(-results)
@@ -31,7 +31,7 @@ expec_cash_flow_Public_1$FJ<-diag(ssh[,(u/h):N_duration+1,1,5])*Benefits$Public_
 expec_cash_flow_Public_1$DP<-diag(ssh[,(u/h):N_duration+1,1,6])*Benefits$Public_1[6]*exp(-results)
 expec_cash_flow_Public_1$total<-expec_cash_flow_Public_1$SB+expec_cash_flow_Public_1$JC+expec_cash_flow_Public_1$RS+expec_cash_flow_Public_1$UB+expec_cash_flow_Public_1$FJ+expec_cash_flow_Public_1$DP
 
-expec_cash_flow_Insurance_2<-data.frame(SB=numeric(N_duration+1))
+expec_cash_flow_Insurance_2<-data.frame(SB=numeric(N_duration+1-u/h))
 expec_cash_flow_Insurance_2$SB<-diag(ssh[,(u/h):N_duration+1,1,1])*Benefits$Insurance_2[1]*exp(-results)
 expec_cash_flow_Insurance_2$JC<-diag(ssh[,(u/h):N_duration+1,1,2])*Benefits$Insurance_2[2]*exp(-results)
 expec_cash_flow_Insurance_2$RS<-diag(ssh[,(u/h):N_duration+1,1,3])*Benefits$Insurance_2[3]*exp(-results)
@@ -74,13 +74,27 @@ rates <- as.numeric(rentekurve[1, 2:(length(years) + 1)])/100 # Ekstraher rentev
 #approximere lineært mellem punkterne i rentekurven 
 r <- approxfun(years, rates, method = "linear", rule = 2)
 
-plot(r, xlim=c(0,27))
+plot_data <- data.frame(years = seq(0, 30, by = 0.1), rates = r(seq(0, 30, by = 0.1)))
+
+# Plot af renten
+#p <- ggplot(plot_data, aes(x = years, y = rates)) +
+#  geom_line() +
+#  labs(x = "Years", y = "Interest Rate")+
+#  theme(
+#    axis.text.x = element_text(size = 10), 
+#    axis.text.y = element_text(size = 10),
+#    axis.title.x = element_text(size = 12),     
+#    axis.title.y = element_text(size = 12)
+#  )
+#
+#print(p)
+#ggsave("r.png", plot = p, width = 6, height = 3, dpi = 300)
 
 #Produkt 1
 discount <- function(s) {
   integral <- integrate(function(tau) r(tau), lower = 0, upper = s)$value
   return(exp(-integral))
-} #Noget i den her funktion er FORKERT!
+} 
 
 # Generér en sekvens af tidspunkter fra 0 til t_slut - t_0 med intervaller på h
 s_sequence <- seq(0, t_slut - t_0, h)
@@ -88,8 +102,12 @@ s_sequence <- seq(0, t_slut - t_0, h)
 # Anvend discount-funktionen på hver værdi i s_sequence
 discount_vector <- sapply(s_sequence, discount)
 
-sum(integrand[-length(integrand)])
-integrand<-expec_cash_flow_Insurance_1$total*discount_vector
+
+integrand1<-expec_cash_flow_Insurance_1$total*discount_vector
+sum(integrand1[-length(integrand1)])
+integrand2<-expec_cash_flow_Insurance_2$total*discount_vector
+sum(integrand2[-length(integrand2)])
+
 integrand_func<-function(t){integrand[round(t)+1]}
 integrate(integrand_func,0,t_slut*12-t_0*12,subdivisions = 1000)
 
