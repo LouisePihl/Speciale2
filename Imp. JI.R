@@ -22,9 +22,11 @@ mean_of_mu <- function(row) {
 #setwd("/Users/louisepihl/Documents/Speciale2")
 #setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
 mu_int <- readRDS("mu_array.rds")
+mu_int_stress1<-mu_int
+mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
 
 mu<-function(i,j,t,u){
-  mu_int[(t-18)/h+1,u/h+1,i,j]
+  mu_int_stress1[(t-18)/h+1,u/h+1,i,j] #Change here in stress scenarios
 }
 
 #Define new mu_p without death and reactivation
@@ -40,7 +42,7 @@ for (i in 1:6){
   #mu_p_int[,,i]<-mu_p_int[,,i]+mu_int[,,i,7]+mu_int[,,i,8]
   for (j in 1:6){
     if (j!=i){
-      mu_p_int[,,i]<-mu_p_int[,,i]+mu_int[,,i,j]
+      mu_p_int[,,i]<-mu_p_int[,,i]+mu_int_stress1[,,i,j] #Change here in stress scenarios
     }
   }
 }
@@ -62,7 +64,7 @@ ssh<-array(NA,c(N_time+1,N_duration+1,6,8)) #Time, duration, from state, end sta
 
 #start.time <- Sys.time() #To measure run time
 for (i in 1:1){ #change to 1:6 to run for all "from" states
-  i<-1 #i denotes the "from" state, specify here or remove to run for all "from" states
+  i<-i #i denotes the "from" state, specify here or remove to run for all "from" states
   #Boundary conditions
   for (j in 1:6){ #loop through all end states
     if (i==j){
@@ -167,13 +169,13 @@ for (i in 2:length(t_values)) {
   results[i] <- accumulated_sum
 }
 
-exp(-results)
+#exp(-results)
 
 #setwd("/Users/louisepihl/Documents/Speciale")
 for (j in 1:6){
   data <- data.frame(
     time = seq(t_0,slut,h),
-    p_1j = diag(ssh[,(u/h):N_duration+1,1,j])#*exp(-results)
+    p_1j = diag(ssh[,(u/h):N_duration+1,1,j])*exp(-results)
     #p_1j = diag(ssh[1:(12*3+1),1:(12*5+1),1,j])*exp(-results)[1:(12*3+1)]
   )
   p<-ggplot(data, aes(x = time, y = p_1j)) +
@@ -194,7 +196,7 @@ for (j in 1:6){
 #Summen af de 6 ssh'er skal give ssh for at forblive syg
 diag<-0
 for (j in 1:6){
-  diag<-diag+diag(ssh[,(u/h):N_duration+1,1,j])*exp(-results[(u/h):N_duration+1])
+  diag<-diag+diag(ssh[,(u/h):N_duration+1,1,j])*exp(-results[1:(N_duration+1-(u/h))])
 }
 diag==exp(-results)
 deviation <- abs(diag - exp(-results))

@@ -8,12 +8,12 @@ Benefits$Insurance_2<-c(13220,32000,32000,19670,5170,13510)
 
 #Starting in SB
 expec_cash_flow_Insurance_1<-data.frame(SB=numeric(N_duration+1))
-expec_cash_flow_Insurance_1$SB<-diag(ssh[,(u/h):N_duration+1,1,1])*Benefits$Insurance_1[1]*exp(-results)
-expec_cash_flow_Insurance_1$JC<-diag(ssh[,(u/h):N_duration+1,1,2])*Benefits$Insurance_1[2]*exp(-results)
-expec_cash_flow_Insurance_1$RS<-diag(ssh[,(u/h):N_duration+1,1,3])*Benefits$Insurance_1[3]*exp(-results)
-expec_cash_flow_Insurance_1$UB<-diag(ssh[,(u/h):N_duration+1,1,4])*Benefits$Insurance_1[4]*exp(-results)
-expec_cash_flow_Insurance_1$FJ<-diag(ssh[,(u/h):N_duration+1,1,5])*Benefits$Insurance_1[5]*exp(-results)
-expec_cash_flow_Insurance_1$DP<-diag(ssh[,(u/h):N_duration+1,1,6])*Benefits$Insurance_1[6]*exp(-results)
+expec_cash_flow_Insurance_1$SB<-diag(ssh[,(u/h):N_duration+1,2,1])*Benefits$Insurance_1[1]*exp(-results)
+expec_cash_flow_Insurance_1$JC<-diag(ssh[,(u/h):N_duration+1,2,2])*Benefits$Insurance_1[2]*exp(-results)
+expec_cash_flow_Insurance_1$RS<-diag(ssh[,(u/h):N_duration+1,2,3])*Benefits$Insurance_1[3]*exp(-results)
+expec_cash_flow_Insurance_1$UB<-diag(ssh[,(u/h):N_duration+1,2,4])*Benefits$Insurance_1[4]*exp(-results)
+expec_cash_flow_Insurance_1$FJ<-diag(ssh[,(u/h):N_duration+1,2,5])*Benefits$Insurance_1[5]*exp(-results)
+expec_cash_flow_Insurance_1$DP<-diag(ssh[,(u/h):N_duration+1,2,6])*Benefits$Insurance_1[6]*exp(-results)
 expec_cash_flow_Insurance_1$total<-expec_cash_flow_Insurance_1$SB+expec_cash_flow_Insurance_1$JC+expec_cash_flow_Insurance_1$RS+expec_cash_flow_Insurance_1$UB+expec_cash_flow_Insurance_1$FJ+expec_cash_flow_Insurance_1$DP
 
 expec_cash_flow_Public_1<-data.frame(SB=numeric(N_duration+1))
@@ -26,12 +26,12 @@ expec_cash_flow_Public_1$DP<-diag(ssh[,(u/h):N_duration+1,1,6])*Benefits$Public_
 expec_cash_flow_Public_1$total<-expec_cash_flow_Public_1$SB+expec_cash_flow_Public_1$JC+expec_cash_flow_Public_1$RS+expec_cash_flow_Public_1$UB+expec_cash_flow_Public_1$FJ+expec_cash_flow_Public_1$DP
 
 expec_cash_flow_Insurance_2<-data.frame(SB=numeric(N_duration+1))
-expec_cash_flow_Insurance_2$SB<-diag(ssh[,(u/h):N_duration+1,1,1])*Benefits$Insurance_2[1]*exp(-results)
-expec_cash_flow_Insurance_2$JC<-diag(ssh[,(u/h):N_duration+1,1,2])*Benefits$Insurance_2[2]*exp(-results)
-expec_cash_flow_Insurance_2$RS<-diag(ssh[,(u/h):N_duration+1,1,3])*Benefits$Insurance_2[3]*exp(-results)
-expec_cash_flow_Insurance_2$UB<-diag(ssh[,(u/h):N_duration+1,1,4])*Benefits$Insurance_2[4]*exp(-results)
-expec_cash_flow_Insurance_2$FJ<-diag(ssh[,(u/h):N_duration+1,1,5])*Benefits$Insurance_2[5]*exp(-results)
-expec_cash_flow_Insurance_2$DP<-diag(ssh[,(u/h):N_duration+1,1,6])*Benefits$Insurance_2[6]*exp(-results)
+expec_cash_flow_Insurance_2$SB<-diag(ssh[,(u/h):N_duration+1,2,1])*Benefits$Insurance_2[1]*exp(-results)
+expec_cash_flow_Insurance_2$JC<-diag(ssh[,(u/h):N_duration+1,2,2])*Benefits$Insurance_2[2]*exp(-results)
+expec_cash_flow_Insurance_2$RS<-diag(ssh[,(u/h):N_duration+1,2,3])*Benefits$Insurance_2[3]*exp(-results)
+expec_cash_flow_Insurance_2$UB<-diag(ssh[,(u/h):N_duration+1,2,4])*Benefits$Insurance_2[4]*exp(-results)
+expec_cash_flow_Insurance_2$FJ<-diag(ssh[,(u/h):N_duration+1,2,5])*Benefits$Insurance_2[5]*exp(-results)
+expec_cash_flow_Insurance_2$DP<-diag(ssh[,(u/h):N_duration+1,2,6])*Benefits$Insurance_2[6]*exp(-results)
 expec_cash_flow_Insurance_2$total<-expec_cash_flow_Insurance_2$SB+expec_cash_flow_Insurance_2$JC+expec_cash_flow_Insurance_2$RS+expec_cash_flow_Insurance_2$UB+expec_cash_flow_Insurance_2$FJ+expec_cash_flow_Insurance_2$DP
 
 expec_cash_flow_Public_2<-data.frame(SB=numeric(N_duration+1))
