@@ -2,14 +2,26 @@
 ##                 Priser                   ##
 ##############################################
 
-t_0 <- 50
+t_0 <- 40
 t_slut <- 67
 h <- 1/12  # En måned som trinlængde
 w <- 0 #start varrighed
 eps <- 1 #dækningsperioden
 
 
-mu_12 <-function(t,z){0.0009687435*(t>67) +(exp(72.53851-10.66927*t+0.53371*t^{2}-0.012798*t^3+1.4922*10^{-4}*t^{4}-6.8007*10^{-7}*t^5))*(t<=67)}
+#------------- Intensiteter ------------------
+library("readxl")
+levetidbench <- read_excel("Benchmark_doedelighed2022_010224.xlsx")
+mu_13 <- function (t){levetidbench$Kvinder[t+1]}
+
+mu_12 <-function(t,z){0.01034251*(t>67)+exp(-22.93861+0.8512794751*t+0.007038620628*t^2-0.001014142721*t^3+1.910555732* 10^(-5)*t^4-1.112835873* 10^(-7)*t^5)*(t<=67)}
+
+mu_12_m <-function(t,z){0.0009687435*(t>67) +(exp(72.53851-10.66927*t+0.53371*t^{2}-0.012798*t^3+1.4922*10^{-4}*t^{4}-6.8007*10^{-7}*t^5))*(t<=67)}
+
+
+plot(mu_13,xlim=c(30,60))
+plot(mu_12,xlim=c(20,67))
+plot(mu_12_m,xlim=c(20,67))
 
 #tjek lige om det er for mænd
 
@@ -18,13 +30,15 @@ reserve_DI_simple <- sum(integrand[1:12])
 
 #---------------- mu_ACDI --------------------
 
+t_values <- seq(t_0, t_0+eps, by = h)
 
 mu_ACDI_vector <- sapply(t_values, mu_12)
+#mu_ACDE_vector <- sapply(t_values, mu_13)
 
 
 #------------- exp(-int mu)-------------------
 int <- function(t) {
-  mu_12(t)+mu_23(t,0)
+  mu_12(t)+mu_13(t)
 }
 
 # Opret en sekvens af t og z værdier med trin h = 1/12 (månedlige trin)
@@ -51,7 +65,6 @@ for (i in 2:length(t_values)) {
 
 p_12_vektor <- exp(-results)
 
-
 #------------- exp(-int r)-------------------
 library("readxl")
 rentekurve<-read_excel("Rentekurven_020124.xlsx")
@@ -76,7 +89,7 @@ discount_vector <- sapply(s_sequence, discount)
 
 
 #------------- Priser -------------------
-sum(discount_vector*p_12_vektor*reserve_DI_simple*mu_ACDI_vector)
+sum(discount_vector*p_12_vektor*reserve_DI*mu_ACDI_vector)
 
 
 
