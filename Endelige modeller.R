@@ -536,11 +536,11 @@ mu_int[,(5*12+1):dim(mu_int)[2],4,5]<-LYFJ_OE_endpoint
 
 ################ LYFP ################
 LYFP <- read_csv("Data/LY/LYFP.csv")
-LYFP<-LYFP[-c(1,29,30,31,32),] #Fjerner første alders interval, samt aldre over 67 (har 0 occurences)
 
 #OE-raten for alder 17-40:
 LYFP_filtered2 <- LYFP[LYFP$age == 17, ]
 LYFP_OE_17 <- sum(LYFP_filtered2$O)/sum(LYFP_filtered2$E)
+LYFP<-LYFP[-c(1,29,30,31,32),] #Fjerner første alders interval, samt aldre over 67 (har 0 occurences)
 
 #Centrerer age
 unique_ages_LYFP <- unique(LYFP$age)
