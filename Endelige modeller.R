@@ -16,8 +16,8 @@ new_data <- data.frame(
   E=1
 )
 
-setwd("/Users/louisepihl/Documents/Speciale")
-#setwd("/Users/frejalundfredholm/Desktop/Speciale")
+#setwd("/Users/louisepihl/Documents/Speciale")
+setwd("/Users/frejalundfredholm/Desktop/Speciale")
 
 ######################################
 ####         SYGEDAGPENGE         ####
@@ -49,7 +49,7 @@ SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), off
 
 predictions <- predict(SDJA_final, newdata = new_data, type = "response")
 mu_int[,,1,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],1,2]<-SDJA_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],1,2]<-SDJA_OE_endpoint
 
 ################ SDRF ################
 SDRF <- read_csv("Data/SD/SDRF.csv")
@@ -77,7 +77,7 @@ SDRF_final <- glm(O~poly(age,3)+poly(duration,3)+offset(log(E)),family = poisson
 
 predictions <- predict(SDRF_final, newdata = new_data, type = "response")
 mu_int[,,1,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],1,3]<-SDRF_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],1,3]<-SDRF_OE_endpoint
 
 ################ SDLY ################
 SDLY <- read_csv("Data/SD/SDLY.csv")
@@ -105,7 +105,7 @@ SDLY_final <- glm(O~poly(age,2)+I(age>=60)+poly(duration,2)+offset(log(E)),famil
 
 predictions <- predict(SDLY_final, newdata = new_data, type = "response")
 mu_int[,,1,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],1,4]<-SDLY_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],1,4]<-SDLY_OE_endpoint
 
 ################ SDFJ ################
 SDFJ <- read_csv("Data/SD/SDFJ.csv")
@@ -127,7 +127,7 @@ SDFJ_final<-glm(O~I(age>=60)+poly(age,2)+poly(duration,2)+offset(log(E)),family 
 
 predictions <- predict(SDFJ_final, newdata = new_data, type = "response")
 mu_int[,,1,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],1,5]<-SDFJ_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],1,5]<-SDFJ_OE_endpoint
 
 ################ SDFP ################
 SDFP <- read_csv("Data/SD/SDFP.csv")
@@ -137,8 +137,8 @@ SDFP_filtered <- SDFP[SDFP$duration == 3, ]
 SDFP_OE_endpoint<-sum(SDFP_filtered$O)/sum(SDFP_filtered$E)
 
 #O/E rate for alder 18-40
-SDFP_filtered2 <- SDFJ[SDFJ$age == 18, ]
-SDFP_OE_18<-sum(SDFJ_filtered2$O)/sum(SDFJ_filtered2$E)
+SDFP_filtered2 <- SDFP[SDFP$age == 17, ]
+SDFP_OE_18<-sum(SDFP_filtered2$O)/sum(SDFP_filtered2$E)
 
 midpointsage<-c((unique(SDFP$age)[-1]+unique(SDFP$age)[-length(unique(SDFP$age))])/2,(unique(SDFP$age)[length(unique(SDFP$age))]+67)/2)
 SDFP$age<-midpointsage[match(SDFP$age, unique(SDFP$age))]
@@ -156,8 +156,8 @@ SDFP_final<-glm(O~ns(age,3)+poly(duration,3)+offset(log(E)),family = poisson(lin
 
 predictions <- predict(SDFP_final, newdata = new_data, type = "response")
 mu_int[,,1,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],1,6]<-SDFP_OE_endpoint
-mu_int[1:((40-18)*12),,1,6]<-SDFP_OE_18
+mu_int[,(3/h+1):dim(mu_int)[2],1,6]<-SDFP_OE_endpoint
+mu_int[1:((40-18)/h),,1,6]<-SDFP_OE_18
 
 ######################################
 ####         JOBAFKLARING         ####
@@ -183,7 +183,7 @@ JAFJ_final<-glm(O~poly(age,2)+I(age>=60)+poly(duration,3)+offset(log(E)),family 
 
 predictions <- predict(SDJA_final, newdata = new_data, type = "response")
 mu_int[,,2,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],2,5]<-JAFJ_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],2,5]<-JAFJ_OE_endpoint
 
 ################ JARF ################
 JARF <- read_csv("Data/JA/JARF.csv")
@@ -211,7 +211,7 @@ JARF_final <- glm(O~poly(age,4)+ns(duration,3)+offset(log(E)),family = poisson(l
 
 predictions <- predict(JAFJ_final, newdata = new_data, type = "response")
 mu_int[,,2,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(4*12+1):dim(mu_int)[2],2,3]<-JARF_OE_endpoint
+mu_int[,(4/h+1):dim(mu_int)[2],2,3]<-JARF_OE_endpoint
 
 ################ JALY ################
 JALY <- read_csv("Data/JA/JALY.csv")
@@ -246,8 +246,8 @@ JALY_final <- glm(O ~ poly(age,2) + poly(duration, 3):I(duration <= 2), offset =
 
 predictions <- predict(JALY_final, newdata = new_data, type = "response")
 mu_int[,,2,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(4.5*12+1):dim(mu_int)[2],2,4]<-JALY_OE_endpoint_dur
-mu_int[((60-18)*12+1):dim(mu_int)[1],,2,4]<-JALY_OE_endpoint_age
+mu_int[,(4.5/h+1):dim(mu_int)[2],2,4]<-JALY_OE_endpoint_dur
+mu_int[((60-18)/h+1):dim(mu_int)[1],,2,4]<-JALY_OE_endpoint_age
 
 ################ JAFP ################
 JAFP <- read_csv("Data/JA/JAFP.csv")
@@ -282,8 +282,8 @@ JAFP_final <- glm(O ~ poly(age,2) + poly(duration, 2) + I(duration >= 2)*I(age >
 
 predictions <- predict(JAFP_final, newdata = new_data, type = "response")
 mu_int[,,2,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],2,6]<-JAFP_OE_endpoint
-mu_int[1:((40-18)*12),,2,6]<-JAFP_OE_age_17
+mu_int[,(3/h+1):dim(mu_int)[2],2,6]<-JAFP_OE_endpoint
+mu_int[1:((40-18)/h),,2,6]<-JAFP_OE_age_17
 
 ################ JASD ################
 JASD <- read_csv("Data/JA/JASD.csv")
@@ -311,7 +311,7 @@ JASD_final <- glm(O ~ poly(age, 3) + duration, offset = log(E), family = poisson
 
 predictions <- predict(JASD_final, newdata = new_data, type = "response")
 mu_int[,,2,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(0.75*12+1):dim(mu_int)[2],2,1]<-JASD_OE_endpoint
+mu_int[,(0.75/h+1):dim(mu_int)[2],2,1]<-JASD_OE_endpoint
 
 ######################################
 ####        RESSOURCEFORLØB       ####
@@ -343,7 +343,7 @@ RFLY_final <- glm(O ~ ns(duration, df=2), offset = log(E), family = poisson, dat
 
 predictions <- predict(RFLY_final, newdata = new_data, type = "response")
 mu_int[,,3,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],3,4]<-RFLY_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],3,4]<-RFLY_OE_endpoint
 
 ################ RFFJ ################
 RFFJ <- read_csv("Data/RF/RFFJ.csv")
@@ -371,7 +371,7 @@ RFFJ_final <- glm(O ~ poly(age, 2) + poly(duration, 2) + I(age <= 40), offset = 
 
 predictions <- predict(RFFJ_final, newdata = new_data, type = "response")
 mu_int[,,3,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],3,5]<-RFFJ_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],3,5]<-RFFJ_OE_endpoint
 
 ################ RFFP ################
 RFFP <- read_csv("Data/RF/RFFP.csv")
@@ -403,8 +403,8 @@ RFFP_final <- glm(O ~ poly(age, 3) + poly(duration, 2) + I(duration <= 3), offse
 
 predictions <- predict(RFFP_final, newdata = new_data, type = "response")
 mu_int[,,3,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3.5*12+1):dim(mu_int)[2],3,6]<-RFFP_OE_endpoint
-mu_int[1:((40-18)*12),,3,6]<-RFFP_OE_17
+mu_int[,(3.5/h+1):dim(mu_int)[2],3,6]<-RFFP_OE_endpoint
+mu_int[1:((40-18)/h),,3,6]<-RFFP_OE_17
 
 ################ RFSD ################
 RFSD <- read_csv("Data/RF/RFSD.csv")
@@ -425,7 +425,7 @@ RFSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log")
 
 predictions <- predict(RFSD_final, newdata = new_data, type = "response")
 mu_int[,,3,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],3,1]<-RFSD_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],3,1]<-RFSD_OE_endpoint
 
 ################ RFJA ################
 RFJA <- read_csv("Data/RF/RFJA.csv")
@@ -446,7 +446,7 @@ RFJA_final <- glm(O ~ duration + offset(log(E)),family = poisson(link="log"),dat
 
 predictions <- predict(RFJA_final, newdata = new_data, type = "response")
 mu_int[,,3,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(1.5*12+1):dim(mu_int)[2],3,2]<-RFJA_OE_endpoint
+mu_int[,(1.5/h+1):dim(mu_int)[2],3,2]<-RFJA_OE_endpoint
 
 ######################################
 ####        LEDIGHEDSYDELSE       ####
@@ -471,7 +471,7 @@ LYSD_final <- glm(O ~ offset(log(E)), family = poisson, data = LYSD)
 
 predictions <- predict(LYSD_final, newdata = new_data, type = "response")
 mu_int[,,4,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(0.5*12+1):dim(mu_int)[2],4,1]<-LYSD_OE_endpoint
+mu_int[,(0.5/h+1):dim(mu_int)[2],4,1]<-LYSD_OE_endpoint
 
 ################ LYJA ################
 LYJA  <- read_csv("Data/LY/LYJA.csv")
@@ -504,7 +504,7 @@ LYRF_final <- glm(O ~ poly(duration,2)+offset(log(E)), family = poisson, data = 
 
 predictions <- predict(LYRF_final, newdata = new_data, type = "response")
 mu_int[,,4,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(4*12+1):dim(mu_int)[2],4,3]<-LYRF_OE_endpoint
+mu_int[,(4/h+1):dim(mu_int)[2],4,3]<-LYRF_OE_endpoint
 
 ################ LYFJ ################
 LYFJ <- read_csv("Data/LY/LYFJ.csv")
@@ -532,7 +532,7 @@ LYFJ_final <-  glm(O ~ poly(age,4) + ns(duration, df = 5), offset = log(E), fami
 
 predictions <- predict(LYFJ_final, newdata = new_data, type = "response")
 mu_int[,,4,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(5*12+1):dim(mu_int)[2],4,5]<-LYFJ_OE_endpoint
+mu_int[,(5/h+1):dim(mu_int)[2],4,5]<-LYFJ_OE_endpoint
 
 ################ LYFP ################
 LYFP <- read_csv("Data/LY/LYFP.csv")
@@ -554,7 +554,7 @@ LYFP_final<-glm(O ~ I(age<55) + poly(I(age*(age >= 55)), 3)+offset(log(E)),famil
 
 predictions <- predict(LYFP_final, newdata = new_data, type = "response")
 mu_int[,,4,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[1:((40-18)*12),,4,6]<-LYFP_OE_17
+mu_int[1:((40-18)/h),,4,6]<-LYFP_OE_17
 
 ######################################
 ####           FLEKSJOB           ####
@@ -579,7 +579,7 @@ FJSD_final <- glm(O~poly(duration,2)+offset(log(E)),family = poisson(link="log")
 
 predictions <- predict(FJSD_final, newdata = new_data, type = "response")
 mu_int[,,5,1]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(5*12+1):dim(mu_int)[2],5,1]<-FJSD_OE_endpoint
+mu_int[,(5/h+1):dim(mu_int)[2],5,1]<-FJSD_OE_endpoint
 
 ################ FJFP ################
 FJFP <- read_csv("Data/FJ/FJFP.csv")
@@ -614,8 +614,8 @@ FJFP_final <- glm(O~poly(age,3)+duration+offset(log(E)),family = poisson(link="l
 
 predictions <- predict(FJFP_final, newdata = new_data, type = "response")
 mu_int[,,5,6]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],5,6]<-FJFP_OE_endpoint
-mu_int[1:((40-18)*12),,5,6]<-FJFP_OE_18
+mu_int[,(3/h+1):dim(mu_int)[2],5,6]<-FJFP_OE_endpoint
+mu_int[1:((40-18)/h),,5,6]<-FJFP_OE_18
 
 ################ FJRF ################
 FJRF <- read_csv("Data/FJ/FJRF.csv")
@@ -644,7 +644,7 @@ FJJA_final <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
 
 predictions <- predict(FJFP_final, newdata = new_data, type = "response")
 mu_int[,,5,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(1.5*12+1):dim(mu_int)[2],5,2]<-FJJA_OE_endpoint
+mu_int[,(1.5/h+1):dim(mu_int)[2],5,2]<-FJJA_OE_endpoint
 
 ################ FJLY ################
 FJLY <- read_csv("Data/FJ/FJLY.csv")
@@ -672,7 +672,7 @@ FJLY_final<-glm(O~poly(age,4)+poly(duration,2)+I(duration>=2/12)+offset(log(E)),
 
 predictions <- predict(FJLY_final, newdata = new_data, type = "response")
 mu_int[,,5,4]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],5,4]<-FJLY_OE_endpoint
+mu_int[,(3/h+1):dim(mu_int)[2],5,4]<-FJLY_OE_endpoint
 
 ######################################
 ####         FØRTIDSPENSION       ####
@@ -704,9 +704,7 @@ FPFJ_final<-glm(O~poly(age,4)+poly(duration,2)+offset(log(E)),family = poisson(l
 
 predictions <- predict(FPFJ_final, newdata = new_data, type = "response")
 mu_int[,,6,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
-mu_int[,(3*12+1):dim(mu_int)[2],6,5]<-FPFJ_OE_endpoint
-
-
+mu_int[,(3/h+1):dim(mu_int)[2],6,5]<-FPFJ_OE_endpoint
 
 
 
