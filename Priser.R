@@ -91,5 +91,6 @@ discount_vector <- sapply(s_sequence, discount)
 #------------- Priser -------------------
 sum(discount_vector*p_12_vektor*reserve_DI*mu_ACDI_vector)
 
+sum(discount_vector[1:12]*p_12_vektor[1:12]*sum(integrand2)*mu_ACDI_vector[1:12]/12)
 
-
+sum(integrand2)*mu_12(40,0)
