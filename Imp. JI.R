@@ -21,9 +21,19 @@ mean_of_mu <- function(row) {
 #Load array with intensities and define mu and mu_p functions
 #setwd("/Users/louisepihl/Documents/Speciale2")
 #setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
+<<<<<<< HEAD
 #mu_int <- readRDS("mu_array.rds")
 #mu_int_stress1<-mu_int
 #mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
+=======
+mu_int <- readRDS("mu_array.rds")
+#mu_int_stress1<-mu_int
+#mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
+#mu_int_stress1[,,,6]<-mu_int[,,,6]*0.8
+#mu_int_stress1[,,2,4]<-mu_int[,,2,4]*1.15
+#mu_int_stress1[,,2,5]<-mu_int[,,2,5]*1.15
+
+>>>>>>> 2126ec2365071575ca3423d4cae33001f8d80b7c
 
 mu<-function(i,j,t,u){
   mu_int[(t-18)/h+1,u/h+1,i,j] #Change here in stress scenarios
@@ -54,7 +64,7 @@ mu_p<-function(i,t,u){
 #First transition probabilities within J^I is calculated
 
 #Define grid
-t_0<-40
+t_0<-30
 u<-0
 slut<-67
 #h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
@@ -120,30 +130,32 @@ for (j in 1:6){
   diag<-diag+diag(ssh[,(u/h):N_duration+1,1,j])
 }
 diag
-
-#Plot transition probabilities with maximum duration
-for (j in 1:6){
-  data <- data.frame(
-    time = seq(t_0,slut,h),
-    p_1j = diag(ssh[,(u/h):N_duration+1,1,j])
-  )
-  p<-ggplot(data, aes(x = time, y = p_1j)) +
-    geom_line() +              # Add a line plot
-    #geom_point() +             # Add points to the plot
-    labs(x = "Time", y = paste("p_1",j))
-  print(p)
-  #plot(diag(ssh[,(u/h):N_duration+1,1,j]), type="l",main=j)
-}
-
-#Probability of staying in DI is calculated by a simple integral
-
+#
+##Plot transition probabilities with maximum duration
+#for (j in 1:6){
+#  data <- data.frame(
+#    time = seq(t_0,slut,h),
+#    p_1j = diag(ssh[,(u/h):N_duration+1,1,j])
+#  )
+#  p<-ggplot(data, aes(x = time, y = p_1j)) +
+#    geom_line() +              # Add a line plot
+#    #geom_point() +             # Add points to the plot
+#    labs(x = "Time", y = paste("p_1",j))
+#  print(p)
+#  #plot(diag(ssh[,(u/h):N_duration+1,1,j]), type="l",main=j)
+#}
+#
+##Probability of staying in DI is calculated by a simple integral
+#
 mu_21 <- function(t,z){exp(0.5640359-0.1035612*t)*(z>5)+exp(0.4279071-0.0314083*t-0.4581508*z)*(5>=z&z>2)+exp(1.517019-0.0314083*t-1.0027067*z)*(2>=z&z>0.2291667)+exp(0.8694878-0.0314083*t+1.8228841*z)*(0.2291667>=z)}
 mu_23 <- function(t,z){exp(-8.2226723+0.0696388*t)*(z>5)+(exp(-7.0243455+0.0685318*t-0.2207053*z))*(z<=5)}
+
+#mu_23_stress<-function(t,z){mu_23(t,z)*1.15}
 
 integrand <- function(t, z) {
   mu_21(t, z) + mu_23(t, z)
 }
-
+#
 # Opret en sekvens af t og z værdier med trin h = 1/12 (månedlige trin)
 t_values <- seq(t_0, slut, by = h)
 z_values <- seq(u, u+slut-t_0, by = h)
