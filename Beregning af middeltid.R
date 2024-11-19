@@ -9,6 +9,7 @@ library(hexbin)
 
 #Regner reserve størrelse
 
+
 #Definerer funktioner først
 predmodel<-function(x,u){
   new_data <- data.frame(
@@ -39,6 +40,7 @@ trapezoidal_integration_cum <- function(x, y) {
   }
   return(cumulative_sums)
 }
+
 trapezoidal_integration <- function(x, y) {
   # Number of intervals
   n <- length(x) - 1

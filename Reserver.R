@@ -52,7 +52,7 @@ expec_cash_flow_Public_2$total<-expec_cash_flow_Public_2$SB+expec_cash_flow_Publ
 
 #Plots 
 data <- data.frame(
-  time = seq(40,67,1/12),
+  time = seq(40,67,h),
   cf_Insurance1 = expec_cash_flow_Insurance_1$total,
   cf_Insurance2 = expec_cash_flow_Insurance_2$total
 )
@@ -103,21 +103,19 @@ s_sequence <- seq(0, t_slut - t_0, h)
 discount_vector <- sapply(s_sequence, discount)
 
 
-<<<<<<< HEAD
-integrand<-expec_cash_flow_Insurance_1$total*discount_vector
-=======
-integrand1<-expec_cash_flow_Insurance_1$total*discount_vector
-sum(integrand1[-length(integrand1)])
-integrand2<-expec_cash_flow_Insurance_2$total*discount_vector
-sum(integrand2[-length(integrand2)])
 
->>>>>>> 8e4e5b74bef18a6f78e5ccd00ee1192fb88b3176
-integrand_func<-function(t){integrand[round(t)+1]}
-integrate(integrand_func,0,t_slut*12-t_0*12,subdivisions = 1000)
-sum(integrand[-length(integrand)])
+integrand1<-expec_cash_flow_Insurance_1$total*discount_vector
+sum(integrand1[-length(integrand1)])*12/18
+integrand2<-expec_cash_flow_Insurance_2$total*discount_vector
+sum(integrand2[-length(integrand2)])*12/18
+
+
+#integrand_func<-function(t){integrand[round(t)+1]}
+#integrate(integrand_func,0,t_slut*12-t_0*12,subdivisions = 1000)
+#sum(integrand[-length(integrand)])
 
 #Produkt 2
-discount <- function(s) {
+discount2 <- function(s) {
   integral <- integrate(function(tau) r(tau), lower = t_0, upper = s + t_0)$value
   return(exp(-integral))
 }
@@ -126,26 +124,26 @@ discount <- function(s) {
 s_sequence <- seq(0, t_slut - t_0, h)
 
 # Anvend discount-funktionen på hver værdi i s_sequence
-discount_vector <- sapply(s_sequence, discount)
+discount_vector2 <- sapply(s_sequence, discount2)
 
-integrand<-expec_cash_flow_Insurance_2$total*discount_vector
-integrand_func<-function(t){integrand[round(t/h)+1]}
-integrate(integrand_func,0,t_slut-t_0,subdivisions = 1000)
+integrand2<-expec_cash_flow_Insurance_2$total*discount_vector
+integrand_func2<-function(t){integrand2[round(t/h)+1]}
+#integrate(integrand_func2,0,t_slut-t_0,subdivisions = 1000)
 
 
 
 #------------------- IGEN med konstant r til sammenligning ---------------------
-r_k<- 0.01
-discount<-function(t){exp(-t*r_k)}
+#r_k<- 0.01
+#discount<-function(t){exp(-t*r_k)}
 
-integrand<-expec_cash_flow_Insurance_1$total*discount(seq(0,27,h))
-integrand_func<-function(t){integrand[round(t/h)+1]}
-integrate(integrand_func,0,27,subdivisions = 1000)
+#integrand<-expec_cash_flow_Insurance_1$total*discount(seq(0,27,h))
+#integrand_func<-function(t){integrand[round(t/h)+1]}
+#integrate(integrand_func,0,27,subdivisions = 1000)
 
 
-integrand<-expec_cash_flow_Insurance_2$total*discount(seq(0,27,h))
-integrand_func<-function(t){integrand[round(t/h)+1]}
-integrate(integrand_func,0,27,subdivisions = 1000)
+#integrand<-expec_cash_flow_Insurance_2$total*discount(seq(0,27,h))
+#integrand_func<-function(t){integrand[round(t/h)+1]}
+#integrate(integrand_func,0,27,subdivisions = 1000)
 
 
 

@@ -21,12 +21,12 @@ mean_of_mu <- function(row) {
 #Load array with intensities and define mu and mu_p functions
 #setwd("/Users/louisepihl/Documents/Speciale2")
 #setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
-mu_int <- readRDS("mu_array.rds")
-mu_int_stress1<-mu_int
-mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
+#mu_int <- readRDS("mu_array.rds")
+#mu_int_stress1<-mu_int
+#mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
 
 mu<-function(i,j,t,u){
-  mu_int_stress1[(t-18)/h+1,u/h+1,i,j] #Change here in stress scenarios
+  mu_int[(t-18)/h+1,u/h+1,i,j] #Change here in stress scenarios
 }
 
 #Define new mu_p without death and reactivation
@@ -34,7 +34,7 @@ t_0<-18
 t_slut<-67
 u_0<-0
 u_slut<-t_slut-t_0
-h<-1/12
+#h<-1/12
 N_time<-round((t_slut-t_0)/h)
 N_duration<-round((u_slut-u_0)/h)
 mu_p_int<-array(0,c(N_time+1,N_duration+1,6)) 
@@ -42,7 +42,7 @@ for (i in 1:6){
   #mu_p_int[,,i]<-mu_p_int[,,i]+mu_int[,,i,7]+mu_int[,,i,8]
   for (j in 1:6){
     if (j!=i){
-      mu_p_int[,,i]<-mu_p_int[,,i]+mu_int_stress1[,,i,j] #Change here in stress scenarios
+      mu_p_int[,,i]<-mu_p_int[,,i]+mu_int[,,i,j] #Change here in stress scenarios
     }
   }
 }
@@ -57,7 +57,7 @@ mu_p<-function(i,t,u){
 t_0<-40
 u<-0
 slut<-67
-h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
+#h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
 ssh<-array(NA,c(N_time+1,N_duration+1,6,8)) #Time, duration, from state, end state
@@ -211,3 +211,5 @@ p<-ggplot(data, aes(x = time, y = p_DIDI)) +
   #geom_point() +             # Add points to the plot
   labs(x = "Time", y = paste("p_DIDI"))
 print(p)
+
+
