@@ -57,6 +57,7 @@ data <- data.frame(
     geom_line() +              # Add a line plot
     labs(x = "Time", y = "Expected cash flow")
 
+
 #Starting in DP
 expec_cash_flow_Insurance_1<-data.frame(SB=numeric(N_duration+1))
 expec_cash_flow_Insurance_1$SB<-diag(ssh[,(u/h):N_duration+1,6,1])*Benefits$Insurance_1[1]*exp(-results)
