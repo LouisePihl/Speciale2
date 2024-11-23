@@ -47,9 +47,10 @@ SDJA<-SDJA[SDJA$duration!=unique(SDJA$duration)[length(unique(SDJA$duration))],]
 SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 #SDJA_final_raw <- glm(O ~ age + I(age^2) + duration + I(duration^2) + I(duration^3)  + I(duration^4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 
-predictions <- predict(SDJA_final, newdata = new_data, type = "response")
+predictions <- predict(SDJA_final , newdata = new_data, type = "response")
 mu_int[,,1,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 mu_int[,(3/h+1):dim(mu_int)[2],1,2]<-SDJA_OE_endpoint
+
 
 ################ SDRF ################
 SDRF <- read_csv("Data/SD/SDRF.csv")
@@ -181,7 +182,7 @@ JAFJ<-JAFJ[JAFJ$duration!=unique(JAFJ$duration)[length(unique(JAFJ$duration))],]
 JAFJ_final<-glm(O~poly(age,2)+I(age>=60)+poly(duration,3)+offset(log(E)),family = poisson(link="log"),data=JAFJ)
 #JAFJ_final_raw <- glm(O ~ age + I(age^2) + I(age>=60) + duration + I(duration^2) + I(duration^3), offset = log(E), family = poisson, data = JAFJ)
 
-predictions <- predict(SDJA_final, newdata = new_data, type = "response")
+predictions <- predict(JAFJ_final, newdata = new_data, type = "response")
 mu_int[,,2,5]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 mu_int[,(3/h+1):dim(mu_int)[2],2,5]<-JAFJ_OE_endpoint
 
