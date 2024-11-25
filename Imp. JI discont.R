@@ -66,18 +66,20 @@ N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
 ssh<-array(NA,c(N_time+1,N_duration+1,6,8)) #Time, duration, from state, end state
 
-Vdis_u<-c(2/12,0.5,0.75,1.5,2,3,4,5)
-Vdis_t<-c(40,55,60)
-Vdis<-sort(c(Vdis_u-u,Vdis_t-t_0))
-Vdis<-Vdis[Vdis>=0]
+Vdis_u<-c(2/12,0.5,0.75,1.5,2,3,4,5)-1/12
+Vdis_u<-sort(Vdis_u)
+Vdis_t<-c(40,55,60)-1/12
+Vdis_t<-sort(Vdis_t-t_0)
+Vdis_t<-Vdis_t[Vdis_t>=0]
 step_seq<-seq(0,slut-t_0,h)
-dis_step<-findInterval(Vdis,step_seq)
+dis_step_t<-findInterval(Vdis_t,step_seq)
+dis_step_u<-findInterval(Vdis_u,step_seq)
 
 mean_of_mu <- function(row,n) {
   if (length(row)==1){ 
     return(row)
   }
-  else if (n%in%dis_step){
+  else if (n%in%dis_step_t){
     return(row[-length(row)])
   }
   else{
@@ -89,6 +91,7 @@ mean_of_mu <- function(row,n) {
     for (i in 2:length(row)) {
       summed_row[i] <- (row[i] + row[i - 1])/2
     }
+    summed_row[dis_step_u[dis_step_u<=length(row)]]<-row[dis_step_u[dis_step_u<=length(row)]]
     # Return the last 3 entries of the summed row
     return(tail(summed_row, length(row)-1))
   }
