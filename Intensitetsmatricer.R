@@ -41,7 +41,7 @@ mu_int[,,7,8]<-mu_int[,,1,8]
 #Define mu_p by summing all intensities out of a state
 mu_p_int<-array(0,c(N_time+1,N_duration+1,6)) 
 for (i in 1:6){
-  mu_p_int[,,i]<-mu_p_int[,,i]+mu_int[,,i,7]+mu_int[,,i,8]
+  #mu_p_int[,,i]<-mu_p_int[,,i]#+mu_int[,,i,7]+mu_int[,,i,8]
   for (j in 1:6){
     if (j!=i){
       mu_p_int[,,i]<-mu_p_int[,,i]+mu_int[,,i,j]
@@ -50,8 +50,8 @@ for (i in 1:6){
 }
 
 #Save arrays with intensities - they will be loaded in "Implementering"
-setwd("/Users/louisepihl/Documents/Speciale2")
-#setwd("/Users/frejalundfredholm/Desktop/Speciale2")
+#setwd("/Users/louisepihl/Documents/Speciale2")
+setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
 saveRDS(mu_int, file = "mu_array.rds")
 saveRDS(mu_p_int, file = "mu_p_array.rds")
 

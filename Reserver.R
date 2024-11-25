@@ -58,7 +58,6 @@ sum(integrand1[-length(integrand1)])
 
 
 #Plots 
-<<<<<<< HEAD
 data <- data.frame(
   time = seq(40,67,h),
   cf_Insurance1 = expec_cash_flow_Insurance_1$total,
@@ -71,7 +70,7 @@ ggplot(data, aes(x = time, y = cf_Insurance1)) +
 ggplot(data, aes(x = time, y = cf_Insurance2)) +
   geom_line() +              # Add a line plot
   labs(x = "Time", y = "Expected cash flow")
-=======
+
 #data <- data.frame(
 #  time = seq(40,67,1/12),
 #  cf_Insurance1 = expec_cash_flow_Insurance_1$total,
@@ -84,12 +83,10 @@ ggplot(data, aes(x = time, y = cf_Insurance2)) +
 #ggplot(data, aes(x = time, y = cf_Insurance2)) +
 #  geom_line() +              # Add a line plot
 #  labs(x = "Time", y = "Expected cash flow")
->>>>>>> 2126ec2365071575ca3423d4cae33001f8d80b7c
-
 
 #-----------------------------------Reserve-------------------------------------
 library("readxl")
-#rentekurve<-read_excel("Rentekurven_020124.xlsx")
+rentekurve<-read_excel("Rentekurven_020124.xlsx")
 years <- 1:120  # Hvis din dataframe har data op til 10 år. Udvid hvis nødvendigt.
 rates <- as.numeric(rentekurve[1, 2:(length(years) + 1)])/100 # Ekstraher renteværdierne fra rækken og divider med 100 for at få det i procent
 
@@ -124,19 +121,15 @@ s_sequence <- seq(0, t_slut - t_0, h)
 # Anvend discount-funktionen på hver værdi i s_sequence
 discount_vector <- sapply(s_sequence, discount)
 
-
-<<<<<<< HEAD
-
 integrand1<-expec_cash_flow_Insurance_1$total*discount_vector
-sum(integrand1[-length(integrand1)])*12/18
+sum(integrand1[-length(integrand1)])
 integrand2<-expec_cash_flow_Insurance_2$total*discount_vector
-sum(integrand2[-length(integrand2)])*12/18
+sum(integrand2[-length(integrand2)])
 
 
 #integrand_func<-function(t){integrand[round(t)+1]}
 #integrate(integrand_func,0,t_slut*12-t_0*12,subdivisions = 1000)
 #sum(integrand[-length(integrand)])
-=======
 
 integrand<-expec_cash_flow_Insurance_1$total*discount_vector
 
@@ -153,7 +146,6 @@ Res2[12]<-sum(integrand2[-length(integrand2)])
 integrand_func<-function(t){integrand[round(t)+1]}
 integrate(integrand_func,0,t_slut*12-t_0*12,subdivisions = 1000)
 sum(integrand[-length(integrand)])
->>>>>>> 2126ec2365071575ca3423d4cae33001f8d80b7c
 
 #Produkt 2
 discount2 <- function(s) {

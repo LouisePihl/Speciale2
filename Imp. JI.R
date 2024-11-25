@@ -21,19 +21,12 @@ mean_of_mu <- function(row) {
 #Load array with intensities and define mu and mu_p functions
 #setwd("/Users/louisepihl/Documents/Speciale2")
 #setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
-<<<<<<< HEAD
-#mu_int <- readRDS("mu_array.rds")
-#mu_int_stress1<-mu_int
-#mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
-=======
 mu_int <- readRDS("mu_array.rds")
 #mu_int_stress1<-mu_int
 #mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
 #mu_int_stress1[,,,6]<-mu_int[,,,6]*0.8
 #mu_int_stress1[,,2,4]<-mu_int[,,2,4]*1.15
 #mu_int_stress1[,,2,5]<-mu_int[,,2,5]*1.15
-
->>>>>>> 2126ec2365071575ca3423d4cae33001f8d80b7c
 
 mu<-function(i,j,t,u){
   mu_int[(t-18)/h+1,u/h+1,i,j] #Change here in stress scenarios
@@ -44,7 +37,7 @@ t_0<-18
 t_slut<-67
 u_0<-0
 u_slut<-t_slut-t_0
-#h<-1/12
+h<-1/12
 N_time<-round((t_slut-t_0)/h)
 N_duration<-round((u_slut-u_0)/h)
 mu_p_int<-array(0,c(N_time+1,N_duration+1,6)) 
@@ -61,13 +54,15 @@ mu_p<-function(i,t,u){
   mu_p_int[(t-18)/h+1,u/h+1,i]
 }
 
+
+
 #First transition probabilities within J^I is calculated
 
 #Define grid
-t_0<-30
+t_0<-40
 u<-0
 slut<-67
-#h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
+h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
 ssh<-array(NA,c(N_time+1,N_duration+1,6,8)) #Time, duration, from state, end state
