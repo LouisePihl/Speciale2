@@ -20,7 +20,7 @@ mean_of_mu <- function(row) {
 
 #Load array with intensities and define mu and mu_p functions
 #setwd("/Users/louisepihl/Documents/Speciale2")
-#setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
+setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
 mu_int <- readRDS("mu_array.rds")
 #mu_int_stress1<-mu_int
 #mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
@@ -60,7 +60,7 @@ mu_p<-function(i,t,u){
 #Define grid
 t_0<-40
 u<-0
-slut<-67
+slut<-43
 h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
@@ -208,7 +208,7 @@ for (i in 2:length(t_values)) {
 }
 
 #exp(-results)
-
+setwd("/Users/frejalundfredholm/Desktop/Speciale")
 #setwd("/Users/louisepihl/Documents/Speciale")
 for (j in 1:6){
   data <- data.frame(
@@ -217,17 +217,18 @@ for (j in 1:6){
     #p_1j = diag(ssh[1:(12*3+1),1:(12*5+1),1,j])*exp(-results)[1:(12*3+1)]
   )
   p<-ggplot(data, aes(x = time, y = p_1j)) +
-    geom_line() +               # Add a line plot
+    geom_line(color = "steelblue", size = 1.1) +               # Add a line plot
     #geom_point() +             # Add points to the plot
+    theme_minimal() +
     theme(
-      axis.text.x = element_text(size = 10), 
-      axis.text.y = element_text(size = 10),
+      axis.text.x = element_text(size = 12), 
+      axis.text.y = element_text(size = 12),
       axis.title.x = element_text(size = 12),     
       axis.title.y = element_text(size = 12)
     )+
     labs(x = "Age", y = "Probability")
   print(p)
-  #ggsave(paste0("p1", j, "_4067.png"), plot = p, width = 6, height = 3, dpi = 300)
+  ggsave(paste0("p1", j, "_4067.png"), plot = p, width = 6, height = 3, dpi = 300)
   #plot(diag(ssh[,(u/h):N_duration+1,1,j]), type="l",main=j)
 }
 
@@ -245,7 +246,16 @@ data <- data.frame(
   p_DIDI = exp(-results)
 )
 p<-ggplot(data, aes(x = time, y = p_DIDI)) +
-  geom_line() +               # Add a line plot
+  geom_line(color = "steelblue", size = 1.1) +               # Add a line plot
   #geom_point() +             # Add points to the plot
-  labs(x = "Time", y = paste("p_DIDI"))
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12), 
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(size = 12),     
+    axis.title.y = element_text(size = 12)
+  )+
+  labs(x = "Age", y = "Probability")
 print(p)
+
+ggsave(paste0("p18", j, "_4067.png"), plot = p, width = 6, height = 3, dpi = 300)
