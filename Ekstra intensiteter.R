@@ -8,6 +8,9 @@ levetidbench <- read_excel("Benchmark_doedelighed2022_010224.xlsx")
 mu_13 <- function (t){
   levetidbench$Kvinder[t+1]
 }
+mu_12 <-function(t,z){0.01034251*(t>67)+exp(-22.93861+0.8512794751*t+0.007038620628*t^2-0.001014142721*t^3+1.910555732* 10^(-5)*t^4-1.112835873* 10^(-7)*t^5)*(t<=67)}
+
+
 
 z_seq<-seq(0,6,1/12)
 
@@ -36,7 +39,7 @@ lines(t_seq,mu_13(t_seq),col="green",lwd=2)
 legend("topleft", legend=c("mu_23 (duration=1)", "mu_13 (duration=1)"), col=c("blue", "green"), lwd=2,bty = "n")
 
 
-mu_12 <-function(t,z){0.0009687435*(t>67)+(exp(72.53851-10.66927*t+0.53371*t^{2}-0.012798*t^3+1.4922*10^{-4}*t^{4}-6.8007*10^{-7}*t^5))*(t<=67)}
+mu_12 <-function(t,z){0.01034251*(t>67)+exp(-22.93861+0.8512794751*t+0.007038620628*t^2-0.001014142721*t^3+1.910555732* 10^(-5)*t^4-1.112835873* 10^(-7)*t^5)*(t<=67)}
 
 
 
@@ -106,6 +109,65 @@ df_mu_23_t <- data.frame(
   mu_13 = mu_13(t_seq)
 )
 
+#-------------- Plot for mu_21 -------------
+
+# Plot for mu_12 over Duration (z)
+plot_mu_21_z <- ggplot(df_mu_21_z, aes(x = z, y = mu_21)) +
+  geom_line(color = "steelblue", size = 1.1) +
+  labs(x = "Duration", y = expression(mu[21])) +
+  theme_minimal()
+
+# Plot for mu_21 over Age (t)
+plot_mu_21_t <- ggplot(df_mu_21_t, aes(x = t, y = mu_21)) +
+  geom_line(color = "steelblue", size = 1.1) +
+  labs(x = "Age", y = expression(mu[21])) +
+  theme_minimal()
+
+# Plot for mu_21 over Duration (z)
+plot_mu_21_z <- ggplot(df_mu_21_z, aes(x = z, y = mu_21)) +
+  geom_line(color = "steelblue", size = 1.1) +  # Brug samme størrelse og farve som tidligere
+  labs(x = "Duration", y = expression(mu[21]), title = "") +  # Tilføj etiketter
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12), 
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(size = 12),     
+    axis.title.y = element_text(size = 12)
+  ) +
+  annotate("text", 
+           label = "", 
+           color = "steelblue")
+
+# Gem plottet som en billedfil
+ggsave("mu_21_z.png", plot = plot_mu_21_z, width = 6, height = 4, dpi = 300)
+
+# Plot for mu_12 over Age (t)
+plot_mu_21_t <- ggplot(df_mu_21_t, aes(x = t, y = mu_21)) +
+  geom_line(color = "steelblue", size = 1.1) +  # Brug samme størrelse og farve som tidligere
+  labs(x = "Age", y = expression(mu[12]), title = "") +  # Tilføj etiketter
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12), 
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(size = 12),     
+    axis.title.y = element_text(size = 12)
+  ) +
+  annotate("text", 
+           label = "", 
+           color = "steelblue")
+
+# Gem plottet som en billedfil
+ggsave("mu_21_t.png", plot = plot_mu_21_t, width = 6, height = 4, dpi = 300)
+
+print(plot_mu_21_t)
+print(plot_mu_21_z)
+
+
+
+
+
+
+
 # Plot for mu_12 over Duration (z)
 plot_mu_12_z <- ggplot(df_mu_12_z, aes(x = z, y = mu_12)) +
   geom_line(color = "steelblue", size = 1.5) +
@@ -117,17 +179,6 @@ plot_mu_21_z <- ggplot(df_mu_21_z, aes(x = z, y = mu_21)) +
   geom_line(color = "steelblue", size = 1.5) +
   labs(x = "Duration", y = expression(mu[21])) +
   theme_minimal()
-
-# Plot for mu_23 and mu_13 over Duration (z)
-plot_mu_23_z <- ggplot(df_mu_23_z, aes(x = z)) +
-  geom_line(aes(y = mu_23), color = "steelblue", size = 1.5) +
-  geom_hline(aes(yintercept = mu_13), color = "hotpink2", size = 1.5) +
-  labs(x = "Duration", y = "", title = expression(mu[23] ~ "and" ~ mu[13])) +
-  theme_minimal() +
-  ylim(0, 0.015) +
-  theme(legend.position = "topright") +
-  annotate("text", x = 8, y = 0.014, label = "mu_23 (age=40)", color = "steelblue") +
-  annotate("text", x = 8, y = 0.012, label = "mu_13 (age=40)", color = "hotpink2")
 
 # Plot for mu_12 over Age (t)
 plot_mu_12_t <- ggplot(df_mu_12_t, aes(x = t, y = mu_12)) +
@@ -142,8 +193,60 @@ plot_mu_21_t <- ggplot(df_mu_21_t, aes(x = t, y = mu_21)) +
   theme_minimal()
 
 
+#-------------- Plot for mu_12 -------------
 
-#---------- Plot for mu_i3 -------
+# Plot for mu_12 over Duration (z)
+plot_mu_12_z <- ggplot(df_mu_12_z, aes(x = z, y = mu_12)) +
+  geom_line(color = "steelblue", size = 1.5) +
+  labs(x = "Duration", y = expression(mu[12])) +
+  theme_minimal()
+
+# Plot for mu_12 over Age (t)
+plot_mu_12_t <- ggplot(df_mu_12_t, aes(x = t, y = mu_12)) +
+  geom_line(color = "steelblue", size = 1.5) +
+  labs(x = "Age", y = expression(mu[12])) +
+  theme_minimal()
+
+# Plot for mu_12 over Duration (z)
+plot_mu_12_z <- ggplot(df_mu_12_z, aes(x = z, y = mu_12)) +
+  geom_line(color = "steelblue", size = 1.1) +  # Brug samme størrelse og farve som tidligere
+  labs(x = "Duration", y = expression(mu[12]), title = "") +  # Tilføj etiketter
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12), 
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(size = 12),     
+    axis.title.y = element_text(size = 12)
+  ) +
+  annotate("text", 
+           label = "", 
+           color = "steelblue")
+
+# Gem plottet som en billedfil
+ggsave("mu_12_z.png", plot = plot_mu_12_z, width = 6, height = 4, dpi = 300)
+
+# Plot for mu_12 over Age (t)
+plot_mu_12_t <- ggplot(df_mu_12_t, aes(x = t, y = mu_12)) +
+  geom_line(color = "steelblue", size = 1.1) +  # Brug samme størrelse og farve som tidligere
+  labs(x = "Age", y = expression(mu[12]), title = "") +  # Tilføj etiketter
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12), 
+    axis.text.y = element_text(size = 12),
+    axis.title.x = element_text(size = 12),     
+    axis.title.y = element_text(size = 12)
+  ) +
+  annotate("text", 
+           label = "", 
+           color = "steelblue")
+
+# Gem plottet som en billedfil
+ggsave("mu_12_t.png", plot = plot_mu_12_t, width = 6, height = 4, dpi = 300)
+
+print(plot_mu_12_t)
+print(plot_mu_12_z)
+
+#-------------- Plot for mu_i3 -------------
 # Plot for mu_23 and mu_13 over Age (t)
   # Plot for mu_23 and mu_13 over Age (t)
   plot_mu_23_t <- ggplot(df_mu_23_t, aes(x = t)) +
@@ -164,7 +267,7 @@ plot_mu_21_t <- ggplot(df_mu_21_t, aes(x = t, y = mu_21)) +
     annotate("text", x = 60, y = 0.008, 
              label = expression(mu[13] ~ "(duration=1)"), 
              color = "hotpink2")
-  ggsave(paste0("p_i3.png"), plot_mu_23_t, width = 6, height = 4, dpi = 300)
+  ggsave(paste0("mu_i3_t.png"), plot_mu_23_t, width = 6, height = 4, dpi = 300)
     
     
     
@@ -190,7 +293,7 @@ plot_mu_21_t <- ggplot(df_mu_21_t, aes(x = t, y = mu_21)) +
                color = "hotpink2")
     
     # Gem plottet som en fil
-    ggsave("p_i3_z.png", plot = plot_mu_23_z, width = 6, height = 4, dpi = 300)
+    ggsave(" mu_i3_z.png", plot = plot_mu_23_z, width = 6, height = 4, dpi = 300)
 
 
 # Print plots
