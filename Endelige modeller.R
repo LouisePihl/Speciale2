@@ -78,7 +78,7 @@ SDJA_final <- glm(O ~ poly(age,2) + poly(duration, 4) + I(duration >= 2/12), off
 
 #SDJA_final_punktmasse <- glm(O ~ poly(age, 2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), family = poisson, data = SDJA)
 
-predictions <- predict(SDJA_final , newdata = new_data, type = "response")
+predictions <- predict(SDJA_final, newdata = new_data, type = "response")
 mu_int[,,1,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 mu_int[,(3/h+1):dim(mu_int)[2],1,2]<-SDJA_OE_endpoint
 
@@ -241,7 +241,7 @@ JARF<-JARF[JARF$duration!=unique(JARF$duration)[length(unique(JARF$duration))],]
 JARF_final <- glm(O~poly(age,4)+ns(duration,3)+offset(log(E)),family = poisson(link="log"),data=JARF)
 #JARF_final_raw <- glm(O ~ age + I(age^2) + I(age^3) + I(age^4) + ns(duration,3), offset = log(E), family = poisson, data = JARF)
 
-predictions <- predict(JAFJ_final, newdata = new_data, type = "response")
+predictions <- predict(JARF_final, newdata = new_data, type = "response")
 mu_int[,,2,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 mu_int[,(4/h+1):dim(mu_int)[2],2,3]<-JARF_OE_endpoint
 
@@ -658,8 +658,9 @@ FJRF_OE_endpoint <- glm(O ~ offset(log(E)), family = poisson, data = FJRF)
 FJRF_final <- FJRF_OE_endpoint #0.00087 = intercept: -9.351
 #FJRF_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = FJRF) #0.00087 = intercept: -9.351
 
-predictions <- predict(FJFP_final, newdata = new_data, type = "response")
+predictions <- predict(FJRF_final, newdata = new_data, type = "response")
 mu_int[,,5,3]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
+
 
 ################ FJJA ################
 FJJA <- read_csv("Data/FJ/FJJA.csv")
@@ -674,7 +675,7 @@ FJJA <- FJJA[FJJA$duration != unique(FJJA$duration)[length(unique(FJJA$duration)
 FJJA_final <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
 #FJJA_final_raw <- glm(O ~ offset(log(E)), family = poisson, data = FJJA)
 
-predictions <- predict(FJFP_final, newdata = new_data, type = "response")
+predictions <- predict(FJJA_final, newdata = new_data, type = "response")
 mu_int[,,5,2]<-matrix(predictions, nrow = length(t_seq), ncol = length(u_seq))
 mu_int[,(1.5/h+1):dim(mu_int)[2],5,2]<-FJJA_OE_endpoint
 

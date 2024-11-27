@@ -213,3 +213,116 @@ legend("topleft", legend = c("SDFP", "JAFP", "RFFP", "LYFP", "FJFP"),
 # Tilføj en lodret linje ved x = 40
 abline(v = 40, col = "black", lty = 2)
 
+
+
+
+
+
+#----------- Ny ---------------
+# Indlæs nødvendige pakker
+library(ggplot2)
+library(dplyr)
+
+# Opret dataramme for AgeAgg_SDFP, AgeAgg_JAFP, AgeAgg_RFFP, AgeAgg_LYFP og AgeAgg_FJFP
+df <- bind_rows(
+  AgeAgg_SDFP %>% mutate(Group = "SBDP"),
+  AgeAgg_JAFP %>% mutate(Group = "JCDP"),
+  AgeAgg_RFFP %>% mutate(Group = "RSDP"),
+  AgeAgg_LYFP %>% mutate(Group = "UBDP"),
+  AgeAgg_FJFP %>% mutate(Group = "FJDP")
+)
+
+# Lav plottet
+plot_OE <- ggplot(df, aes(x = age, y = OE, color = Group)) +
+  geom_point(size = 3) +  # Plot prikkerne
+  scale_color_manual(values = c("SDFP" = "blue", "JAFP" = "aquamarine3", "RFFP" = "forestgreen", 
+                                "LYFP" = "steelblue", "FJFP" = "darkseagreen4")) +  # Farver for grupperne
+  labs(
+    x = "Age",
+    y = "OE",
+    title = ""
+  ) +  # Etiketter
+  theme_bw() +  # Ensartet baggrund
+  theme(
+    axis.text.x = element_text(size = 14, family = "Times New Roman"),
+    axis.text.y = element_text(size = 14, family = "Times New Roman"),
+    axis.title.x = element_text(size = 14, family = "Times New Roman"),
+    axis.title.y = element_text(size = 14, family = "Times New Roman"),
+    text = element_text(size = 14, family = "Times New Roman", color = "black"),
+    axis.ticks = element_line(size = 0.15, color = "black"),
+    axis.ticks.length = unit(-0.15, "cm"),
+    legend.position = "topleft",  # Placering af legenden
+    legend.title = element_blank()  # Fjern legendens titel
+  ) +
+  geom_vline(xintercept = 40, color = "black", linetype = "dashed", size = 1)  # Tilføj lodret linje
+
+# Print plottet
+print(plot_OE)
+
+
+
+
+
+# Lav plottet
+plot_OE <- ggplot(df, aes(x = age, y = OE, color = Group)) +
+  geom_point(size = 3) +  # Plot prikkerne
+  scale_color_manual(values = c("SBDP" = "#1f77b4",   # Stærk blå
+                                "JCDP" = "#7ec8e3",   # Lys blå
+                                "RSDP" = "#2ca02c",   # Mørk grøn
+                                "UBDP" = "#98c9a3",   # Lysere grøn
+                                "FJDP" = "royalblue4")) +  # Mellemgrøn farve
+  labs(
+    x = "Age",
+    y = "OE",
+    title = ""
+  ) +  # Etiketter
+  theme_bw() +  # Ensartet baggrund
+  theme(
+    axis.text.x = element_text(size = 14, family = "Times New Roman"),
+    axis.text.y = element_text(size = 14, family = "Times New Roman"),
+    axis.title.x = element_text(size = 14, family = "Times New Roman"),
+    axis.title.y = element_text(size = 14, family = "Times New Roman"),
+    text = element_text(size = 14, family = "Times New Roman", color = "black"),
+    axis.ticks = element_line(size = 0.15, color = "black"),
+    axis.ticks.length = unit(-0.15, "cm"),
+    legend.position = c(0.1, 0.9),  # Placering af legenden i venstre øverste hjørne
+    legend.title = element_blank()  # Fjern legendens titel
+  ) +
+  geom_vline(xintercept = 40, color = "black", linetype = "dashed", size = 1)  # Tilføj lodret linje
+
+# Print plottet
+print(plot_OE)
+
+
+# Lav plottet
+plot_OE <- ggplot(df, aes(x = age, y = OE, color = Group)) +
+  geom_point(size = 3) +  # Plot prikkerne
+  scale_color_manual(values = c("SDFP" = "black",   # Stærk blå
+                                "JAFP" = "olivedrab3",   # Lys blå
+                                "RFFP" = "seagreen",   # Mørk grøn
+                                "LYFP" = "#7ec8e3",   # Lysere grøn
+                                "FJFP" = "royalblue4")) +  # Mellemgrøn farve
+  labs(
+    x = "Age",
+    y = "OE rate",
+    title = ""
+  ) +  # Etiketter
+  theme_bw() +  # Ensartet baggrund
+  theme(
+    axis.text.x = element_text(size = 14, family = "Times New Roman"),
+    axis.text.y = element_text(size = 14, family = "Times New Roman"),
+    axis.title.x = element_text(size = 14, family = "Times New Roman"),
+    axis.title.y = element_text(size = 14, family = "Times New Roman"),
+    text = element_text(size = 14, family = "Times New Roman", color = "black"),
+    axis.ticks = element_line(size = 0.15, color = "black"),
+    axis.ticks.length = unit(-0.15, "cm"),
+    legend.position = c(0.2, 0.75),  # Placering af legenden længere nede
+    legend.title = element_blank()  # Fjern legendens titel
+  ) +
+  geom_vline(xintercept = 40, color = "black", linetype = "dashed", size = 1)  # Tilføj lodret linje
+
+# Print plottet
+print(plot_OE)
+
+ggsave("DP_points.png", plot = plot_OE, width = 6, height = 4, dpi = 300)
+

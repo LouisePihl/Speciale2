@@ -16,7 +16,7 @@ SDJA <- read_csv("Data/SD/SDJA.csv")
 SDJA$OE <- SDJA$O / SDJA$E
 
 # Vis data og opsummering
-#view(Data)
+#view(SDJA)
 #summary(Data)
 
 
@@ -329,3 +329,65 @@ SDJA_punktmasse_model <- glm(O ~ poly(age, 2) + poly(duration, 4) + I(duration >
                            family = poisson, data = SDJA)
 
 
+######################################################
+####            Sammenligning med før             ####
+######################################################
+
+# Indsæt de valgte modeller
+model1 <- glm_indikator_poly4
+model2 <- glm(O ~ poly(age, 2) + poly(duration, 4) + I(duration >= 2/12), offset = log(E), 
+              family = poisson, data = SDJA)
+
+# Forudsig for begge modeller
+Data <- Data %>%
+  mutate(predicted_O_model1 = predict(model1, type = "response"),
+  )
+
+SDJA <- SDJA %>%
+  mutate(predicted_O_model2 = predict(model2, type = "response"),
+  )
+
+
+# Aggreger data for duration for begge modeller
+DurAgg1 <- Data %>%
+  group_by(duration) %>%
+  summarise(
+    expoAgg = sum(E),
+    occAgg = sum(O),
+    predictedAgg = sum(predicted_O_model1)
+  ) %>%
+  mutate(
+    predicted_OE = predictedAgg / expoAgg,
+    OE = occAgg / expoAgg,
+    Model = "μ"
+  )
+
+DurAgg2 <- SDJA %>%
+  group_by(duration) %>%
+  summarise(
+    expoAgg = sum(E),
+    occAgg = sum(O),
+    predictedAgg = sum(predicted_O_model2)
+  ) %>%
+  mutate(
+    predicted_OE = predictedAgg / expoAgg,
+    OE = occAgg / expoAgg,
+    Model = "New μ"
+  )
+
+# Kombiner data for begge modeller
+CombinedDur <- bind_rows(DurAgg1, DurAgg2)
+
+# Plot OE-rater for duration for begge modeller
+ggplot(CombinedDur, aes(x = duration, y = OE, color = Model, shape = Model)) +
+  geom_point(size = 2, shape = 16) +  # Observerede OE-rater som punkter
+  geom_line(aes(y = predicted_OE), size = 1) +  # Forudsagte OE-rater som linjer
+  labs(
+    x = "Duration",
+    y = "OE Rate",
+    title = "",
+    color = "Model",
+    shape = "Model"
+  ) +
+  theme_minimal() +
+  scale_color_manual(values = c("μ" = "blue", "New μ" = "red"))
