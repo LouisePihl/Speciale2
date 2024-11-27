@@ -94,3 +94,17 @@ sum(discount_vector*p_12_vektor*reserve_DI*mu_ACDI_vector)
 sum(discount_vector[1:12]*p_12_vektor[1:12]*sum(integrand2)*mu_ACDI_vector[1:12]/12)
 
 sum(integrand2)*mu_12(40,0)
+
+sum(discount_vector[1:12]*p_12_vektor[1:12]*Res2*mu_ACDI_vector[1:12]/12)
+sum(discount_vector[1:12]*p_12_vektor[1:12]*Res2*mu_ACDI_vector[1:12]/12)/sum(discount_vector[1:12]*p_12_vektor[1:12]/12)
+Res2[1]*mu_12(40,0)
+Res2[1]*mu_12(40,0)/sum(discount_vector[1:12]*p_12_vektor[1:12]/12)
+
+sum(discount_vector[1:12]*p_12_vektor[1:12]*Res1*mu_ACDI_vector[1:12]/12)
+sum(discount_vector[1:12]*p_12_vektor[1:12]*Res1*mu_ACDI_vector[1:12]/12)/sum(discount_vector[1:12]*p_12_vektor[1:12]/12)
+Res1[1]*mu_12(40,0)
+Res1[1]*mu_12(40,0)/sum(discount_vector[1:12]*p_12_vektor[1:12]/12)
+
+
+
+

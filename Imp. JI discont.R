@@ -19,10 +19,11 @@ mean_of_mu <- function(row) {
 }
 
 #Load array with intensities and define mu and mu_p functions
-#setwd("/Users/louisepihl/Documents/Speciale2")
+setwd("/Users/louisepihl/Documents/Speciale2")
 #setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
 mu_int <- readRDS("mu_array.rds")
 #mu_int_stress1<-mu_int
+#mu_int_stress1[,,1,]<-mu_int[,,1,]*1.1
 #mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
 #mu_int_stress1[,,,6]<-mu_int[,,,6]*0.8
 #mu_int_stress1[,,2,4]<-mu_int[,,2,4]*1.15
