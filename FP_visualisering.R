@@ -164,14 +164,14 @@ plot(AgeAgg_SDFP$age, AgeAgg_SDFP$OE, type = "p", col = "blue", lwd = 2.5,
      xlab = "Age", ylab = "OE", ylim=c(0,0.09), xlim=c(18,70))
 
 # Tilføj yderligere linjer til plottet
-lines(AgeAgg_JAFP$age, AgeAgg_JAFP$OE, col = "aquamarine3", lwd = 2.5)
-lines(AgeAgg_RFFP$age, AgeAgg_RFFP$OE, col = "forestgreen", lwd = 2.5)
+lines(AgeAgg_JAFP$age, AgeAgg_JAFP$OE, col = "wheat3", lwd = 2.5)
+lines(AgeAgg_RFFP$age, AgeAgg_RFFP$OE, col = "firebrick1", lwd = 2.5)
 lines(AgeAgg_LYFP$age, AgeAgg_LYFP$OE, col = "steelblue", lwd = 2.5)
-lines(AgeAgg_FJFP$age, AgeAgg_FJFP$OE, col = "darkseagreen4", lwd = 2.5)
+lines(AgeAgg_FJFP$age, AgeAgg_FJFP$OE, col = ""forestgreen"", lwd = 2.5)
 
 # Tilføj en legende for at identificere de forskellige grupper
 legend("topleft", legend = c("SDFP", "JAFP", "RFFP", "LYFP", "FJFP"), 
-       col = c("blue", "aquamarine3", "forestgreen", "steelblue", "darkseagreen4"), lwd = 3)
+       col = c("wheat3","firebrick1", "steelblue", "forestgreen", "orange"), lwd = 3)
 abline(v = 40, col = "black", lty = 2)
 
 
@@ -294,14 +294,15 @@ plot_OE <- ggplot(df, aes(x = age, y = OE, color = Group)) +
 print(plot_OE)
 
 
+
 # Lav plottet
 plot_OE <- ggplot(df, aes(x = age, y = OE, color = Group)) +
   geom_point(size = 3) +  # Plot prikkerne
-  scale_color_manual(values = c("SDFP" = "black",   # Stærk blå
-                                "JAFP" = "olivedrab3",   # Lys blå
-                                "RFFP" = "seagreen",   # Mørk grøn
-                                "LYFP" = "#7ec8e3",   # Lysere grøn
-                                "FJFP" = "royalblue4")) +  # Mellemgrøn farve
+  scale_color_manual(values = c("SBDP" = "wheat3",   # Stærk blå
+                                "JCDP" = "firebrick1",   # Lys blå
+                                "RSDP" = "steelblue",   # Mørk grøn
+                                "UBDP" = "forestgreen",   # Lysere grøn
+                                "FJDP" = "orange")) +  # Mellemgrøn farve
   labs(
     x = "Age",
     y = "OE rate",
@@ -316,10 +317,10 @@ plot_OE <- ggplot(df, aes(x = age, y = OE, color = Group)) +
     text = element_text(size = 14, family = "Times New Roman", color = "black"),
     axis.ticks = element_line(size = 0.15, color = "black"),
     axis.ticks.length = unit(-0.15, "cm"),
-    legend.position = c(0.2, 0.75),  # Placering af legenden længere nede
+    legend.position = c(0.1, 0.75),  # Placering af legenden længere nede
     legend.title = element_blank()  # Fjern legendens titel
   ) +
-  geom_vline(xintercept = 40, color = "black", linetype = "dashed", size = 1)  # Tilføj lodret linje
+  geom_vline(xintercept = 40, color = "grey3", linetype = "dashed", size = 0.75)  # Tilføj lodret linje
 
 # Print plottet
 print(plot_OE)

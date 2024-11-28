@@ -71,6 +71,7 @@ ggsave(paste0("p1", j, "_4067.png"), plot = p, width = 6, height = 3, dpi = 300)
 #-------- Nyt plot med vores farver ------- 
 library(ggplot2)
 library(dplyr)
+library(grid)
 
 # Definer intervaller
 z_seq <- seq(0, 10, length.out = 500)  # Duration
@@ -111,134 +112,101 @@ df_mu_23_t <- data.frame(
 
 #-------------- Plot for mu_21 -------------
 
-# Plot for mu_12 over Duration (z)
 plot_mu_21_z <- ggplot(df_mu_21_z, aes(x = z, y = mu_21)) +
-  geom_line(color = "steelblue", size = 1.1) +
-  labs(x = "Duration", y = expression(mu[21])) +
-  theme_minimal()
-
-# Plot for mu_21 over Age (t)
-plot_mu_21_t <- ggplot(df_mu_21_t, aes(x = t, y = mu_21)) +
-  geom_line(color = "steelblue", size = 1.1) +
-  labs(x = "Age", y = expression(mu[21])) +
-  theme_minimal()
-
-# Plot for mu_21 over Duration (z)
-plot_mu_21_z <- ggplot(df_mu_21_z, aes(x = z, y = mu_21)) +
-  geom_line(color = "steelblue", size = 1.1) +  # Brug samme størrelse og farve som tidligere
-  labs(x = "Duration", y = expression(mu[21]), title = "") +  # Tilføj etiketter
-  theme_minimal() +
+  geom_line(color = "black", size = 1, linetype = "dashed") +  # Sort linje, stiplede linjer
+  labs(x = "Duration", y = expression(mu[21]~ "(40,z)"), title = "") +  # Etiketter
+  theme_bw() +  # Ensartet baggrund
   theme(
-    axis.text.x = element_text(size = 12), 
-    axis.text.y = element_text(size = 12),
-    axis.title.x = element_text(size = 12),     
-    axis.title.y = element_text(size = 12)
+    axis.text.x = element_text(size = 14), 
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(size = 14),     
+    axis.title.y = element_text(size = 14),
+    axis.text = element_text(size = 14),
+    text = element_text(size = 14, family = "Times New Roman", color = "black"),
+    axis.ticks = element_line(size = 0.15, color = "black"),
+    axis.ticks.length = unit(-0.15, "cm")  # Negative ticks for "indented" look
   ) +
   annotate("text", 
-           label = "", 
-           color = "steelblue")
+           label = expression(mu[21] ~ "(z)"), 
+           color = "black", size = 6, family = "Times New Roman")  # Tekst-annotering
 
 # Gem plottet som en billedfil
 ggsave("mu_21_z.png", plot = plot_mu_21_z, width = 6, height = 4, dpi = 300)
 
-# Plot for mu_12 over Age (t)
 plot_mu_21_t <- ggplot(df_mu_21_t, aes(x = t, y = mu_21)) +
-  geom_line(color = "steelblue", size = 1.1) +  # Brug samme størrelse og farve som tidligere
-  labs(x = "Age", y = expression(mu[12]), title = "") +  # Tilføj etiketter
-  theme_minimal() +
+  geom_line(color = "black", size = 1, linetype = "dashed") +  # Sort linje med fast linje
+  labs(x = "Age", y = expression(mu[21]~ "(t,1)"), title = "") +  # Etiketter
+  theme_bw() +  # Ensartet baggrund
   theme(
-    axis.text.x = element_text(size = 12), 
-    axis.text.y = element_text(size = 12),
-    axis.title.x = element_text(size = 12),     
-    axis.title.y = element_text(size = 12)
+    axis.text.x = element_text(size = 14), 
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(size = 14),     
+    axis.title.y = element_text(size = 14),
+    axis.text = element_text(size = 14),
+    text = element_text(size = 14, family = "Times New Roman", color = "black"),
+    axis.ticks = element_line(size = 0.15, color = "black"),
+    axis.ticks.length = unit(-0.15, "cm")  # Negative ticks for "indented" look
   ) +
   annotate("text", 
-           label = "", 
-           color = "steelblue")
+           label = expression(mu[21] ~ "(t)"), 
+           color = "black", size = 6, family = "Times New Roman")  # Tekst-annotering
 
 # Gem plottet som en billedfil
 ggsave("mu_21_t.png", plot = plot_mu_21_t, width = 6, height = 4, dpi = 300)
 
-print(plot_mu_21_t)
-print(plot_mu_21_z)
-
-
-
-
-
-
-
-# Plot for mu_12 over Duration (z)
-plot_mu_12_z <- ggplot(df_mu_12_z, aes(x = z, y = mu_12)) +
-  geom_line(color = "steelblue", size = 1.5) +
-  labs(x = "Duration", y = expression(mu[12])) +
-  theme_minimal()
-
-# Plot for mu_21 over Duration (z)
-plot_mu_21_z <- ggplot(df_mu_21_z, aes(x = z, y = mu_21)) +
-  geom_line(color = "steelblue", size = 1.5) +
-  labs(x = "Duration", y = expression(mu[21])) +
-  theme_minimal()
-
-# Plot for mu_12 over Age (t)
-plot_mu_12_t <- ggplot(df_mu_12_t, aes(x = t, y = mu_12)) +
-  geom_line(color = "steelblue", size = 1.5) +
-  labs(x = "Age", y = expression(mu[12])) +
-  theme_minimal()
-
-# Plot for mu_21 over Age (t)
-plot_mu_21_t <- ggplot(df_mu_21_t, aes(x = t, y = mu_21)) +
-  geom_line(color = "steelblue", size = 1.5) +
-  labs(x = "Age", y = expression(mu[21])) +
-  theme_minimal()
 
 
 #-------------- Plot for mu_12 -------------
 
-# Plot for mu_12 over Duration (z)
-plot_mu_12_z <- ggplot(df_mu_12_z, aes(x = z, y = mu_12)) +
-  geom_line(color = "steelblue", size = 1.5) +
-  labs(x = "Duration", y = expression(mu[12])) +
-  theme_minimal()
 
-# Plot for mu_12 over Age (t)
-plot_mu_12_t <- ggplot(df_mu_12_t, aes(x = t, y = mu_12)) +
-  geom_line(color = "steelblue", size = 1.5) +
-  labs(x = "Age", y = expression(mu[12])) +
-  theme_minimal()
-
-# Plot for mu_12 over Duration (z)
 plot_mu_12_z <- ggplot(df_mu_12_z, aes(x = z, y = mu_12)) +
-  geom_line(color = "steelblue", size = 1.1) +  # Brug samme størrelse og farve som tidligere
-  labs(x = "Duration", y = expression(mu[12]), title = "") +  # Tilføj etiketter
-  theme_minimal() +
+  geom_line(color = "black", size = 1) +  # Sort linje med stiplede linjer
+  labs(x = "Duration", y = expression(mu[12]~ "(40,z)"), title = "") +  # Etiketter
+  theme_bw() +  # Ensartet baggrund
   theme(
-    axis.text.x = element_text(size = 12), 
-    axis.text.y = element_text(size = 12),
-    axis.title.x = element_text(size = 12),     
-    axis.title.y = element_text(size = 12)
+    axis.text.x = element_text(size = 14), 
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(size = 14),     
+    axis.title.y = element_text(size = 14),
+    axis.text = element_text(size = 14),
+    text = element_text(size = 14, family = "Times New Roman", color = "black"),
+    axis.ticks = element_line(size = 0.15, color = "black"),
+    axis.ticks.length = unit(-0.15, "cm")  # Negative ticks for "indented" look
   ) +
+  xlim(0,0.15) +
   annotate("text", 
-           label = "", 
-           color = "steelblue")
+           label = expression(mu[12] ~ "(40,z)"), 
+           color = "black", size = 6, family = "Times New Roman")  # Tekst-annotering
 
 # Gem plottet som en billedfil
 ggsave("mu_12_z.png", plot = plot_mu_12_z, width = 6, height = 4, dpi = 300)
 
-# Plot for mu_12 over Age (t)
+# Gem plottet som en billedfil
+ggsave("mu_12_z.png", plot = plot_mu_12_z, width = 6, height = 4, dpi = 300)
+
+
 plot_mu_12_t <- ggplot(df_mu_12_t, aes(x = t, y = mu_12)) +
-  geom_line(color = "steelblue", size = 1.1) +  # Brug samme størrelse og farve som tidligere
-  labs(x = "Age", y = expression(mu[12]), title = "") +  # Tilføj etiketter
-  theme_minimal() +
+  geom_line(color = "black", size = 1) +  # Sort linje med fast linje
+  labs(x = "Age", y = expression(mu[12]~ "(t,1)"), title = "") +  # Etiketter
+  theme_bw() +  # Ensartet baggrund
   theme(
-    axis.text.x = element_text(size = 12), 
-    axis.text.y = element_text(size = 12),
-    axis.title.x = element_text(size = 12),     
-    axis.title.y = element_text(size = 12)
+    axis.text.x = element_text(size = 14), 
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(size = 14),     
+    axis.title.y = element_text(size = 14),
+    axis.text = element_text(size = 14),
+    text = element_text(size = 14, family = "Times New Roman", color = "black"),
+    axis.ticks = element_line(size = 0.15, color = "black"),
+    axis.ticks.length = unit(-0.15, "cm")  # Negative ticks for "indented" look
   ) +
   annotate("text", 
-           label = "", 
-           color = "steelblue")
+           label = expression(mu[12] ~ "(t)"), 
+           color = "black", size = 6, family = "Times New Roman")  # Tekst-annotering
+
+# Gem plottet som en billedfil
+ggsave("mu_12_t.png", plot = plot_mu_12_t, width = 6, height = 4, dpi = 300)
+
+
 
 # Gem plottet som en billedfil
 ggsave("mu_12_t.png", plot = plot_mu_12_t, width = 6, height = 4, dpi = 300)
@@ -250,52 +218,66 @@ print(plot_mu_12_z)
 # Plot for mu_23 and mu_13 over Age (t)
   # Plot for mu_23 and mu_13 over Age (t)
   plot_mu_23_t <- ggplot(df_mu_23_t, aes(x = t)) +
-    geom_line(aes(y = mu_23), color = "steelblue", size = 1.1) +
-    geom_line(aes(y = mu_13), color = "hotpink2", size = 1.1) +
+    geom_line(aes(y = mu_23), color = "black", size = 1, linetype = "dashed") +
+    geom_line(aes(y = mu_13), color = "black", size = 1) +
     labs(x = "Age", y = "", title = "") +
-    theme_minimal() +
+  theme_bw() +
     theme(
-      axis.text.x = element_text(size = 12), 
-      axis.text.y = element_text(size = 12),
-      axis.title.x = element_text(size = 12),     
-      axis.title.y = element_text(size = 12)
+      axis.text.x = element_text(size = 14), 
+      axis.text.y = element_text(size = 14),
+      axis.title.x = element_text(size = 14),     
+      axis.title.y = element_text(size = 14),
+      #axis.line = element_line(color = "black", size = 0.6), # Tilføjer sorte linjer langs akserne
+      axis.text = element_text(size = 14),
+      text = element_text(size = 14, family = "Times New Roman", color="black"),
+      axis.ticks = element_line(size = 0.15, color="black") , 
+      axis.ticks.length = unit(-.15, "cm")
     )+
     labs(x = "Age", y = "") +
-    annotate("text", x = 58, y = 0.06, 
-             label = expression(mu[23] ~ "(duration=1)"), 
-             color = "steelblue") +
-    annotate("text", x = 60, y = 0.008, 
-             label = expression(mu[13] ~ "(duration=1)"), 
-             color = "hotpink2")
+  annotate("text", x = 58, y = 0.06, 
+           label = expression(mu[23] ~ "(t,1)"), 
+           color = "black", size = 6, family = "Times New Roman") +
+  annotate("text", x = 55, y = 0.008, 
+           label = expression(mu[13] ~ "(t,1)"), 
+           color = "black", size = 6, family = "Times New Roman")
+print(plot_mu_23_t)
   ggsave(paste0("mu_i3_t.png"), plot_mu_23_t, width = 6, height = 4, dpi = 300)
     
-    
+  
+  
+  
     
     # Evaluér mu_13 for t = 40
     mu_13_value <- mu_13(40)  # Sørg for, at mu_13 kan evaluere til en numerisk værdi
     
     # Skab plottet
     plot_mu_23_z <- ggplot(df_mu_23_z, aes(x = z)) +
-      geom_line(aes(y = mu_23), color = "steelblue", size = 1.1) +
-      geom_hline(yintercept = mu_13_value, color = "hotpink2", size = 1.1) +  # Brug konstant værdi
+      geom_line(aes(y = mu_23), color = "black", size = 1, linetype = "dashed") +
+      geom_line(aes(y = mu_13), color = "black", size = 1) + # Brug konstant værdi
       labs(x = "Duration", y = "", title = "") +
-      theme_minimal() +
-      ylim(0, 0.015) +
+      theme_bw() +
       theme(
-        axis.text.x = element_text(size = 12), 
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),     
-        axis.title.y = element_text(size = 12)
-      ) +
-      annotate("text", x = 8, y = 0.0055, label = expression(mu[23] ~ "(age=40)"), 
-               color = "steelblue") +
-      annotate("text", x = 8, y = 0.0017, label = expression(mu[13] ~ "(age=40)"), 
-               color = "hotpink2")
+        axis.text.x = element_text(size = 14), 
+        axis.text.y = element_text(size = 14),
+        axis.title.x = element_text(size = 14),     
+        axis.title.y = element_text(size = 14),
+        #axis.line = element_line(color = "black", size = 0.6), # Tilføjer sorte linjer langs akserne
+        axis.text = element_text(size = 14),
+        text = element_text(size = 14, family = "Times New Roman", color="black"),
+        axis.ticks = element_line(size = 0.15, color="black") , 
+        axis.ticks.length = unit(-.15, "cm")) +
+      annotate("text", x = 8, y = 0.0055, label = expression(mu[23] ~ "(40,z)"), 
+               color = "black", size = 6, family = "Times New Roman") +
+      annotate("text", x = 8, y = 0.0013, label = expression(mu[13] ~ "(40,z)"), 
+               color = "black", size = 6, family = "Times New Roman")
     
+    print( plot_mu_23_z)
     # Gem plottet som en fil
     ggsave(" mu_i3_z.png", plot = plot_mu_23_z, width = 6, height = 4, dpi = 300)
 
 
+    
+    
 # Print plots
 print(plot_mu_12_z)
 print(plot_mu_21_z)
