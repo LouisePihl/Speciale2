@@ -19,21 +19,17 @@ mean_of_mu <- function(row) {
 }
 
 #Load array with intensities and define mu and mu_p functions
-<<<<<<< HEAD
 setwd("/Users/louisepihl/Documents/Speciale2")
 #setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
-=======
-#setwd("/Users/louisepihl/Documents/Speciale2")
-setwd("/Users/frejalundfredholm/Desktop/Speciale/Speciale2")
->>>>>>> fa9bfa4a1f50e66e8ef73ea5d6946809ca96446e
+
 mu_int <- readRDS("mu_array.rds")
 #mu_int_stress1<-mu_int
 #mu_int_stress1[,,1,]<-mu_int[,,1,]*1.1
-#mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 10% for all times and durations
+#mu_int_stress1[,,1,2]<-mu_int[,,1,2]*1.2 #Increase intensity from SB til JC by 20% for all times and durations
 #mu_int_stress1[,,,6]<-mu_int[,,,6]*0.8
 #mu_int_stress1[,,2,4]<-mu_int[,,2,4]*1.15
 #mu_int_stress1[,,2,5]<-mu_int[,,2,5]*1.15
-
+mu_int[,(3*12+1):length(mu_int[1,,1,2]),1,2]<-mu_int[,(3*12+1):length(mu_int[1,,1,2]),1,2]*1.2
 
 mu<-function(i,j,t,u){
   mu_int[(t-18)/h+1,u/h+1,i,j] #Change here in stress scenarios
@@ -66,7 +62,7 @@ mu_p<-function(i,t,u){
 #Define grid
 t_0<-40
 u<-0
-slut<-43
+slut<-67
 h<-1/12 #has to be the same as h used in "Intensitetsmatricer"
 N_time<-round((slut-t_0)/h)
 N_duration<-round((slut-t_0+u)/h)
